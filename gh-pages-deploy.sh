@@ -13,3 +13,6 @@ git commit -m 'deploy'
 
 # subtree push
 git subtree push --prefix dist origin gh-pages
+
+# return to master branch
+git checkout master
