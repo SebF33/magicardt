@@ -7,6 +7,7 @@
 
 **Cahier des charges :**
 Rechercher des cartes Magic : L'Assemblée et organiser une liste de celles-ci à exporter.
+
 :construction: Work in Progress
 
 
