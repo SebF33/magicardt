@@ -1,4 +1,4 @@
-# MINI-PROJET AVEC FRAMEWORK
+# PROJET AVEC FRAMEWORK
 ![logo_magicardt](/github/logo_magicardt.png)
 
 **Titre : Magicardt**
@@ -18,11 +18,11 @@ Rechercher des cartes Magic : L'Assemblée et organiser une liste de celles-ci �
 
 
 ## :computer: Développement
-**Description technique :** Consommation d'une API avec un framework front-end et les librairies associées.
+**Description technique :** Consommation d'une API sur une SPA (“Single Page Application”) avec un framework front-end et les librairies associées.
 
 **Langage :** JavaScript.
 
-[![Vue.js](/github/Vue.js.png)](https://vuejs.org) [![Vuetify](/github/Vuetify.png)](https://vuetifyjs.com) [![VeeValidate](/github/VeeValidate.png)](https://vee-validate.logaretm.com) [![Axios](/github/Axios.png)](https://axios-http.com) [![Vite](/github/Vite.png)](https://vitejs.dev)
+[![Vue.js](/github/Vue.js.png)](https://vuejs.org) [![Vuetify](/github/Vuetify.png)](https://vuetifyjs.com) [![VeeValidate](/github/VeeValidate.png)](https://vee-validate.logaretm.com) [![Axios](/github/Axios.png)](https://axios-http.com) [![Vite](/github/Vite.png)](https://vitejs.dev) [![Tailwind](/github/Tailwind.png)](https://tailwindcss.com)
 
 :toolbox: **Technologies :**
 - [Vue.js 3](https://vuejs.org/guide/introduction.html)
@@ -30,6 +30,7 @@ Rechercher des cartes Magic : L'Assemblée et organiser une liste de celles-ci �
 - [VeeValidate 4](https://vee-validate.logaretm.com/v4/guide/overview)
 - [Axios](https://axios-http.com/docs/intro)
 - [Vite](https://vitejs.dev/guide)
+- [Tailwind](https://tailwindcss.com/docs/guides/vite)
 
 
 ### ![Vite_tiny](/github/Vite_tiny.png) Vite

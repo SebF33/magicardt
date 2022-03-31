@@ -4,10 +4,12 @@
     :class="{ 'has-error': !!errorMessage, success: meta.valid }"
   >
     <label :for="name">{{ label }}</label>
+
     <input
       :name="name"
       :id="name"
       :type="type"
+      v-model="message"
       :value="inputValue"
       :placeholder="placeholder"
       @input="handleChange"
@@ -22,9 +24,11 @@
 
 <script>
 import { useField } from "vee-validate";
+import { useModelWrapper } from "../utils/modelWrapper";
 
 export default {
   props: {
+    modelValue: String,
     type: {
       type: String,
       default: "text",
@@ -51,7 +55,7 @@ export default {
     },
   },
 
-  setup(props) {
+  setup(props, { emit }) {
     // https://vee-validate.logaretm.com/v4/guide/validation#form-level-validation
     const {
       value: inputValue,
@@ -69,6 +73,7 @@ export default {
       errorMessage,
       inputValue,
       meta,
+      message: useModelWrapper(props, emit, "modelValue"),
     };
   },
 };

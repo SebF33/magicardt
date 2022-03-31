@@ -71,20 +71,20 @@ export default {
 
   computed: {
     createGradientString() {
-      var data = this.cardDatas.colors;
+      let data = this.cardDatas.colors;
       if (data !== "") {
-        var cardColors = data
-          .map((w) => (w === "W" ? "#FDFEC2" : w))
-          .map((u) => (u === "U" ? "#68C1F5" : u))
-          .map((b) => (b === "B" ? "#494747" : b))
-          .map((r) => (r === "R" ? "#F85452" : r))
-          .map((g) => (g === "G" ? "#27B56A" : g));
-        var percentage = Math.round(100 / cardColors.length);
-        var gradientColors = [];
+        let cardColors = data
+          .map((w) => (w === "W" ? "#f3f2f9" : w))
+          .map((u) => (u === "U" ? "#246bc6" : u))
+          .map((b) => (b === "B" ? "#3b3b3f" : b))
+          .map((r) => (r === "R" ? "#ce372d" : r))
+          .map((g) => (g === "G" ? "#006744" : g));
+        let percentage = Math.round(100 / cardColors.length);
+        let gradientColors = [];
         if (data.length === 1) {
           var gradientString = `background-color: ${cardColors}`;
         } else {
-          for (var i = 0; i < cardColors.length; ++i) {
+          for (let i = 0; i < cardColors.length; ++i) {
             gradientColors[i] =
               cardColors[i] + " " + (percentage * i + percentage) + "%";
             if (i + 1 == cardColors.length) {
@@ -92,7 +92,6 @@ export default {
                 cardColors[i] + " " + (percentage * i + 20) + "%";
             }
           }
-          console.log(gradientColors);
           var gradientString = `background-image: linear-gradient(${gradientColors})`;
         }
       } else {

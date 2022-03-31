@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main>
+    <v-main class="min-w-screen min-h-screen flex items-center">
       <Logo />
       <div class="container mx-auto">
         <div
@@ -9,21 +9,61 @@
             backgroundImage: `url(${cardDatas.image_uris.border_crop})`,
           }"
         ></div>
+
         <Form
+          v-model="submitTerm"
           @submit="submitForm"
-          v-model="inputCardName"
           :validation-schema="schema"
           @invalid-submit="onInvalidSubmit"
         >
           <TextInput
+            :modelValue="searchTerm"
+            @update:modelValue="searchTerm = $event"
             name="name"
             type="text"
             label="Nom de la carte :"
             placeholder="(Ex : The Wanderer)"
             success-message="Maintenant cliquez !"
           />
-          <button class="submit-btn" type="submit">Afficher</button>
+          <button class="submit-btn bg-primary-color" type="submit">Afficher</button>
+          <p
+            v-if="selectedCardName"
+            class="selected-name text-lg pt-2 absolute"
+          >
+            Vous avez sélectionné :
+            <span class="font-semibold">{{ selectedCardName }}</span>
+          </p>
         </Form>
+
+        <ul
+          v-if="searchCardNames.length"
+          class="
+            autocompletion
+            w-96
+            rounded
+            bg-white
+            border
+            px-4
+            py-2
+            space-y-1
+            absolute
+            z-10
+          "
+        >
+          <li class="px-1 pt-1 pb-2 font-bold border-b border-gray-200">
+            Affichage de {{ searchCardNames.length }} résultats sur
+            {{ searchResults.length }}
+          </li>
+          <li
+            v-for="cardName in searchCardNames"
+            :key="cardName"
+            @click="selectCardName(cardName)"
+            class="cursor-pointer hover:bg-gray-100 p-1"
+          >
+            {{ cardName }}
+          </li>
+        </ul>
+
         <Card :cardDatas="cardDatas" />
       </div>
     </v-main>
@@ -31,9 +71,10 @@
 </template>
 
 <script>
+import axios from "axios";
 import { Form } from "vee-validate";
+import { ref, watch, computed } from "vue";
 import * as Yup from "yup";
-
 import Card from "./components/Card.vue";
 import Logo from "./components/Logo.vue";
 import TextInput from "./components/TextInput.vue";
@@ -64,18 +105,31 @@ export default {
         toughness: "",
         type_line: "",
       },
-      inputCardName: "",
+      submitTerm: "",
     };
   },
 
   methods: {
     // Récupérer les données de l'API à la soumission du formulaire
-    submitForm(inputCardName) {
-      const name = inputCardName.name;
-      this.axios
+    submitForm() {
+      this.searchCardNames.length = 0;
+      let selectedCardName = this.selectedCardName;
+      let searchTerm = this.searchTerm;
+
+      function name() {
+        let name;
+        if (selectedCardName === "") {
+          name = searchTerm;
+        } else {
+          name = selectedCardName;
+        }
+        return name;
+      }
+
+      axios
         .get(`https://api.scryfall.com/cards/named`, {
           params: {
-            exact: name,
+            exact: name(),
           },
         })
         .then((response) => {
@@ -98,6 +152,42 @@ export default {
   },
 
   setup() {
+    // Auto-complétion
+    const searchTerm = ref("");
+    const searchResults = ref([]);
+    const selectedCardName = ref("");
+
+    watch(
+      () => searchTerm.value,
+      (card) =>
+        axios
+          .get(`https://api.scryfall.com/cards/autocomplete?q=${card}`)
+          .then((res) => {
+            searchResults.value = res.data.data;
+          })
+    );
+
+    const searchCardNames = computed(() => {
+      if (searchTerm.value === "") {
+        return [];
+      }
+      let matches = 0;
+      return searchResults.value.filter((cardName) => {
+        if (
+          cardName.toLowerCase().includes(searchTerm.value.toLowerCase()) &&
+          matches < 10
+        ) {
+          matches++;
+          return cardName;
+        }
+      });
+    });
+
+    const selectCardName = (cardName) => {
+      selectedCardName.value = cardName;
+      searchTerm.value = "";
+    };
+
     // Comportement si la saisie de l'utilisateur est invalide
     function onInvalidSubmit() {
       const submitBtn = document.querySelector(".submit-btn");
@@ -114,6 +204,11 @@ export default {
     });
 
     return {
+      searchResults,
+      searchTerm,
+      searchCardNames,
+      selectCardName,
+      selectedCardName,
       schema,
       onInvalidSubmit,
     };
@@ -137,6 +232,10 @@ export default {
   --error-bg-color: #fddfe2;
   --success-color: var(--secondary-color);
   --success-bg-color: var(--light-color);
+}
+
+::selection {
+  background-color: var(--lighter-primary-color);
 }
 
 @font-face {
@@ -168,13 +267,20 @@ body {
 
 .container {
   position: relative;
+  max-width: 100% !important;
   height: 680px;
 }
 
-.bg-container {
+.autocompletion,
+.bg-container,
+.selected-name,
+.submit-btn {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.bg-container {
   width: 480px;
   height: 680px;
   opacity: 0.32;
@@ -205,10 +311,11 @@ form {
   padding-bottom: 60px;
 }
 
+.selected-name {
+  margin-top: 52px;
+}
+
 .submit-btn {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   display: inline-block;
   border-radius: 5px;
   padding: 8px 20px;
