@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --primary-color: #837c5e;
+  --lighter-primary-color: #c0bc97;
+  --darker-primary-color: #57523d;
+  --secondary-color: #2e1d22;
+  --tertiary-color: #fcf8e8;
+  --light-color: #f8f8f5;
+  --error-color: #e44051;
+  --error-bg-color: #fddfe2;
+  --success-color: var(--secondary-color);
+  --success-bg-color: var(--light-color);
+}
+
+::selection {
+  background-color: var(--lighter-primary-color);
+}
+
+@font-face {
+  font-family: "Magic";
+  src: local("Magic"), url(assets/fonts/Magic.ttf) format("truetype");
+}
+@font-face {
+  font-family: "MedievalSharp";
+  src: local("MedievalSharp"),
+    url(assets/fonts/MedievalSharp.ttf) format("truetype");
+}
