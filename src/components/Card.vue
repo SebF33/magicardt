@@ -1,5 +1,5 @@
 <template>
-  <vue-load-image>
+  <vue-load-image class="mt-14">
     <template v-slot:image>
       <div
         id="gradient"

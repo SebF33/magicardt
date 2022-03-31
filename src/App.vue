@@ -25,7 +25,9 @@
             placeholder="(Ex : The Wanderer)"
             success-message="Maintenant cliquez !"
           />
-          <button class="submit-btn bg-primary-color" type="submit">Afficher</button>
+          <button class="submit-btn bg-primary-color" type="submit">
+            Afficher
+          </button>
           <p
             v-if="selectedCardName"
             class="selected-name text-lg pt-2 absolute"
@@ -41,7 +43,7 @@
             autocompletion
             w-96
             rounded
-            bg-white
+            bg-light-color
             border
             px-4
             py-2
@@ -51,14 +53,14 @@
           "
         >
           <li class="px-1 pt-1 pb-2 font-bold border-b border-gray-200">
-            Affichage de {{ searchCardNames.length }} résultats sur
+            Affichage de {{ searchCardNames.length }} résultat(s) sur
             {{ searchResults.length }}
           </li>
           <li
             v-for="cardName in searchCardNames"
             :key="cardName"
             @click="selectCardName(cardName)"
-            class="cursor-pointer hover:bg-gray-100 p-1"
+            class="cursor-pointer hover:bg-lighter-primary-color p-1"
           >
             {{ cardName }}
           </li>
@@ -253,6 +255,10 @@ body {
   transform: translateX(-50%);
 }
 
+.autocompletion {
+  box-shadow: 0 0 3px 3px var(--darker-primary-color);
+}
+
 .bg-container {
   width: 480px;
   height: 680px;
@@ -279,7 +285,7 @@ body {
 }
 
 form {
-  width: 300px;
+  width: 260px;
   margin: 0px auto;
   padding-bottom: 60px;
 }
