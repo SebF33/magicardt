@@ -1,8 +1,9 @@
 <template>
   <v-app>
     <v-main class="min-w-screen min-h-screen flex items-center">
+      <Cart :cardDatas="cardDatas" />
       <Logo />
-      <div class="container mx-auto">
+      <div class="inline-block container mx-auto">
         <div
           class="bg-container"
           :style="{
@@ -25,13 +26,8 @@
             placeholder="(Ex : The Wanderer)"
             success-message="Maintenant cliquez !"
           />
-          <button class="submit-btn bg-primary-color" type="submit">
-            Afficher
-          </button>
-          <p
-            v-if="selectedCardName"
-            class="selected-name text-lg pt-2 absolute"
-          >
+          <button class="submit-btn bg-primary-color" type="submit">Afficher</button>
+          <p v-if="selectedCardName" class="selected-name text-lg pt-2 absolute">
             Vous avez sélectionné :
             <span class="font-semibold">{{ selectedCardName }}</span>
           </p>
@@ -39,18 +35,7 @@
 
         <ul
           v-if="searchCardNames.length"
-          class="
-            autocompletion
-            w-96
-            rounded
-            bg-light-color
-            border
-            px-4
-            py-2
-            space-y-1
-            absolute
-            z-10
-          "
+          class="autocompletion w-96 rounded bg-light-color border px-4 py-2 space-y-1 absolute z-10"
         >
           <li class="px-1 pt-1 pb-2 font-bold border-b border-gray-200">
             Affichage de {{ searchCardNames.length }} résultat(s) sur
@@ -61,11 +46,8 @@
             :key="cardName"
             @click="selectCardName(cardName)"
             class="cursor-pointer hover:bg-lighter-primary-color p-1"
-          >
-            {{ cardName }}
-          </li>
+          >{{ cardName }}</li>
         </ul>
-
         <Card :cardDatas="cardDatas" />
       </div>
     </v-main>
@@ -78,6 +60,7 @@ import { Form } from "vee-validate";
 import { ref, watch, computed } from "vue";
 import * as Yup from "yup";
 import Card from "./components/Card.vue";
+import Cart from "./components/Cart.vue";
 import Logo from "./components/Logo.vue";
 import TextInput from "./components/TextInput.vue";
 
@@ -86,6 +69,7 @@ export default {
 
   components: {
     Card,
+    Cart,
     Logo,
     Form,
     TextInput,
@@ -114,7 +98,6 @@ export default {
   methods: {
     // Récupérer les données de l'API à la soumission du formulaire
     submitForm() {
-      this.searchCardNames.length = 0;
       let selectedCardName = this.selectedCardName;
       let searchTerm = this.searchTerm;
 
@@ -136,6 +119,8 @@ export default {
         })
         .then((response) => {
           this.cardDatas = response.data;
+          this.handleOracleText();
+          this.searchCardNames.length = 0;
         })
         .catch(() => {
           this.onInvalidSubmit();
@@ -149,14 +134,15 @@ export default {
           this.cardDatas.power = "";
           this.cardDatas.toughness = "";
           this.cardDatas.type_line = "";
+          this.searchCardNames.length = 0;
         });
     },
   },
 
   setup() {
     // Auto-complétion
-    const searchTerm = ref("");
     const searchResults = ref([]);
+    const searchTerm = ref("");
     const selectedCardName = ref("");
 
     watch(
@@ -190,6 +176,11 @@ export default {
       searchTerm.value = "";
     };
 
+    // Formater le texte Oracle
+    function handleOracleText() {
+      this.cardDatas.oracle_text = this.cardDatas.oracle_text.replace(/\n/g, "<br/>");
+    };
+
     // Comportement si la saisie de l'utilisateur est invalide
     function onInvalidSubmit() {
       const submitBtn = document.querySelector(".submit-btn");
@@ -197,7 +188,7 @@ export default {
       setTimeout(() => {
         submitBtn.classList.remove("invalid");
       }, 1000);
-    }
+    };
 
     // Générer un schéma de validation
     // https://vee-validate.logaretm.com/v4/guide/validation#validation-schemas-with-yup
@@ -206,13 +197,14 @@ export default {
     });
 
     return {
+      handleOracleText,
+      onInvalidSubmit,
+      searchCardNames,
       searchResults,
       searchTerm,
-      searchCardNames,
       selectCardName,
       selectedCardName,
       schema,
-      onInvalidSubmit,
     };
   },
 };

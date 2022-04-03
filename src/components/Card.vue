@@ -1,35 +1,25 @@
 <template>
   <vue-load-image class="mt-14">
     <template v-slot:image>
-      <div
-        id="gradient"
-        v-if="cardDatas.mana_cost"
-        :style="createGradientString"
-      ></div>
+      <transition name="el-zoom-in-center" appear>
+        <div id="gradient" v-if="cardDatas.mana_cost" :style="createGradientString"></div>
+      </transition>
       <div id="card">
-        <img
-          :src="cardDatas.image_uris.png || cardback"
-          width="223"
-          height="310"
-          alt="card"
-        />
+        <img :src="cardDatas.image_uris.png || cardback" width="223" height="310" alt="card" />
         <h2 v-if="cardDatas.name">{{ cardDatas.name }}</h2>
         <p v-if="cardDatas.type_line">{{ cardDatas.type_line }}</p>
-        <p class="oracle-text" v-if="cardDatas.oracle_text">
-          {{ cardDatas.oracle_text }}
-        </p>
-        <p class="flavor-text" v-if="cardDatas.flavor_text">
-          {{ cardDatas.flavor_text }}
-        </p>
-        <span class="artist" v-if="cardDatas.artist"
-          >Artiste : {{ cardDatas.artist }}</span
-        >
-        <span class="power" v-if="cardDatas.power"
-          >{{ cardDatas.power }}/{{ cardDatas.toughness }}</span
-        >
-        <span class="power" v-if="cardDatas.loyalty"
-          >Loyauté : {{ cardDatas.loyalty }}</span
-        >
+        <p class="oracle-text" v-if="cardDatas.oracle_text" v-html="cardDatas.oracle_text"></p>
+        <p class="flavor-text" v-if="cardDatas.flavor_text">{{ cardDatas.flavor_text }}</p>
+        <span class="artist" v-if="cardDatas.artist">Artiste : {{ cardDatas.artist }}</span>
+        <span class="power" v-if="cardDatas.power">{{ cardDatas.power }}/{{ cardDatas.toughness }}</span>
+        <span class="power" v-if="cardDatas.loyalty">Loyauté : {{ cardDatas.loyalty }}</span>
+        <el-button
+          class="add-btn"
+          color="#837c5e"
+          style="color: black"
+          v-if="cardDatas.id"
+          @click="addClick"
+        >Ajouter</el-button>
       </div>
     </template>
     <template v-slot:preloader>
@@ -104,6 +94,10 @@ export default {
   methods: {
     getImageUrl() {
       this.cardback = new URL(`../assets/cardback.png`, import.meta.url).href;
+    },
+
+    addClick() {
+      this.emitter.emit("addItemEvent");
     },
   },
 };
@@ -182,6 +176,14 @@ export default {
   position: absolute;
   bottom: 25px;
   right: 25px;
+  font-weight: bold;
+}
+
+#card .add-btn {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 25px;
   font-weight: bold;
 }
 </style>
