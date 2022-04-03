@@ -43,7 +43,7 @@ import { Delete } from '@element-plus/icons-vue'
 import ExcellentExport from 'excellentexport';
 import fullLogo from "../assets/full-logo.png";
 
-const baseURL = "http://localhost:3001/magicardt";
+const baseURL = "https://magicardt.herokuapp.com/cards";
 
 export default {
   name: "Cart",

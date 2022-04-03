@@ -38,8 +38,7 @@ Rechercher des cartes Magic : L'Assembl√©e et organiser une liste de celles-ci √
 
 
 ### JSON Server
-Lancer la BDD JSON :
-`yarn run db:serve`
+https://github.com/jesperorb/json-server-heroku
 
 
 ### ![Vite_tiny](/.github/Vite_tiny.png) Vite
