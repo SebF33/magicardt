@@ -7,6 +7,7 @@
       <div id="card">
         <img :src="cardDatas.image_uris.png || cardback" width="223" height="310" alt="card" />
         <h2 v-if="cardDatas.name">{{ cardDatas.name }}</h2>
+        <p class="mana-cost" v-if="cardDatas.mana_cost" v-html="cardDatas.mana_cost"></p>
         <p v-if="cardDatas.type_line">{{ cardDatas.type_line }}</p>
         <p class="oracle-text" v-if="cardDatas.oracle_text" v-html="cardDatas.oracle_text"></p>
         <p class="flavor-text" v-if="cardDatas.flavor_text">{{ cardDatas.flavor_text }}</p>
@@ -103,7 +104,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 #gradient {
   margin: 0 auto;
   margin-top: 200px;
@@ -141,7 +142,7 @@ export default {
 }
 
 #card h2 {
-  margin-top: 30px;
+  margin-top: 40px;
   padding: 0;
   color: var(--secondary-color);
   font-size: 15pt;
@@ -151,6 +152,12 @@ export default {
 #card p {
   color: var(--darker-primary-color);
   font-size: 13px;
+}
+
+#card .mana-cost {
+  position: absolute;
+  top: 16px;
+  right: 25px;
 }
 
 #card .oracle-text {
@@ -183,7 +190,30 @@ export default {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 25px;
+  bottom: 16px;
   font-weight: bold;
+}
+
+.card-symbol {
+  display: inline-block;
+  margin: 1px 1px -1px 1px;
+  -webkit-border-radius: 500px;
+  border-radius: 500px;
+  -webkit-box-shadow: -1px 1px 0 rgba(0, 0, 0, 0.85);
+  box-shadow: -1px 1px 0 rgba(0, 0, 0, 0.85);
+  text-indent: -999em;
+  overflow: hidden;
+  width: 14px;
+  height: 14px;
+  -webkit-background-size: 100% 100%;
+  background-size: 100% 100%;
+  background-position: top left;
+  -webkit-print-color-adjust: exact;
+  color-adjust: exact;
+  cursor: help;
+}
+
+.card-symbol + .card-symbol {
+  margin-left: 2px;
 }
 </style>

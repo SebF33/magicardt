@@ -119,7 +119,8 @@ export default {
         })
         .then((response) => {
           this.cardDatas = response.data;
-          this.handleOracleText();
+          this.cardDatas.mana_cost = this.formatSymbols(this.cardDatas.mana_cost);
+          this.cardDatas.oracle_text = this.formatOracleText(this.cardDatas.oracle_text);
           this.searchCardNames.length = 0;
         })
         .catch(() => {
@@ -177,8 +178,33 @@ export default {
     };
 
     // Formater le texte Oracle
-    function handleOracleText() {
-      this.cardDatas.oracle_text = this.cardDatas.oracle_text.replace(/\n/g, "<br/>");
+    function formatOracleText(data) {
+      const formattedData = data.replace(/\n/g, '<br/>');
+      return formatSymbols(formattedData);
+    };
+
+    // Formater les symboles
+    function formatSymbols(data) {
+      const formattedData = data
+        .replace('{T}', '<abbr class="card-symbol card-symbol-T" title="one black mana">{T}</abbr>')
+        .replace('{W}', '<abbr class="card-symbol card-symbol-W" title="Mana blanc">{W}</abbr>')
+        .replace('{U}', '<abbr class="card-symbol card-symbol-U" title="Mana bleu">{U}</abbr>')
+        .replace('{B}', '<abbr class="card-symbol card-symbol-B" title="Mana noir">{B}</abbr>')
+        .replace('{R}', '<abbr class="card-symbol card-symbol-R" title="Mana rouge">{R}</abbr>')
+        .replace('{G}', '<abbr class="card-symbol card-symbol-G" title="Mana vert">{G}</abbr>')
+        .replace('{0}', '<abbr class="card-symbol card-symbol-0" title="Mana : 0">{0}</abbr>')
+        .replace('{1}', '<abbr class="card-symbol card-symbol-1" title="Mana générique : 1">{1}</abbr>')
+        .replace('{2}', '<abbr class="card-symbol card-symbol-2" title="Mana générique : 2">{2}</abbr>')
+        .replace('{3}', '<abbr class="card-symbol card-symbol-3" title="Mana générique : 3">{3}</abbr>')
+        .replace('{4}', '<abbr class="card-symbol card-symbol-4" title="Mana générique : 4">{4}</abbr>')
+        .replace('{5}', '<abbr class="card-symbol card-symbol-5" title="Mana générique : 5">{5}</abbr>')
+        .replace('{6}', '<abbr class="card-symbol card-symbol-6" title="Mana générique : 6">{6}</abbr>')
+        .replace('{7}', '<abbr class="card-symbol card-symbol-7" title="Mana générique : 7">{7}</abbr>')
+        .replace('{8}', '<abbr class="card-symbol card-symbol-8" title="Mana générique : 8">{8}</abbr>')
+        .replace('{9}', '<abbr class="card-symbol card-symbol-9" title="Mana générique : 9">{9}</abbr>')
+        .replace('{15}', '<abbr class="card-symbol card-symbol-15" title="Mana générique : 15">{15}</abbr>')
+        .replace('{16}', '<abbr class="card-symbol card-symbol-16" title="Mana générique : 16">{16}</abbr>');
+      return formattedData;
     };
 
     // Comportement si la saisie de l'utilisateur est invalide
@@ -197,7 +223,8 @@ export default {
     });
 
     return {
-      handleOracleText,
+      formatOracleText,
+      formatSymbols,
       onInvalidSubmit,
       searchCardNames,
       searchResults,
