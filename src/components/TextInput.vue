@@ -105,10 +105,9 @@ input:focus {
 
 .help-message {
   position: absolute;
-  bottom: calc(-1.5 * 1em);
-  left: 0;
-  margin: 0;
-  font-size: 14px;
+  bottom: calc(-1.7 * 1em);
+  left: 0.6em;
+  font-size: 15px;
 }
 
 .TextInput.has-error input {

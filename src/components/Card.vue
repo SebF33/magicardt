@@ -5,10 +5,24 @@
         <div id="gradient" v-if="cardDatas.mana_cost" :style="createGradientString"></div>
       </transition>
       <div id="card">
-        <img :src="cardDatas.image_uris.png || cardback" width="223" height="310" alt="card" />
+        <img
+          class="card-img"
+          :src="cardDatas.image_uris.png || cardback"
+          width="223"
+          height="310"
+          alt="card"
+        />
         <h2 v-if="cardDatas.name">{{ cardDatas.name }}</h2>
         <p class="mana-cost" v-if="cardDatas.mana_cost" v-html="cardDatas.mana_cost"></p>
         <p v-if="cardDatas.type_line">{{ cardDatas.type_line }}</p>
+        <img
+          class="set-symbol"
+          :src="setDatas.icon_svg_uri"
+          v-if="setDatas.icon_svg_uri"
+          width="32"
+          :alt="setDatas.name"
+          :title="setDatas.name"
+        />
         <p class="oracle-text" v-if="cardDatas.oracle_text" v-html="cardDatas.oracle_text"></p>
         <p class="flavor-text" v-if="cardDatas.flavor_text">{{ cardDatas.flavor_text }}</p>
         <span class="artist" v-if="cardDatas.artist">Artiste : {{ cardDatas.artist }}</span>
@@ -48,6 +62,7 @@ export default {
 
   props: {
     cardDatas: Object,
+    setDatas: Object,
   },
 
   data() {
@@ -93,12 +108,12 @@ export default {
   },
 
   methods: {
-    getImageUrl() {
-      this.cardback = new URL(`../assets/cardback.png`, import.meta.url).href;
-    },
-
     addClick() {
       this.emitter.emit("addItemEvent");
+    },
+
+    getImageUrl() {
+      this.cardback = new URL(`../assets/cardback.png`, import.meta.url).href;
     },
   },
 };
@@ -131,7 +146,7 @@ export default {
   z-index: 1;
 }
 
-#card img {
+#card .card-img {
   float: left;
   margin-top: 20px;
   margin-right: 20px;
@@ -158,6 +173,15 @@ export default {
   position: absolute;
   top: 16px;
   right: 25px;
+}
+
+#card .set-symbol {
+  position: absolute;
+  top: 60px;
+  right: 25px;
+  width: 32px;
+  max-height: 32px;
+  cursor: help;
 }
 
 #card .oracle-text {

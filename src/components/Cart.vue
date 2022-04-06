@@ -43,7 +43,7 @@ import { Delete } from '@element-plus/icons-vue'
 import ExcellentExport from 'excellentexport';
 import fullLogo from "../assets/full-logo.png";
 
-const baseURL = "https://magicardt.herokuapp.com/cards";
+const serverURL = "https://magicardt.herokuapp.com/cards";
 
 export default {
   name: "Cart",
@@ -63,7 +63,7 @@ export default {
   // Item(s) dans la liste
   async created() {
     try {
-      const res = await axios.get(baseURL);
+      const res = await axios.get(serverURL);
       this.items = res.data;
     } catch (e) {
       console.error(e);
@@ -74,13 +74,13 @@ export default {
     // Suppression d'un item de la liste
     removeItem(row) {
       const id = row.id;
-      axios.delete(`${baseURL}/${id}`);
+      axios.delete(`${serverURL}/${id}`);
       this.items = this.items.filter((item) => item.id !== id);
     },
 
     // Ajout d'un item dans la liste
     async addItem() {
-      const res = await axios.post(baseURL, {
+      const res = await axios.post(serverURL, {
         name: this.cardDatas.name,
       });
       this.items = [...this.items, res.data];

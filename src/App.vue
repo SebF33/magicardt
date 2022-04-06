@@ -35,7 +35,7 @@
 
         <ul
           v-if="searchCardNames.length"
-          class="autocompletion w-96 rounded bg-light-color border px-4 py-2 space-y-1 absolute z-10"
+          class="autocompletion w-96 rounded bg-light-color border px-4 py-4 space-y-1 absolute z-10"
         >
           <li class="px-1 pt-1 pb-2 font-bold border-b border-gray-200">
             Affichage de {{ searchCardNames.length }} résultat(s) sur
@@ -48,7 +48,7 @@
             class="cursor-pointer hover:bg-lighter-primary-color p-1"
           >{{ cardName }}</li>
         </ul>
-        <Card :cardDatas="cardDatas" />
+        <Card :cardDatas="cardDatas" :setDatas="setDatas" />
       </div>
     </v-main>
   </v-app>
@@ -63,6 +63,8 @@ import Card from "./components/Card.vue";
 import Cart from "./components/Cart.vue";
 import Logo from "./components/Logo.vue";
 import TextInput from "./components/TextInput.vue";
+
+const apiURL = "https://api.scryfall.com";
 
 export default {
   name: "App",
@@ -88,8 +90,13 @@ export default {
         oracle_text: "",
         power: "",
         prices: { eur: "", eur_foil: "" },
+        set: "",
         toughness: "",
         type_line: "",
+      },
+      setDatas: {
+        icon_svg_uri: "",
+        name: "",
       },
       submitTerm: "",
     };
@@ -98,12 +105,10 @@ export default {
   methods: {
     // Récupérer les données de l'API à la soumission du formulaire
     submitForm() {
-      let selectedCardName = this.selectedCardName;
-      let searchTerm = this.searchTerm;
-      let name = selectedCardName === "" ? searchTerm : selectedCardName;
+      let name = this.selectedCardName === "" ? this.searchTerm : this.selectedCardName;
 
       axios
-        .get(`https://api.scryfall.com/cards/named`, {
+        .get(`${apiURL}/cards/named`, {
           params: {
             exact: name,
           },
@@ -113,6 +118,12 @@ export default {
           this.cardDatas.mana_cost = this.formatSymbols(this.cardDatas.mana_cost);
           this.cardDatas.oracle_text = this.formatOracleText(this.cardDatas.oracle_text);
           this.searchCardNames.length = 0;
+        })
+        .then(async () => {
+          await axios.get(`${apiURL}/sets/${this.cardDatas.set}`).then((res) => {
+            this.setDatas = res.data;
+            console.log(this.setDatas);
+          });
         })
         .catch(() => {
           this.onInvalidSubmit();
@@ -124,9 +135,12 @@ export default {
           this.cardDatas.name = "Nom incomplet ou inexistant 😕";
           this.cardDatas.oracle_text = "";
           this.cardDatas.power = "";
+          this.cardDatas.set = "";
           this.cardDatas.toughness = "";
           this.cardDatas.type_line = "";
           this.searchCardNames.length = 0;
+          this.setDatas.icon_svg_uri = "";
+          this.setDatas.name = "";
         });
     },
   },
@@ -141,7 +155,7 @@ export default {
       () => searchTerm.value,
       (card) =>
         axios
-          .get(`https://api.scryfall.com/cards/autocomplete?q=${card}`)
+          .get(`${apiURL}/cards/autocomplete?q=${card}`)
           .then((res) => {
             searchResults.value = res.data.data;
           })
@@ -174,7 +188,7 @@ export default {
       return formatSymbols(formattedData);
     };
 
-    // Formater les symboles
+    // Formater la symbologie
     function formatSymbols(data) {
       const formattedData = data
         .replaceAll('{T}', '<abbr class="card-symbol card-symbol-T" title="Engagez ce permanent">{T}</abbr>')
