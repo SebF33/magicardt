@@ -12,6 +12,7 @@
         ></div>
 
         <Form
+          id="card-form"
           v-model="submitTerm"
           @submit="submitForm"
           :validation-schema="schema"
@@ -57,7 +58,7 @@
 <script>
 import axios from "axios";
 import { Form } from "vee-validate";
-import { ref, watch, computed } from "vue";
+import { computed, ref, watch } from "vue";
 import * as Yup from "yup";
 import Card from "./components/Card.vue";
 import Cart from "./components/Cart.vue";
@@ -91,6 +92,7 @@ export default {
         power: "",
         prices: { eur: "", eur_foil: "" },
         set: "",
+        set_name: "",
         toughness: "",
         type_line: "",
       },
@@ -117,12 +119,11 @@ export default {
           this.cardDatas = response.data;
           this.cardDatas.mana_cost = this.formatSymbols(this.cardDatas.mana_cost);
           this.cardDatas.oracle_text = this.formatOracleText(this.cardDatas.oracle_text);
-          this.searchCardNames.length = 0;
+          this.cardDatas.prices.eur = this.cardDatas.prices.eur + " €";
         })
         .then(async () => {
           await axios.get(`${apiURL}/sets/${this.cardDatas.set}`).then((res) => {
             this.setDatas = res.data;
-            console.log(this.setDatas);
           });
         })
         .catch(() => {
@@ -136,9 +137,9 @@ export default {
           this.cardDatas.oracle_text = "";
           this.cardDatas.power = "";
           this.cardDatas.set = "";
+          this.cardDatas.set_name = "";
           this.cardDatas.toughness = "";
           this.cardDatas.type_line = "";
-          this.searchCardNames.length = 0;
           this.setDatas.icon_svg_uri = "";
           this.setDatas.name = "";
         });

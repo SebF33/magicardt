@@ -2,7 +2,7 @@
   <div class="inline-block flex justify-center">
     <transition name="bounce" appear>
       <a class="w-48" href="/magicardt/">
-        <img :src="logo" />
+        <img :src="logo" alt="logo" />
       </a>
     </transition>
   </div>

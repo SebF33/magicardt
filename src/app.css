@@ -30,6 +30,11 @@
   src: local("MedievalSharp"),
     url(assets/fonts/MedievalSharp.ttf) format("truetype");
 }
+@font-face {
+  font-family: "Oswald";
+  src: local("Oswald"),
+    url(assets/fonts/Oswald.ttf) format("truetype");
+}
 
 /* Symbologie ®Scryfall */
 .card-symbol-T {
