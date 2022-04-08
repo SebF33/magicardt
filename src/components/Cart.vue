@@ -14,6 +14,7 @@
         :header-cell-style="{ background: '#c0bc97' }"
         :row-style="{ background: '#f8f8f5' }"
         style="width:440px"
+        max-height="410"
       >
         <el-table-column min-width="36" prop="image">
           <template #default="scope">
@@ -69,8 +70,8 @@ export default {
   data() {
     return {
       fullLogo,
-      items: [],
       itemName: "",
+      items: [],
     };
   },
 
