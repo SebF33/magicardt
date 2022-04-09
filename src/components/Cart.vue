@@ -1,10 +1,25 @@
 <template>
   <div class="absolute top-0 right-10">
-    <transition name="el-fade-in" appear>
-      <a class="absolute left-0 z-10" @click="show = !show" style="width:340px">
-        <img :src="fullLogo" alt="magicardt" />
-      </a>
+    <transition name="slide-fade" appear>
+      <img
+        class="absolute left-0 z-10"
+        v-show="show"
+        :src="fullLogo"
+        alt="magicardt"
+        style="width:340px"
+        draggable="false"
+        ondragstart="return false"
+      />
     </transition>
+    <a
+      class="glass-btn absolute z-10"
+      @click="show = !show"
+      style="width:32.2955px"
+      draggable="false"
+      ondragstart="return false"
+    >
+      <img :src="glass" alt="magicardt" />
+    </a>
     <transition name="el-zoom-in-top" appear>
       <el-table
         class="absolute top-4"
@@ -23,6 +38,8 @@
               :src="scope.row.image"
               :alt="scope.row.name"
               :title="scope.row.title"
+              draggable="false"
+              ondragstart="return false"
             />
           </template>
         </el-table-column>
@@ -47,6 +64,8 @@
       href="#"
       id="anchorNewApi-xls"
       @click="openFile('xls')"
+      draggable="false"
+      ondragstart="return false"
     >Export</a>
   </div>
 </template>
@@ -57,6 +76,7 @@ import { computed, ref } from 'vue';
 import { Delete } from '@element-plus/icons-vue'
 import ExcellentExport from 'excellentexport';
 import fullLogo from "../assets/full-logo.png";
+import glass from "../assets/glass.png";
 
 const serverURL = "https://magicardt.herokuapp.com/cards";
 
@@ -70,6 +90,7 @@ export default {
   data() {
     return {
       fullLogo,
+      glass,
       itemName: "",
       items: [],
     };
@@ -98,7 +119,7 @@ export default {
       const res = await axios.post(serverURL, {
         image: this.cardDatas.image_uris.border_crop,
         name: this.cardDatas.name,
-        price: this.cardDatas.prices.eur,
+        price: this.cardDatas.prices.eur.replace('.', ','),
         set: this.cardDatas.set,
         set_name: this.cardDatas.set_name,
         title: this.cardDatas.name + " (" + this.cardDatas.set_name + ")",
@@ -161,6 +182,10 @@ export default {
 </script>
 
 <style scoped>
+.glass-btn {
+  right: 130px;
+}
+
 .el-table {
   margin-top: 55px;
   font-family: "Oswald";
@@ -177,5 +202,18 @@ export default {
 li {
   font-size: 1.5rem;
   list-style: none;
+}
+
+/* Slide-fade animations */
+.slide-fade-enter-active {
+  transition: all 0.6s ease-out;
+}
+.slide-fade-leave-active {
+  transition: all 1s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
 }
 </style>

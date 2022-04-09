@@ -1,7 +1,7 @@
 <template>
   <div class="inline-block flex justify-center">
     <transition name="bounce" appear>
-      <a class="w-48" href="/magicardt/">
+      <a class="w-48" href="/magicardt/" draggable="false" ondragstart="return false">
         <img :src="logo" alt="logo" />
       </a>
     </transition>
@@ -21,6 +21,7 @@ export default {
 </script>
 
 <style scoped>
+/* Bounce animations */
 .bounce-enter-active {
   animation: bounce-in 0.8s;
 }

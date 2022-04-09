@@ -11,8 +11,12 @@
           width="223"
           height="310"
           alt="card"
+          draggable="false"
+          ondragstart="return false"
         />
-        <h2 v-if="cardDatas.name">{{ cardDatas.name }}</h2>
+        <transition name="bounce" appear>
+          <h2 v-if="cardDatas.name">{{ cardDatas.name }}</h2>
+        </transition>
         <p class="mana-cost" v-if="cardDatas.mana_cost" v-html="cardDatas.mana_cost"></p>
         <p v-if="cardDatas.type_line">{{ cardDatas.type_line }}</p>
         <img
@@ -22,10 +26,12 @@
           width="32"
           :alt="setDatas.name"
           :title="setDatas.name"
+          draggable="false"
+          ondragstart="return false"
         />
         <p class="oracle-text" v-if="cardDatas.oracle_text" v-html="cardDatas.oracle_text"></p>
         <p class="flavor-text" v-if="cardDatas.flavor_text">{{ cardDatas.flavor_text }}</p>
-        <span class="artist" v-if="cardDatas.artist">Artiste : {{ cardDatas.artist }}</span>
+        <span class="artist font-bold" v-if="cardDatas.artist">Artiste : {{ cardDatas.artist }}</span>
         <span class="power" v-if="cardDatas.power">{{ cardDatas.power }}/{{ cardDatas.toughness }}</span>
         <span class="power" v-if="cardDatas.loyalty">Loyauté : {{ cardDatas.loyalty }}</span>
         <el-button
@@ -239,5 +245,24 @@ export default {
 
 .card-symbol + .card-symbol {
   margin-left: 2px;
+}
+
+/* Bounce animations */
+.bounce-enter-active {
+  animation: bounce-in 0.6s;
+}
+.bounce-leave-active {
+  animation: bounce-in 0.6s reverse;
+}
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 </style>
