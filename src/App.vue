@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main class="min-w-screen min-h-screen flex items-center">
-      <Cart :cardDatas="cardDatas" />
+      <Cart :cardDatas="cardDatas" :setDatas="setDatas" />
       <Logo />
       <div class="inline-block container mx-auto">
         <div

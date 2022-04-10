@@ -5,42 +5,39 @@
         <div id="gradient" v-if="cardDatas.mana_cost" :style="createGradientString"></div>
       </transition>
       <div id="card">
-        <img
-          class="card-img"
-          :src="cardDatas.image_uris.png || cardback"
-          width="223"
-          height="310"
-          alt="card"
-          draggable="false"
-          ondragstart="return false"
-        />
+        <img class="card-img" :src="cardDatas.image_uris.png || cardback" width="223" height="310" alt="card"
+          draggable="false" ondragstart="return false" />
         <transition name="bounce" appear>
           <h2 v-if="cardDatas.name">{{ cardDatas.name }}</h2>
         </transition>
-        <p class="mana-cost" v-if="cardDatas.mana_cost" v-html="cardDatas.mana_cost"></p>
-        <p v-if="cardDatas.type_line">{{ cardDatas.type_line }}</p>
-        <img
-          class="set-symbol"
-          :src="setDatas.icon_svg_uri"
-          v-if="setDatas.icon_svg_uri"
-          width="32"
-          :alt="setDatas.name"
-          :title="setDatas.name"
-          draggable="false"
-          ondragstart="return false"
-        />
-        <p class="oracle-text" v-if="cardDatas.oracle_text" v-html="cardDatas.oracle_text"></p>
-        <p class="flavor-text" v-if="cardDatas.flavor_text">{{ cardDatas.flavor_text }}</p>
-        <span class="artist font-bold" v-if="cardDatas.artist">Artiste : {{ cardDatas.artist }}</span>
-        <span class="power" v-if="cardDatas.power">{{ cardDatas.power }}/{{ cardDatas.toughness }}</span>
-        <span class="power" v-if="cardDatas.loyalty">Loyauté : {{ cardDatas.loyalty }}</span>
-        <el-button
-          class="add-btn"
-          color="#837c5e"
-          style="color: black"
-          v-if="cardDatas.id"
-          @click="addClick"
-        >Ajouter</el-button>
+        <transition name="el-fade-in-linear" appear>
+          <p class="mana-cost" v-if="cardDatas.mana_cost" v-html="cardDatas.mana_cost"></p>
+        </transition>
+        <transition name="el-fade-in-linear" appear>
+          <p v-if="cardDatas.type_line">{{ cardDatas.type_line }}</p>
+        </transition>
+        <transition name="el-fade-in-linear" appear>
+          <img class="set-symbol" :src="setDatas.icon_svg_uri" v-if="setDatas.icon_svg_uri" width="32"
+            :alt="setDatas.name" :title="setDatas.name" draggable="false" ondragstart="return false" />
+        </transition>
+        <transition name="el-fade-in-linear" appear>
+          <p class="oracle-text" v-if="cardDatas.oracle_text" v-html="cardDatas.oracle_text"></p>
+        </transition>
+        <transition name="el-fade-in-linear" appear>
+          <p class="flavor-text" v-if="cardDatas.flavor_text">{{ cardDatas.flavor_text }}</p>
+        </transition>
+        <transition name="el-fade-in-linear" appear>
+          <span class="artist font-bold" v-if="cardDatas.artist">Artiste : {{ cardDatas.artist }}</span>
+        </transition>
+        <transition name="el-fade-in-linear" appear>
+          <span class="power" v-if="cardDatas.power">{{ cardDatas.power }}/{{ cardDatas.toughness }}</span>
+        </transition>
+        <transition name="el-fade-in-linear" appear>
+          <span class="power" v-if="cardDatas.loyalty">Loyauté : {{ cardDatas.loyalty }}</span>
+        </transition>
+        <transition name="el-fade-in-linear" appear>
+          <el-button class="add-btn" color="#837c5e" v-if="cardDatas.id" @click="addClick">Ajouter</el-button>
+        </transition>
       </div>
     </template>
     <template v-slot:preloader>
@@ -51,7 +48,7 @@
     <template v-slot:error>
       <div class="card">Le chargement de l'image a échoué 😕</div>
     </template>
-  </vue-load-image>
+    </vue-load-image>
 </template>
 
 <script>
@@ -221,6 +218,7 @@ export default {
   left: 50%;
   transform: translateX(-50%);
   bottom: 16px;
+  color: black;
   font-weight: bold;
 }
 
@@ -243,7 +241,7 @@ export default {
   cursor: help;
 }
 
-.card-symbol + .card-symbol {
+.card-symbol+.card-symbol {
   margin-left: 2px;
 }
 
@@ -251,16 +249,20 @@ export default {
 .bounce-enter-active {
   animation: bounce-in 0.6s;
 }
+
 .bounce-leave-active {
   animation: bounce-in 0.6s reverse;
 }
+
 @keyframes bounce-in {
   0% {
     transform: scale(0);
   }
+
   50% {
     transform: scale(1.1);
   }
+
   100% {
     transform: scale(1);
   }

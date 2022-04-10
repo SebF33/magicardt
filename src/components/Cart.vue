@@ -6,7 +6,7 @@
         v-show="show"
         :src="fullLogo"
         alt="magicardt"
-        style="width:340px"
+        style="width: 340px"
         draggable="false"
         ondragstart="return false"
       />
@@ -14,7 +14,7 @@
     <a
       class="glass-btn absolute z-10"
       @click="show = !show"
-      style="width:32.2955px"
+      style="width: 32.2955px"
       draggable="false"
       ondragstart="return false"
     >
@@ -28,53 +28,75 @@
         stripe
         :header-cell-style="{ background: '#c0bc97' }"
         :row-style="{ background: '#f8f8f5' }"
-        style="width:440px"
+        style="width: 440px"
         max-height="410"
       >
-        <el-table-column min-width="36" prop="image">
+        <el-table-column min-width="36" prop="card_image">
           <template #default="scope">
-            <img
-              class="miniature"
-              :src="scope.row.image"
-              :alt="scope.row.name"
-              :title="scope.row.title"
-              draggable="false"
-              ondragstart="return false"
-            />
+            <transition name="el-zoom-in-center" appear>
+              <img
+                class="miniature"
+                :src="scope.row.card_image"
+                :alt="scope.row.card_name"
+                :title="scope.row.card_title"
+                draggable="false"
+                ondragstart="return false"
+              />
+            </transition>
           </template>
         </el-table-column>
-        <el-table-column min-width="74" label="Nom" prop="name" />
-        <el-table-column min-width="30" label="Set" prop="set" />
-        <el-table-column min-width="40" label="Prix" prop="price" />
-        <el-table-column min-width="50" align="right">
+        <el-table-column min-width="96" label="Nom" prop="card_name" />
+        <el-table-column min-width="24" label="Set" prop="set_icon">
+          <template #default="scope">
+            <transition name="el-fade-in-linear" appear>
+              <img
+                class="set-icon"
+                :src="scope.row.set_icon"
+                :alt="scope.row.set_name"
+                :title="scope.row.set_name"
+                draggable="false"
+                ondragstart="return false"
+              />
+            </transition>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="40" label="Prix" prop="card_price" />
+        <el-table-column min-width="40" align="right">
           <template #header>
-            <el-input v-model="search" size="small" placeholder="Rechercher" />
+            <el-input v-model="search" size="small" placeholder="Filtre" />
           </template>
           <template #default="scope">
-            <el-button size="small" type="danger" :icon="Delete" @click="removeItem(scope.row)" />
+            <el-button
+              size="small"
+              type="danger"
+              :icon="Delete"
+              @click="removeItem(scope.row)"
+            />
           </template>
         </el-table-column>
       </el-table>
     </transition>
   </div>
-  <div class="absolute bottom-20 right-10 z-10">
+  <transition name="el-fade-in-linear" appear>
     <a
-      class="absolute top-0 right-10"
+      class="el-button export-btn absolute top-6 right-12"
+      v-show="show"
       download="Magicardt.xls"
       href="#"
       id="anchorNewApi-xls"
       @click="openFile('xls')"
       draggable="false"
       ondragstart="return false"
-    >Export</a>
-  </div>
+      >Export</a
+    >
+  </transition>
 </template>
 
 <script>
 import axios from "axios";
-import { computed, ref } from 'vue';
-import { Delete } from '@element-plus/icons-vue'
-import ExcellentExport from 'excellentexport';
+import { computed, ref } from "vue";
+import { Delete } from "@element-plus/icons-vue";
+import ExcellentExport from "excellentexport";
 import fullLogo from "../assets/full-logo.png";
 import glass from "../assets/glass.png";
 
@@ -85,6 +107,7 @@ export default {
 
   props: {
     cardDatas: Object,
+    setDatas: Object,
   },
 
   data() {
@@ -117,37 +140,42 @@ export default {
     // Ajout d'un item dans la liste
     async addItem() {
       const res = await axios.post(serverURL, {
-        image: this.cardDatas.image_uris.border_crop,
-        name: this.cardDatas.name,
-        price: this.cardDatas.prices.eur.replace('.', ','),
-        set: this.cardDatas.set,
-        set_name: this.cardDatas.set_name,
-        title: this.cardDatas.name + " (" + this.cardDatas.set_name + ")",
+        card_image: this.cardDatas.image_uris.border_crop,
+        card_name: this.cardDatas.name,
+        card_price: this.cardDatas.prices.eur.replace(".", ","),
+        card_title: this.cardDatas.name + " (" + this.cardDatas.set_name + ")",
+        set_icon: this.setDatas.icon_svg_uri,
+        set_name: this.setDatas.name,
       });
       this.items = [...this.items, res.data];
     },
 
     // Export de la liste
     openFile(format) {
-      var datatable = document.getElementsByClassName('el-table__body');
-      datatable[0].setAttribute('id', 'datatable');
-      return ExcellentExport.convert({
-        anchor: 'anchorNewApi-' + format,
-        filename: 'Magicardt',
-        format: format,
-        rtl: true,
-      }, [{
-        name: 'Magicardt',
-        from: {
-          table: 'datatable'
+      var datatable = document.getElementsByClassName("el-table__body");
+      datatable[0].setAttribute("id", "datatable");
+      return ExcellentExport.convert(
+        {
+          anchor: "anchorNewApi-" + format,
+          filename: "Magicardt",
+          format: format,
+          rtl: true,
         },
-        fixValue: (value, row, col) => {
-          let v = value.replace(/<br>/gi, "\n");
-          let strippedString = v.replace(/(<([^>]+)>)/gi, "");
-          return strippedString;
-        },
-        removeColumns: [0],
-      }]);
+        [
+          {
+            name: "Magicardt",
+            from: {
+              table: "datatable",
+            },
+            fixValue: (value, row, col) => {
+              let v = value.replace(/<br>/gi, "\n");
+              let strippedString = v.replace(/(<([^>]+)>)/gi, "");
+              return strippedString;
+            },
+            removeColumns: [0, 2],
+          },
+        ]
+      );
     },
   },
 
@@ -158,17 +186,17 @@ export default {
   },
 
   setup() {
-    const items = ref([])
-    const search = ref('')
-    const show = ref(true)
+    const items = ref([]);
+    const search = ref("");
+    const show = ref(true);
 
     const filterTableData = computed(() =>
       items.value.filter(
         (data) =>
           !search.value ||
-          data.name.toLowerCase().includes(search.value.toLowerCase())
+          data.card_name.toLowerCase().includes(search.value.toLowerCase())
       )
-    )
+    );
 
     return {
       Delete,
@@ -182,23 +210,48 @@ export default {
 </script>
 
 <style scoped>
+/* Boutons */
+.export-btn {
+  --el-button-bg-color: #837c5e;
+  --el-button-border-color: #837c5e;
+  --el-button-hover-bg-color: rgb(168, 163, 142);
+  --el-button-hover-border-color: rgb(168, 163, 142);
+  --el-button-active-bg-color: rgb(105, 99, 75);
+  --el-button-active-border-color: rgb(105, 99, 75);
+  font-size: 16px;
+  font-weight: bold;
+}
+.export-btn,
+.el-button:focus,
+.el-button:hover {
+  color: black;
+}
 .glass-btn {
   right: 130px;
+  transition: 0.3s ease-in-out;
+}
+.glass-btn:hover {
+  transform: scale(0.92);
 }
 
+/* Tableau */
 .el-table {
   margin-top: 55px;
   font-family: "Oswald";
   box-shadow: 0 0 3px 3px var(--darker-primary-color);
 }
-
 .el-table .miniature {
   margin-bottom: 2px;
   -webkit-filter: drop-shadow(2px 2px 2px #222);
   filter: drop-shadow(2px 2px 2px #222);
+}
+.el-table .miniature,
+.el-table .set-icon {
   cursor: help;
 }
-
+.el-table .el-input__inner:focus {
+  box-shadow: 0 0 0 1px var(--tertiary-color) inset !important;
+}
 li {
   font-size: 1.5rem;
   list-style: none;
