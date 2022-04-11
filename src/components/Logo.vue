@@ -1,7 +1,12 @@
 <template>
   <div class="inline-block flex justify-center">
     <transition name="bounce" appear>
-      <a class="w-48" href="/magicardt/" draggable="false" ondragstart="return false">
+      <a
+        class="w-48"
+        href="/magicardt/"
+        draggable="false"
+        ondragstart="return false"
+      >
         <img :src="logo" alt="logo" />
       </a>
     </transition>

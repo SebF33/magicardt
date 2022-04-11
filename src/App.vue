@@ -24,31 +24,68 @@
             name="name"
             type="text"
             label="Nom de la carte :"
-            placeholder="(Ex : The Wanderer)"
+            placeholder="(Exemple : The Wanderer)"
             success-message="Maintenant cliquez !"
           />
-          <button class="submit-btn bg-primary-color" type="submit">Afficher</button>
-          <p v-if="selectedCardName" class="selected-name text-lg pt-2 absolute">
+
+          <button class="submit-btn bg-primary-color" type="submit">
+            Afficher
+          </button>
+
+          <transition name="el-fade-in-linear" appear>
+            <ul
+              v-if="searchCardNames.length"
+              class="
+                autocompletion
+                w-96
+                rounded
+                bg-light-color
+                border
+                px-4
+                py-4
+                space-y-1
+                absolute
+                z-20
+              "
+            >
+              <li class="px-1 pt-1 pb-2 font-bold border-b border-gray-200">
+                Affichage de {{ searchCardNames.length }} résultat(s) sur
+                {{ searchResults.length }}
+              </li>
+              <li
+                v-for="cardName in searchCardNames"
+                :key="cardName"
+                @click="selectCardName(cardName)"
+                class="cursor-pointer hover:bg-lighter-primary-color p-1"
+              >
+                {{ cardName }}
+              </li>
+            </ul>
+          </transition>
+
+          <p
+            v-if="selectedCardName"
+            class="selected-name text-lg pt-2 absolute"
+          >
             Vous avez sélectionné :
             <span class="font-semibold">{{ selectedCardName }}</span>
           </p>
-        </Form>
 
-        <ul
-          v-if="searchCardNames.length"
-          class="autocompletion w-96 rounded bg-light-color border px-4 py-4 space-y-1 absolute z-10"
-        >
-          <li class="px-1 pt-1 pb-2 font-bold border-b border-gray-200">
-            Affichage de {{ searchCardNames.length }} résultat(s) sur
-            {{ searchResults.length }}
-          </li>
-          <li
-            v-for="cardName in searchCardNames"
-            :key="cardName"
-            @click="selectCardName(cardName)"
-            class="cursor-pointer hover:bg-lighter-primary-color p-1"
-          >{{ cardName }}</li>
-        </ul>
+          <el-select
+            class="sets-list font-medievalsharp absolute z-10"
+            v-model="setTerm"
+            filterable
+            clearable
+            placeholder="Précisez un set (facultatif)"
+          >
+            <el-option
+              v-for="item in setsList"
+              :key="item.setTerm"
+              :label="item.name"
+              :value="item.code"
+            />
+          </el-select>
+        </Form>
         <Card :cardDatas="cardDatas" :setDatas="setDatas" />
       </div>
     </v-main>
@@ -58,7 +95,7 @@
 <script>
 import axios from "axios";
 import { Form } from "vee-validate";
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import * as Yup from "yup";
 import Card from "./components/Card.vue";
 import Cart from "./components/Cart.vue";
@@ -107,24 +144,33 @@ export default {
   methods: {
     // Récupérer les données de l'API à la soumission du formulaire
     submitForm() {
-      let name = this.selectedCardName === "" ? this.searchTerm : this.selectedCardName;
+      let code = this.setTerm;
+      let name =
+        this.selectedCardName === "" ? this.searchTerm : this.selectedCardName;
 
       axios
         .get(`${apiURL}/cards/named`, {
           params: {
             exact: name,
+            set: code,
           },
         })
         .then((response) => {
           this.cardDatas = response.data;
-          this.cardDatas.mana_cost = this.formatSymbols(this.cardDatas.mana_cost);
-          this.cardDatas.oracle_text = this.formatOracleText(this.cardDatas.oracle_text);
+          this.cardDatas.mana_cost = this.formatSymbols(
+            this.cardDatas.mana_cost
+          );
+          this.cardDatas.oracle_text = this.formatOracleText(
+            this.cardDatas.oracle_text
+          );
           this.cardDatas.prices.eur = this.cardDatas.prices.eur + " €";
         })
         .then(async () => {
-          await axios.get(`${apiURL}/sets/${this.cardDatas.set}`).then((res) => {
-            this.setDatas = res.data;
-          });
+          await axios
+            .get(`${apiURL}/sets/${this.cardDatas.set}`)
+            .then((res) => {
+              this.setDatas = res.data;
+            });
         })
         .catch(() => {
           this.onInvalidSubmit();
@@ -133,7 +179,7 @@ export default {
           this.cardDatas.image_uris.png = this.cardback;
           this.cardDatas.loyalty = "";
           this.cardDatas.mana_cost = "";
-          this.cardDatas.name = "Nom incomplet ou inexistant 😕";
+          this.cardDatas.name = "Carte inexistante 😕";
           this.cardDatas.oracle_text = "";
           this.cardDatas.power = "";
           this.cardDatas.set = "";
@@ -151,15 +197,21 @@ export default {
     const searchResults = ref([]);
     const searchTerm = ref("");
     const selectedCardName = ref("");
+    const setTerm = ref("");
+    const setsList = ref([]);
+
+    onMounted(async () => {
+      await axios.get(`${apiURL}/sets`).then((res) => {
+        setsList.value = res.data.data;
+      });
+    });
 
     watch(
       () => searchTerm.value,
       (card) =>
-        axios
-          .get(`${apiURL}/cards/autocomplete?q=${card}`)
-          .then((res) => {
-            searchResults.value = res.data.data;
-          })
+        axios.get(`${apiURL}/cards/autocomplete?q=${card}`).then((res) => {
+          searchResults.value = res.data.data;
+        })
     );
 
     const searchCardNames = computed(() => {
@@ -185,50 +237,155 @@ export default {
 
     // Formater le texte Oracle
     function formatOracleText(data) {
-      const formattedData = data.replace(/\n/g, '<br/>');
+      const formattedData = data.replace(/\n/g, "<br/>");
       return formatSymbols(formattedData);
-    };
+    }
 
     // Formater la symbologie
     function formatSymbols(data) {
       const formattedData = data
-        .replaceAll('{T}', '<abbr class="card-symbol card-symbol-T" title="Engagez ce permanent">{T}</abbr>')
-        .replaceAll('{A}', '<abbr class="card-symbol card-symbol-A" title="Marqueur "gland"">{A}</abbr>')
-        .replaceAll('{X}', '<abbr class="card-symbol card-symbol-X" title="Mana générique : X">{X}</abbr>')
-        .replaceAll('{Y}', '<abbr class="card-symbol card-symbol-Y" title="Mana générique : Y">{Y}</abbr>')
-        .replaceAll('{Z}', '<abbr class="card-symbol card-symbol-Z" title="Mana générique : Z">{Z}</abbr>')
-        .replaceAll('{½}', '<abbr class="card-symbol card-symbol-HALF" title="Mana générique : ½">{½}</abbr>')
-        .replaceAll('{0}', '<abbr class="card-symbol card-symbol-0" title="Mana : 0">{0}</abbr>')
-        .replaceAll('{1}', '<abbr class="card-symbol card-symbol-1" title="Mana générique : 1">{1}</abbr>')
-        .replaceAll('{2}', '<abbr class="card-symbol card-symbol-2" title="Mana générique : 2">{2}</abbr>')
-        .replaceAll('{3}', '<abbr class="card-symbol card-symbol-3" title="Mana générique : 3">{3}</abbr>')
-        .replaceAll('{4}', '<abbr class="card-symbol card-symbol-4" title="Mana générique : 4">{4}</abbr>')
-        .replaceAll('{5}', '<abbr class="card-symbol card-symbol-5" title="Mana générique : 5">{5}</abbr>')
-        .replaceAll('{6}', '<abbr class="card-symbol card-symbol-6" title="Mana générique : 6">{6}</abbr>')
-        .replaceAll('{7}', '<abbr class="card-symbol card-symbol-7" title="Mana générique : 7">{7}</abbr>')
-        .replaceAll('{8}', '<abbr class="card-symbol card-symbol-8" title="Mana générique : 8">{8}</abbr>')
-        .replaceAll('{9}', '<abbr class="card-symbol card-symbol-9" title="Mana générique : 9">{9}</abbr>')
-        .replaceAll('{10}', '<abbr class="card-symbol card-symbol-10" title="Mana générique : 10">{10}</abbr>')
-        .replaceAll('{11}', '<abbr class="card-symbol card-symbol-11" title="Mana générique : 11">{11}</abbr>')
-        .replaceAll('{12}', '<abbr class="card-symbol card-symbol-12" title="Mana générique : 12">{12}</abbr>')
-        .replaceAll('{13}', '<abbr class="card-symbol card-symbol-13" title="Mana générique : 13">{13}</abbr>')
-        .replaceAll('{14}', '<abbr class="card-symbol card-symbol-14" title="Mana générique : 14">{14}</abbr>')
-        .replaceAll('{15}', '<abbr class="card-symbol card-symbol-15" title="Mana générique : 15">{15}</abbr>')
-        .replaceAll('{16}', '<abbr class="card-symbol card-symbol-16" title="Mana générique : 16">{16}</abbr>')
-        .replaceAll('{17}', '<abbr class="card-symbol card-symbol-17" title="Mana générique : 17">{18}</abbr>')
-        .replaceAll('{18}', '<abbr class="card-symbol card-symbol-18" title="Mana générique : 18">{18}</abbr>')
-        .replaceAll('{19}', '<abbr class="card-symbol card-symbol-19" title="Mana générique : 19">{19}</abbr>')
-        .replaceAll('{20}', '<abbr class="card-symbol card-symbol-20" title="Mana générique : 20">{20}</abbr>')
-        .replaceAll('{100}', '<abbr class="card-symbol card-symbol-100" title="Mana générique : 100">{100}</abbr>')
-        .replaceAll('{1000000}', '<abbr class="card-symbol card-symbol-1000000" title="Mana générique : 1000000">{1000000}</abbr>')
-        .replaceAll('{∞}', '<abbr class="card-symbol card-symbol-INFINITY" title="Mana générique : ∞">{∞}</abbr>')
-        .replaceAll('{W}', '<abbr class="card-symbol card-symbol-W" title="Mana blanc">{W}</abbr>')
-        .replaceAll('{U}', '<abbr class="card-symbol card-symbol-U" title="Mana bleu">{U}</abbr>')
-        .replaceAll('{B}', '<abbr class="card-symbol card-symbol-B" title="Mana noir">{B}</abbr>')
-        .replaceAll('{R}', '<abbr class="card-symbol card-symbol-R" title="Mana rouge">{R}</abbr>')
-        .replaceAll('{G}', '<abbr class="card-symbol card-symbol-G" title="Mana vert">{G}</abbr>');
+        .replaceAll(
+          "{T}",
+          '<abbr class="card-symbol card-symbol-T" title="Engagez ce permanent">{T}</abbr>'
+        )
+        .replaceAll(
+          "{A}",
+          '<abbr class="card-symbol card-symbol-A" title="Marqueur "gland"">{A}</abbr>'
+        )
+        .replaceAll(
+          "{X}",
+          '<abbr class="card-symbol card-symbol-X" title="Mana générique : X">{X}</abbr>'
+        )
+        .replaceAll(
+          "{Y}",
+          '<abbr class="card-symbol card-symbol-Y" title="Mana générique : Y">{Y}</abbr>'
+        )
+        .replaceAll(
+          "{Z}",
+          '<abbr class="card-symbol card-symbol-Z" title="Mana générique : Z">{Z}</abbr>'
+        )
+        .replaceAll(
+          "{½}",
+          '<abbr class="card-symbol card-symbol-HALF" title="Mana générique : ½">{½}</abbr>'
+        )
+        .replaceAll(
+          "{0}",
+          '<abbr class="card-symbol card-symbol-0" title="Mana : 0">{0}</abbr>'
+        )
+        .replaceAll(
+          "{1}",
+          '<abbr class="card-symbol card-symbol-1" title="Mana générique : 1">{1}</abbr>'
+        )
+        .replaceAll(
+          "{2}",
+          '<abbr class="card-symbol card-symbol-2" title="Mana générique : 2">{2}</abbr>'
+        )
+        .replaceAll(
+          "{3}",
+          '<abbr class="card-symbol card-symbol-3" title="Mana générique : 3">{3}</abbr>'
+        )
+        .replaceAll(
+          "{4}",
+          '<abbr class="card-symbol card-symbol-4" title="Mana générique : 4">{4}</abbr>'
+        )
+        .replaceAll(
+          "{5}",
+          '<abbr class="card-symbol card-symbol-5" title="Mana générique : 5">{5}</abbr>'
+        )
+        .replaceAll(
+          "{6}",
+          '<abbr class="card-symbol card-symbol-6" title="Mana générique : 6">{6}</abbr>'
+        )
+        .replaceAll(
+          "{7}",
+          '<abbr class="card-symbol card-symbol-7" title="Mana générique : 7">{7}</abbr>'
+        )
+        .replaceAll(
+          "{8}",
+          '<abbr class="card-symbol card-symbol-8" title="Mana générique : 8">{8}</abbr>'
+        )
+        .replaceAll(
+          "{9}",
+          '<abbr class="card-symbol card-symbol-9" title="Mana générique : 9">{9}</abbr>'
+        )
+        .replaceAll(
+          "{10}",
+          '<abbr class="card-symbol card-symbol-10" title="Mana générique : 10">{10}</abbr>'
+        )
+        .replaceAll(
+          "{11}",
+          '<abbr class="card-symbol card-symbol-11" title="Mana générique : 11">{11}</abbr>'
+        )
+        .replaceAll(
+          "{12}",
+          '<abbr class="card-symbol card-symbol-12" title="Mana générique : 12">{12}</abbr>'
+        )
+        .replaceAll(
+          "{13}",
+          '<abbr class="card-symbol card-symbol-13" title="Mana générique : 13">{13}</abbr>'
+        )
+        .replaceAll(
+          "{14}",
+          '<abbr class="card-symbol card-symbol-14" title="Mana générique : 14">{14}</abbr>'
+        )
+        .replaceAll(
+          "{15}",
+          '<abbr class="card-symbol card-symbol-15" title="Mana générique : 15">{15}</abbr>'
+        )
+        .replaceAll(
+          "{16}",
+          '<abbr class="card-symbol card-symbol-16" title="Mana générique : 16">{16}</abbr>'
+        )
+        .replaceAll(
+          "{17}",
+          '<abbr class="card-symbol card-symbol-17" title="Mana générique : 17">{18}</abbr>'
+        )
+        .replaceAll(
+          "{18}",
+          '<abbr class="card-symbol card-symbol-18" title="Mana générique : 18">{18}</abbr>'
+        )
+        .replaceAll(
+          "{19}",
+          '<abbr class="card-symbol card-symbol-19" title="Mana générique : 19">{19}</abbr>'
+        )
+        .replaceAll(
+          "{20}",
+          '<abbr class="card-symbol card-symbol-20" title="Mana générique : 20">{20}</abbr>'
+        )
+        .replaceAll(
+          "{100}",
+          '<abbr class="card-symbol card-symbol-100" title="Mana générique : 100">{100}</abbr>'
+        )
+        .replaceAll(
+          "{1000000}",
+          '<abbr class="card-symbol card-symbol-1000000" title="Mana générique : 1000000">{1000000}</abbr>'
+        )
+        .replaceAll(
+          "{∞}",
+          '<abbr class="card-symbol card-symbol-INFINITY" title="Mana générique : ∞">{∞}</abbr>'
+        )
+        .replaceAll(
+          "{W}",
+          '<abbr class="card-symbol card-symbol-W" title="Mana blanc">{W}</abbr>'
+        )
+        .replaceAll(
+          "{U}",
+          '<abbr class="card-symbol card-symbol-U" title="Mana bleu">{U}</abbr>'
+        )
+        .replaceAll(
+          "{B}",
+          '<abbr class="card-symbol card-symbol-B" title="Mana noir">{B}</abbr>'
+        )
+        .replaceAll(
+          "{R}",
+          '<abbr class="card-symbol card-symbol-R" title="Mana rouge">{R}</abbr>'
+        )
+        .replaceAll(
+          "{G}",
+          '<abbr class="card-symbol card-symbol-G" title="Mana vert">{G}</abbr>'
+        );
       return formattedData;
-    };
+    }
 
     // Comportement si la saisie de l'utilisateur est invalide
     function onInvalidSubmit() {
@@ -237,7 +394,7 @@ export default {
       setTimeout(() => {
         submitBtn.classList.remove("invalid");
       }, 1000);
-    };
+    }
 
     // Générer un schéma de validation
     // https://vee-validate.logaretm.com/v4/guide/validation#validation-schemas-with-yup
@@ -255,6 +412,8 @@ export default {
       searchTerm,
       selectCardName,
       selectedCardName,
+      setsList,
+      setTerm,
     };
   },
 };
@@ -271,8 +430,10 @@ body {
   height: 100%;
   background: var(--tertiary-color);
   overflow: auto;
-  -ms-overflow-style: none; /* IE */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 #app {
@@ -291,6 +452,7 @@ body {
 .autocompletion,
 .bg-container,
 .selected-name,
+.sets-list,
 .submit-btn {
   position: absolute;
   left: 50%;
@@ -327,15 +489,36 @@ body {
 }
 
 form {
-  width: 260px;
   margin: 0px auto;
   padding-bottom: 60px;
+  width: 260px;
 }
 
 .selected-name {
   margin-top: 52px;
 }
 
+/* Liste des sets */
+.sets-list {
+  margin-top: 90px;
+  width: 260px;
+}
+.sets-list .el-input__inner {
+  background-color: unset;
+  color: var(--success-color);
+  box-shadow: unset;
+  border: 1px solid var(--tertiary-color);
+}
+.el-popper {
+  background: var(--light-color) !important;
+  border: 1px solid var(--light-color) !important;
+  box-shadow: 0 0 3px 3px var(--darker-primary-color) !important;
+}
+.el-select-dropdown__item {
+  font-family: "MedievalSharp";
+}
+
+/* Bouton du formulaire */
 .submit-btn {
   display: inline-block;
   border-radius: 5px;
@@ -351,55 +534,61 @@ form {
   text-decoration: none;
   cursor: pointer;
 }
-
 .submit-btn:active {
   transform: translate(-50%, 5px);
   -webkit-transform: translate(-50%, 5px);
   box-shadow: 0px 1px 0px 0px;
 }
-
 .submit-btn:hover {
   background-color: var(--lighter-primary-color);
 }
-
 .submit-btn.invalid {
   background-color: var(--error-bg-color);
   box-shadow: 0px 5px 0px 0px #e48a93;
   animation: shake 0.5s;
   animation-iteration-count: infinite;
 }
-
 @keyframes shake {
   0% {
     transform: translate(-49%, 1px);
   }
+
   10% {
     transform: translate(-51%, -2px);
   }
+
   20% {
     transform: translate(-53%, 0px);
   }
+
   30% {
     transform: translate(-47%, 2px);
   }
+
   40% {
     transform: translate(-49%, -1px);
   }
+
   50% {
     transform: translate(-51%, 2px);
   }
+
   60% {
     transform: translate(-53%, 1px);
   }
+
   70% {
     transform: translate(-47%, 1px);
   }
+
   80% {
     transform: translate(-51%, -1px);
   }
+
   90% {
     transform: translate(-49%, 2px);
   }
+
   100% {
     transform: translate(-49%, -2px);
   }

@@ -17,6 +17,11 @@ module.exports = {
         'success-color': "var(--success-color)",
         'success-bg-color': "var(--success-bg-color)",
       },
+      fontFamily: {
+        'magic': ['Magic'],
+        'medievalsharp': ['MedievalSharp'],
+        'oswald': ['Oswald'],
+      },
     }
   },
   plugins: [],

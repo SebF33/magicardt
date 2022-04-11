@@ -2,41 +2,82 @@
   <vue-load-image class="mt-14">
     <template v-slot:image>
       <transition name="el-zoom-in-center" appear>
-        <div id="gradient" v-if="cardDatas.mana_cost" :style="createGradientString"></div>
+        <div
+          id="gradient"
+          v-if="cardDatas.mana_cost"
+          :style="createGradientString"
+        ></div>
       </transition>
       <div id="card">
-        <img class="card-img" :src="cardDatas.image_uris.png || cardback" width="223" height="310" alt="card"
-          draggable="false" ondragstart="return false" />
+        <img
+          class="card-img"
+          :src="cardDatas.image_uris.png || cardback"
+          width="223"
+          height="310"
+          alt="card"
+          draggable="false"
+          ondragstart="return false"
+        />
         <transition name="bounce" appear>
           <h2 v-if="cardDatas.name">{{ cardDatas.name }}</h2>
         </transition>
         <transition name="el-fade-in-linear" appear>
-          <p class="mana-cost" v-if="cardDatas.mana_cost" v-html="cardDatas.mana_cost"></p>
+          <p
+            class="mana-cost"
+            v-if="cardDatas.mana_cost"
+            v-html="cardDatas.mana_cost"
+          ></p>
         </transition>
         <transition name="el-fade-in-linear" appear>
           <p v-if="cardDatas.type_line">{{ cardDatas.type_line }}</p>
         </transition>
         <transition name="el-fade-in-linear" appear>
-          <img class="set-symbol" :src="setDatas.icon_svg_uri" v-if="setDatas.icon_svg_uri" width="32"
-            :alt="setDatas.name" :title="setDatas.name" draggable="false" ondragstart="return false" />
+          <img
+            class="set-symbol"
+            :src="setDatas.icon_svg_uri"
+            v-if="setDatas.icon_svg_uri"
+            width="32"
+            :alt="setDatas.name"
+            :title="setDatas.name"
+            draggable="false"
+            ondragstart="return false"
+          />
         </transition>
         <transition name="el-fade-in-linear" appear>
-          <p class="oracle-text" v-if="cardDatas.oracle_text" v-html="cardDatas.oracle_text"></p>
+          <p
+            class="oracle-text"
+            v-if="cardDatas.oracle_text"
+            v-html="cardDatas.oracle_text"
+          ></p>
         </transition>
         <transition name="el-fade-in-linear" appear>
-          <p class="flavor-text" v-if="cardDatas.flavor_text">{{ cardDatas.flavor_text }}</p>
+          <p class="flavor-text" v-if="cardDatas.flavor_text">
+            {{ cardDatas.flavor_text }}
+          </p>
         </transition>
         <transition name="el-fade-in-linear" appear>
-          <span class="artist font-bold" v-if="cardDatas.artist">Artiste : {{ cardDatas.artist }}</span>
+          <span class="artist font-bold" v-if="cardDatas.artist"
+            >Artiste : {{ cardDatas.artist }}</span
+          >
         </transition>
         <transition name="el-fade-in-linear" appear>
-          <span class="power" v-if="cardDatas.power">{{ cardDatas.power }}/{{ cardDatas.toughness }}</span>
+          <span class="power" v-if="cardDatas.power"
+            >{{ cardDatas.power }}/{{ cardDatas.toughness }}</span
+          >
         </transition>
         <transition name="el-fade-in-linear" appear>
-          <span class="power" v-if="cardDatas.loyalty">Loyauté : {{ cardDatas.loyalty }}</span>
+          <span class="power" v-if="cardDatas.loyalty"
+            >Loyauté : {{ cardDatas.loyalty }}</span
+          >
         </transition>
         <transition name="el-fade-in-linear" appear>
-          <el-button class="add-btn" color="#837c5e" v-if="cardDatas.id" @click="addClick">Ajouter</el-button>
+          <el-button
+            class="add-btn"
+            color="#837c5e"
+            v-if="cardDatas.id"
+            @click="addClick"
+            >Ajouter</el-button
+          >
         </transition>
       </div>
     </template>
@@ -48,7 +89,7 @@
     <template v-slot:error>
       <div class="card">Le chargement de l'image a échoué 😕</div>
     </template>
-    </vue-load-image>
+  </vue-load-image>
 </template>
 
 <script>
@@ -125,7 +166,7 @@ export default {
 <style>
 #gradient {
   margin: 0 auto;
-  margin-top: 200px;
+  margin-top: 90px;
   width: 100%;
   height: 150px;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
@@ -241,7 +282,7 @@ export default {
   cursor: help;
 }
 
-.card-symbol+.card-symbol {
+.card-symbol + .card-symbol {
   margin-left: 2px;
 }
 
