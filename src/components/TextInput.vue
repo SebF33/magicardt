@@ -1,5 +1,8 @@
 <template>
-  <div class="TextInput" :class="{ 'has-error': !!errorMessage, success: meta.valid }">
+  <div
+    class="TextInput"
+    :class="{ 'has-error': !!errorMessage, success: meta.valid }"
+  >
     <label :for="name">{{ label }}</label>
 
     <input
@@ -13,7 +16,9 @@
       @blur="handleBlur"
     />
 
-    <p class="help-message" v-show="errorMessage || meta.valid">{{ errorMessage || successMessage }}</p>
+    <p class="help-message" v-show="errorMessage || meta.valid">
+      {{ errorMessage || successMessage }}
+    </p>
   </div>
 </template>
 

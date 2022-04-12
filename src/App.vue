@@ -24,7 +24,7 @@
             name="name"
             type="text"
             label="Nom de la carte :"
-            placeholder="(Exemple : The Wanderer)"
+            placeholder="Exemple : The Wanderer"
             success-message="Maintenant cliquez !"
           />
 
@@ -76,7 +76,7 @@
             v-model="setTerm"
             filterable
             clearable
-            placeholder="Précisez un set (facultatif)"
+            placeholder="Précisez le set (facultatif)"
           >
             <el-option
               v-for="item in setsList"

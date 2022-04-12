@@ -9,15 +9,24 @@
         ></div>
       </transition>
       <div id="card">
-        <img
-          class="card-img"
-          :src="cardDatas.image_uris.png || cardback"
-          width="223"
-          height="310"
-          alt="card"
-          draggable="false"
-          ondragstart="return false"
-        />
+        <div class="card-magnifier-container">
+          <transition name="el-fade-in-linear" appear>
+            <div class="card-magnifier-glass" v-show="showMagnifier"></div
+          ></transition>
+          <img
+            id="my-card"
+            class="card-img"
+            v-show="isLoaded"
+            :src="cardDatas.image_uris.png || cardback"
+            @load="handleZoom"
+            @error="handleZoom"
+            width="223"
+            height="310"
+            alt="card"
+            draggable="false"
+            ondragstart="return false"
+          />
+        </div>
         <transition name="bounce" appear>
           <h2 v-if="cardDatas.name">{{ cardDatas.name }}</h2>
         </transition>
@@ -71,6 +80,16 @@
           >
         </transition>
         <transition name="el-fade-in-linear" appear>
+          <a
+            class="tiny-glass-btn"
+            v-if="cardDatas.id"
+            @click="showMagnifier = !showMagnifier"
+            draggable="false"
+            ondragstart="return false"
+          >
+            <img :src="tinyGlass" alt="glass" /> </a
+        ></transition>
+        <transition name="el-fade-in-linear" appear>
           <el-button
             class="add-btn"
             color="#837c5e"
@@ -94,6 +113,7 @@
 
 <script>
 import Spinner from "./Spinner.vue";
+import tinyGlass from "../assets/glass.png";
 import VueLoadImage from "vue-load-image";
 
 export default {
@@ -112,14 +132,18 @@ export default {
   data() {
     return {
       cardback: "",
+      isLoaded: false,
+      showMagnifier: true,
+      tinyGlass,
     };
   },
 
   created: function () {
-    this.getImageUrl();
+    this.getCardBackUrl();
   },
 
   computed: {
+    // 🏳‍🌈 Création du bandeau de couleur(s)
     createGradientString() {
       let data = this.cardDatas.colors;
       if (data !== "") {
@@ -156,8 +180,73 @@ export default {
       this.emitter.emit("addItemEvent");
     },
 
-    getImageUrl() {
-      this.cardback = new URL(`../assets/cardback.png`, import.meta.url).href;
+    getCardBackUrl() {
+      this.cardback = new URL(`../assets/cardback.webp`, import.meta.url).href;
+    },
+
+    // 🔍 Zoom sur la carte
+    handleZoom() {
+      this.isLoaded = true;
+
+      function magnify(id, zoom) {
+        var img, glass, w, h, bw;
+        img = document.getElementById(id);
+        glass = document.getElementsByClassName("card-magnifier-glass")[0];
+        if (typeof glass != "undefined" && glass != null) {
+          glass.style.backgroundImage = "url('" + img.src + "')";
+          glass.style.backgroundRepeat = "no-repeat";
+          glass.style.backgroundSize =
+            img.width * zoom + "px " + img.height * zoom + "px";
+          bw = 3;
+          w = glass.offsetWidth / 2;
+          h = glass.offsetHeight / 2;
+          glass.addEventListener("mousemove", moveMagnifier);
+          img.addEventListener("mousemove", moveMagnifier);
+          glass.addEventListener("touchmove", moveMagnifier);
+          img.addEventListener("touchmove", moveMagnifier);
+        }
+
+        function moveMagnifier(e) {
+          var pos, x, y;
+          e.preventDefault();
+          pos = getCursorPosition(e);
+          x = pos.x;
+          y = pos.y;
+          if (x > img.width - w / zoom) {
+            x = img.width - w / zoom;
+          }
+          if (x < w / zoom) {
+            x = w / zoom;
+          }
+          if (y > img.height - h / zoom) {
+            y = img.height - h / zoom;
+          }
+          if (y < h / zoom) {
+            y = h / zoom;
+          }
+          glass.style.left = x - w + "px";
+          glass.style.top = y - h + "px";
+          glass.style.backgroundPosition =
+            "-" + (x * zoom - w + bw) + "px -" + (y * zoom - h + bw) + "px";
+        }
+
+        function getCursorPosition(e) {
+          var a,
+            x = 0,
+            y = 0;
+          e = e || window.event;
+          a = img.getBoundingClientRect();
+          x = e.pageX - a.left;
+          y = e.pageY - a.top;
+          x = x - window.pageXOffset;
+          y = y - window.pageYOffset;
+          return { x: x, y: y };
+        }
+      }
+
+      setTimeout(function () {
+        magnify("my-card", 3);
+      }, 1000);
     },
   },
 };
@@ -190,6 +279,10 @@ export default {
   z-index: 1;
 }
 
+.card-magnifier-container {
+  position: relative;
+}
+
 #card .card-img {
   float: left;
   margin-top: 20px;
@@ -198,6 +291,24 @@ export default {
   height: 310px;
   -webkit-filter: drop-shadow(5px 5px 5px #222);
   filter: drop-shadow(5px 5px 5px #222);
+}
+
+/* Loupe */
+.card-magnifier-glass {
+  position: absolute;
+  border-radius: 50%;
+  cursor: none;
+  width: 110px;
+  height: 110px;
+  z-index: 100;
+  border: 2px solid var(--secondary-color);
+  box-shadow: 0 -1px 1px var(--tertiary-color), 0 2px 2px var(--secondary-color),
+    inset 0 0 1px var(--darker-primary-color),
+    inset 0 1px 0.125em var(--primary-color),
+    inset 0 2px 0.25em var(--lighter-primary-color),
+    inset 0 -1px 0.125em var(--primary-color),
+    inset 0 -2px 0.25em var(--lighter-primary-color),
+    inset 0 0 0 0.375em var(--secondary-color);
 }
 
 #card h2 {
@@ -254,15 +365,28 @@ export default {
   font-weight: bold;
 }
 
-#card .add-btn {
+/* Boutons */
+#card .add-btn,
+#card .tiny-glass-btn {
   position: absolute;
+  bottom: 16px;
+}
+#card .add-btn {
   left: 50%;
   transform: translateX(-50%);
-  bottom: 16px;
   color: black;
   font-weight: bold;
 }
+#card .tiny-glass-btn {
+  left: 39%;
+  width: 24px;
+  transition: 0.3s ease-in-out;
+}
+#card .tiny-glass-btn:hover {
+  transform: scale(0.86);
+}
 
+/* Symboles */
 .card-symbol {
   display: inline-block;
   margin: 1px 1px -1px 1px;
@@ -281,7 +405,6 @@ export default {
   color-adjust: exact;
   cursor: help;
 }
-
 .card-symbol + .card-symbol {
   margin-left: 2px;
 }
