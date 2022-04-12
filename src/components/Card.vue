@@ -20,9 +20,7 @@
             :src="cardDatas.image_uris.png || cardback"
             @load="handleZoom"
             @error="handleZoom"
-            width="223"
-            height="310"
-            alt="card"
+            :alt="cardDatas.image_uris.png || cardback"
             draggable="false"
             ondragstart="return false"
           />
@@ -133,7 +131,7 @@ export default {
     return {
       cardback: "",
       isLoaded: false,
-      showMagnifier: true,
+      showMagnifier: false,
       tinyGlass,
     };
   },
@@ -192,55 +190,56 @@ export default {
         var img, glass, w, h, bw;
         img = document.getElementById(id);
         glass = document.getElementsByClassName("card-magnifier-glass")[0];
+
         if (typeof glass != "undefined" && glass != null) {
           glass.style.backgroundImage = "url('" + img.src + "')";
           glass.style.backgroundRepeat = "no-repeat";
           glass.style.backgroundSize =
             img.width * zoom + "px " + img.height * zoom + "px";
           bw = 3;
-          w = glass.offsetWidth / 2;
-          h = glass.offsetHeight / 2;
+          w = parseInt(getComputedStyle(glass).width.replace(/\D/g, "")) / 2;
+          h = parseInt(getComputedStyle(glass).height.replace(/\D/g, "")) / 2;
           glass.addEventListener("mousemove", moveMagnifier);
           img.addEventListener("mousemove", moveMagnifier);
           glass.addEventListener("touchmove", moveMagnifier);
           img.addEventListener("touchmove", moveMagnifier);
-        }
 
-        function moveMagnifier(e) {
-          var pos, x, y;
-          e.preventDefault();
-          pos = getCursorPosition(e);
-          x = pos.x;
-          y = pos.y;
-          if (x > img.width - w / zoom) {
-            x = img.width - w / zoom;
+          function moveMagnifier(e) {
+            var pos, x, y;
+            e.preventDefault();
+            pos = getCursorPosition(e);
+            x = pos.x;
+            y = pos.y;
+            if (x > img.width - w / zoom) {
+              x = img.width - w / zoom;
+            }
+            if (x < w / zoom) {
+              x = w / zoom;
+            }
+            if (y > img.height - h / zoom) {
+              y = img.height - h / zoom;
+            }
+            if (y < h / zoom) {
+              y = h / zoom;
+            }
+            glass.style.left = x - w + "px";
+            glass.style.top = y - h + "px";
+            glass.style.backgroundPosition =
+              "-" + (x * zoom - w + bw) + "px -" + (y * zoom - h + bw) + "px";
           }
-          if (x < w / zoom) {
-            x = w / zoom;
-          }
-          if (y > img.height - h / zoom) {
-            y = img.height - h / zoom;
-          }
-          if (y < h / zoom) {
-            y = h / zoom;
-          }
-          glass.style.left = x - w + "px";
-          glass.style.top = y - h + "px";
-          glass.style.backgroundPosition =
-            "-" + (x * zoom - w + bw) + "px -" + (y * zoom - h + bw) + "px";
-        }
 
-        function getCursorPosition(e) {
-          var a,
-            x = 0,
-            y = 0;
-          e = e || window.event;
-          a = img.getBoundingClientRect();
-          x = e.pageX - a.left;
-          y = e.pageY - a.top;
-          x = x - window.pageXOffset;
-          y = y - window.pageYOffset;
-          return { x: x, y: y };
+          function getCursorPosition(e) {
+            var a,
+              x = 0,
+              y = 0;
+            e = e || window.event;
+            a = img.getBoundingClientRect();
+            x = e.pageX - a.left;
+            y = e.pageY - a.top;
+            x = x - window.pageXOffset;
+            y = y - window.pageYOffset;
+            return { x: x, y: y };
+          }
         }
       }
 
@@ -288,7 +287,6 @@ export default {
   margin-top: 20px;
   margin-right: 20px;
   width: 223px;
-  height: 310px;
   -webkit-filter: drop-shadow(5px 5px 5px #222);
   filter: drop-shadow(5px 5px 5px #222);
 }
@@ -379,11 +377,11 @@ export default {
 }
 #card .tiny-glass-btn {
   left: 39%;
-  width: 24px;
+  width: 22px;
   transition: 0.3s ease-in-out;
 }
 #card .tiny-glass-btn:hover {
-  transform: scale(0.86);
+  transform: scale(0.90);
 }
 
 /* Symboles */
@@ -413,11 +411,9 @@ export default {
 .bounce-enter-active {
   animation: bounce-in 0.6s;
 }
-
 .bounce-leave-active {
   animation: bounce-in 0.6s reverse;
 }
-
 @keyframes bounce-in {
   0% {
     transform: scale(0);
