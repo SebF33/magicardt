@@ -15,7 +15,7 @@
           id="card-form"
           v-model="submitTerm"
           @submit="submitForm"
-          :validation-schema="schema"
+          :validation-schema="validationSchema"
           @invalid-submit="onInvalidSubmit"
         >
           <TextInput
@@ -94,9 +94,10 @@
 
 <script>
 import axios from "axios";
-import { Form } from "vee-validate";
 import { computed, onMounted, ref, watch } from "vue";
-import * as Yup from "yup";
+import { Form } from "vee-validate";
+import { toFormValidator } from "@vee-validate/zod";
+import * as zod from "zod";
 import Card from "./components/Card.vue";
 import Cart from "./components/Cart.vue";
 import Logo from "./components/Logo.vue";
@@ -397,16 +398,19 @@ export default {
     }
 
     // Générer un schéma de validation
-    // https://vee-validate.logaretm.com/v4/guide/validation#validation-schemas-with-yup
-    const schema = Yup.object().shape({
-      name: Yup.string().required(),
-    });
+    const validationSchema = toFormValidator(
+      zod.object({
+        name: zod
+          .string()
+          .nonempty("Ce champ est requis...")
+          .min(2, { message: "Saisissez 2 caractères minimum..." }),
+      })
+    );
 
     return {
       formatOracleText,
       formatSymbols,
       onInvalidSubmit,
-      schema,
       searchCardNames,
       searchResults,
       searchTerm,
@@ -414,6 +418,7 @@ export default {
       selectedCardName,
       setsList,
       setTerm,
+      validationSchema,
     };
   },
 };

@@ -28,7 +28,23 @@ import { useModelWrapper } from "../utils/modelWrapper";
 
 export default {
   props: {
+    label: {
+      type: String,
+      required: true,
+    },
     modelValue: String,
+    name: {
+      type: String,
+      required: true,
+    },
+    placeholder: {
+      type: String,
+      default: "",
+    },
+    successMessage: {
+      type: String,
+      default: "",
+    },
     type: {
       type: String,
       default: "text",
@@ -37,26 +53,9 @@ export default {
       type: String,
       default: "",
     },
-    name: {
-      type: String,
-      required: true,
-    },
-    label: {
-      type: String,
-      required: true,
-    },
-    successMessage: {
-      type: String,
-      default: "",
-    },
-    placeholder: {
-      type: String,
-      default: "",
-    },
   },
 
   setup(props, { emit }) {
-    // https://vee-validate.logaretm.com/v4/guide/validation#form-level-validation
     const {
       value: inputValue,
       errorMessage,
@@ -68,12 +67,12 @@ export default {
     });
 
     return {
-      handleChange,
-      handleBlur,
       errorMessage,
+      handleBlur,
+      handleChange,
       inputValue,
-      meta,
       message: useModelWrapper(props, emit, "modelValue"),
+      meta,
     };
   },
 };
