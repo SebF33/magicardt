@@ -22,7 +22,7 @@ Rechercher des cartes Magic : L'Assembl√©e et organiser une liste de celles-ci √
 
 **Langage :** JavaScript.
 
-[![Vue.js](/.github/Vue.js.png)](https://vuejs.org) [![Vuetify](/.github/Vuetify.png)](https://vuetifyjs.com) [![VeeValidate](/.github/VeeValidate.png)](https://vee-validate.logaretm.com) [![Zod](/.github/Zod.png)](https://github.com/colinhacks/zod) [![Axios](/.github/Axios.png)](https://axios-http.com) [![Vite](/.github/Vite.png)](https://vitejs.dev) [![Mitt](/.github/Mitt.png)](https://github.com/developit/mitt) [![Tailwind](/.github/Tailwind.png)](https://tailwindcss.com) [![Element](/.github/Element.png)](https://element-plus.org)
+[![Vue.js](/.github/Vue.js.png)](https://vuejs.org) [![Vuetify](/.github/Vuetify.png)](https://vuetifyjs.com) [![VeeValidate](/.github/VeeValidate.png)](https://vee-validate.logaretm.com) [![Zod](/.github/Zod.png)](https://github.com/colinhacks/zod) [![Axios](/.github/Axios.png)](https://axios-http.com) [![Vite](/.github/Vite.png)](https://vitejs.dev) [![Mitt](/.github/Mitt.png)](https://github.com/developit/mitt) [![Tailwind](/.github/Tailwind.png)](https://tailwindcss.com) [![Element](/.github/Element.png)](https://element-plus.org/en-US/)
 
 :toolbox: **Technologies :**
 - [Vue.js 3](https://vuejs.org/guide/introduction.html)
