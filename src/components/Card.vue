@@ -78,15 +78,20 @@
           >
         </transition>
         <transition name="el-fade-in-linear" appear>
-          <a
+          <el-button
             class="tiny-glass-btn"
+            color="#837c5e"
             v-if="cardDatas.id"
             @click="showMagnifier = !showMagnifier"
-            draggable="false"
-            ondragstart="return false"
           >
-            <img :src="tinyGlass" alt="glass" /> </a
-        ></transition>
+            <img
+              :src="tinyGlass"
+              alt="glass"
+              draggable="false"
+              ondragstart="return false"
+            />
+          </el-button>
+        </transition>
         <transition name="el-fade-in-linear" appear>
           <el-button
             class="add-btn"
@@ -111,7 +116,7 @@
 
 <script>
 import Spinner from "./Spinner.vue";
-import tinyGlass from "../assets/glass.png";
+import tinyGlass from "../assets/tiny-glass.png";
 import VueLoadImage from "vue-load-image";
 
 export default {
@@ -376,12 +381,11 @@ export default {
   font-weight: bold;
 }
 #card .tiny-glass-btn {
-  left: 39%;
-  width: 22px;
-  transition: 0.3s ease-in-out;
+  left: 38%;
+  padding: 4px 6px;
 }
-#card .tiny-glass-btn:hover {
-  transform: scale(0.90);
+#card .tiny-glass-btn img {
+  width: 24px;
 }
 
 /* Symboles */

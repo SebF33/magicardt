@@ -33,7 +33,7 @@ Rechercher des cartes Magic : L'Assembl√©e et organiser une liste de celles-ci √
 - [JSON Server](https://github.com/typicode/json-server)
 - [Mitt](https://github.com/developit/mitt)
 - [Vite](https://vitejs.dev/guide)
-- [Tailwind](https://tailwindcss.com/docs/guides/vite)
+- [Tailwind CSS](https://tailwindcss.com/docs/guides/vite)
 - [Element Plus](https://element-plus.org/en-US/guide/installation.html)
 - [ExcellentExport.js](https://github.com/jmaister/excellentexport)
 
