@@ -122,6 +122,7 @@ export default {
         artist: "",
         colors: "",
         flavor_text: "",
+        id: "",
         image_uris: { png: "", border_crop: "" },
         loyalty: "",
         mana_cost: "",
@@ -164,7 +165,6 @@ export default {
           this.cardDatas.oracle_text = this.formatOracleText(
             this.cardDatas.oracle_text
           );
-          this.cardDatas.prices.eur = this.cardDatas.prices.eur + " €";
         })
         .then(async () => {
           await axios
@@ -177,6 +177,7 @@ export default {
           this.onInvalidSubmit();
           this.cardDatas.artist = "";
           this.cardDatas.flavor_text = "";
+          this.cardDatas.id = "";
           this.cardDatas.image_uris.png = this.cardback;
           this.cardDatas.loyalty = "";
           this.cardDatas.mana_cost = "";

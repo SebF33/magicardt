@@ -60,7 +60,12 @@
             </transition>
           </template>
         </el-table-column>
-        <el-table-column min-width="40" label="Prix" prop="card_price" />
+        <el-table-column
+          min-width="40"
+          label="Prix (€)"
+          prop="card_price"
+          align="right"
+        />
         <el-table-column min-width="40" align="right">
           <template #header>
             <el-input v-model="search" size="small" placeholder="Filtre" />
@@ -142,7 +147,12 @@ export default {
       const res = await axios.post(serverURL, {
         card_image: this.cardDatas.image_uris.border_crop,
         card_name: this.cardDatas.name,
-        card_price: this.cardDatas.prices.eur.replace(".", ","),
+        card_price:
+          this.cardDatas.prices.eur === null
+            ? "N/A"
+            : this.cardDatas.prices.eur
+                .replace(/(\.0+|0+)$/, "")
+                .replace(".", ","),
         card_title: this.cardDatas.name + " (" + this.cardDatas.set_name + ")",
         set_icon: this.setDatas.icon_svg_uri,
         set_name: this.setDatas.name,
