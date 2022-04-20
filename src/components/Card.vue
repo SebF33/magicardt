@@ -259,7 +259,7 @@ export default {
 <style>
 #gradient {
   margin: 0 auto;
-  margin-top: 90px;
+  margin-top: 180px;
   width: 100%;
   height: 150px;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,

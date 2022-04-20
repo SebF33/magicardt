@@ -16,6 +16,7 @@ export default {
 <style scoped>
 .spinner-container {
   margin: 0 auto;
+  margin-top: 164px;
   width: 223px;
   height: 310px;
 }

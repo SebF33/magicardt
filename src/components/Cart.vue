@@ -259,9 +259,6 @@ export default {
 .el-table .set-icon {
   cursor: help;
 }
-.el-table .el-input__inner:focus {
-  box-shadow: 0 0 0 1px var(--tertiary-color) inset !important;
-}
 li {
   font-size: 1.5rem;
   list-style: none;

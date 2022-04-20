@@ -2,7 +2,9 @@
   <v-app>
     <v-main class="min-w-screen min-h-screen flex items-center">
       <Cart :cardDatas="cardDatas" :setDatas="setDatas" />
+
       <Logo />
+
       <div class="inline-block container mx-auto">
         <div
           class="bg-container"
@@ -25,12 +27,8 @@
             type="text"
             label="Nom de la carte :"
             placeholder="Exemple : The Wanderer"
-            success-message="Maintenant cliquez !"
+            success-message="Bonne recherche !"
           />
-
-          <button class="submit-btn bg-primary-color" type="submit">
-            Afficher
-          </button>
 
           <transition name="el-fade-in-linear" appear>
             <ul
@@ -41,8 +39,8 @@
                 rounded
                 bg-light-color
                 border
-                px-4
-                py-4
+                px-3
+                py-3
                 space-y-1
                 absolute
                 z-20
@@ -56,20 +54,12 @@
                 v-for="cardName in searchCardNames"
                 :key="cardName"
                 @click="selectCardName(cardName)"
-                class="cursor-pointer hover:bg-lighter-primary-color p-1"
+                class="cursor-pointer hover:bg-lightest-primary-color p-1"
               >
                 {{ cardName }}
               </li>
             </ul>
           </transition>
-
-          <p
-            v-if="selectedCardName"
-            class="selected-name text-lg pt-2 absolute"
-          >
-            Vous avez sélectionné :
-            <span class="font-semibold">{{ selectedCardName }}</span>
-          </p>
 
           <el-select
             class="sets-list font-medievalsharp absolute z-10"
@@ -85,7 +75,20 @@
               :value="item.code"
             />
           </el-select>
+
+          <p
+            v-if="selectedCardName"
+            class="selected-name text-lg pt-2 absolute"
+          >
+            Vous avez sélectionné :
+            <span class="font-semibold">{{ selectedCardName }}</span>
+          </p>
+
+          <button class="submit-btn bg-primary-color" type="submit">
+            Afficher
+          </button>
         </Form>
+
         <Card :cardDatas="cardDatas" :setDatas="setDatas" />
       </div>
     </v-main>
@@ -195,7 +198,6 @@ export default {
   },
 
   setup() {
-    // Auto-complétion
     const searchResults = ref([]);
     const searchTerm = ref("");
     const selectedCardName = ref("");
@@ -208,6 +210,7 @@ export default {
       });
     });
 
+    // Auto-complétion
     watch(
       () => searchTerm.value,
       (card) =>
@@ -437,9 +440,7 @@ body {
   background: var(--tertiary-color);
   overflow: auto;
   -ms-overflow-style: none;
-  /* IE */
   scrollbar-width: none;
-  /* Firefox */
 }
 
 #app {
@@ -500,24 +501,16 @@ form {
   width: 260px;
 }
 
-.selected-name {
-  margin-top: 52px;
-}
-
 /* Liste des sets */
 .sets-list {
-  margin-top: 90px;
   width: 260px;
 }
 .sets-list .el-input__inner {
   background-color: unset;
   color: var(--success-color);
   box-shadow: unset;
-  border: 1px solid var(--tertiary-color);
 }
 .el-popper {
-  background: var(--light-color) !important;
-  border: 1px solid var(--light-color) !important;
   box-shadow: 0 0 3px 3px var(--darker-primary-color) !important;
 }
 .el-select-dropdown__item {
@@ -527,6 +520,7 @@ form {
 /* Bouton du formulaire */
 .submit-btn {
   display: inline-block;
+  margin-top: 70px;
   border-radius: 5px;
   padding: 8px 20px;
   font-family: "MedievalSharp";

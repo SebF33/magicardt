@@ -8,6 +8,7 @@ module.exports = {
       colors: {
         'primary-color': "var(--primary-color)",
         'lighter-primary-color': "var(--lighter-primary-color)",
+        'lightest-primary-color': "var(--lightest-primary-color)",
         'darker-primary-color': "var(--darker-primary-color)",
         'secondary-color': "var(--secondary-color)",
         'tertiary-color': "var(--tertiary-color)",

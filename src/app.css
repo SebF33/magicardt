@@ -6,6 +6,7 @@
 :root {
   --primary-color: #837c5e;
   --lighter-primary-color: #c0bc97;
+  --lightest-primary-color: #dbd9bd;
   --darker-primary-color: #57523d;
   --secondary-color: #2e1d22;
   --tertiary-color: #fcf8e8;
@@ -14,6 +15,11 @@
   --error-bg-color: #fddfe2;
   --success-color: var(--secondary-color);
   --success-bg-color: var(--light-color);
+  --el-color-primary: var(--primary-color) !important;
+  --el-color-white: var(--light-color) !important;
+  --el-fill-color-light: var(--lightest-primary-color) !important;
+  --el-text-color-regular: var(--secondary-color) !important;
+  --el-text-color-secondary: var(--secondary-color) !important;
 }
 
 ::selection {
