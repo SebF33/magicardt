@@ -30,7 +30,7 @@
             success-message="Bonne recherche !"
           />
 
-          <transition name="el-fade-in-linear" appear>
+          <v-slide-y-transition>
             <ul
               v-if="searchCardNames.length"
               class="
@@ -59,7 +59,7 @@
                 {{ cardName }}
               </li>
             </ul>
-          </transition>
+          </v-slide-y-transition>
 
           <el-select
             class="sets-list font-medievalsharp absolute z-10"
