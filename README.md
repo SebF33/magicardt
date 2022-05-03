@@ -14,6 +14,8 @@ Rechercher des cartes Magic : L'Assemblée et organiser une liste de celles-ci �
 ## :link: Liens
 :earth_africa: **Site web :** https://sebf33.github.io/magicardt
 
+:clapper: **Démo :** https://youtu.be/wl5Ld7shHVw
+
 :octocat: **GitHub :** https://github.com/SebF33/magicardt
 
 
