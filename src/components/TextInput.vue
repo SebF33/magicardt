@@ -11,7 +11,7 @@
       :type="type"
       v-model="message"
       autocomplete="off"
-      :value="inputValue"
+      :value="message"
       :placeholder="placeholder"
       @input="handleChange"
       @blur="handleBlur"
@@ -57,21 +57,18 @@ export default {
   },
 
   setup(props, { emit }) {
-    const {
-      value: inputValue,
-      errorMessage,
-      handleBlur,
-      handleChange,
-      meta,
-    } = useField(props.name, undefined, {
-      initialValue: props.value,
-    });
+    const { errorMessage, handleBlur, handleChange, meta } = useField(
+      props.name,
+      undefined,
+      {
+        initialValue: props.value,
+      }
+    );
 
     return {
       errorMessage,
       handleBlur,
       handleChange,
-      inputValue,
       message: useModelWrapper(props, emit, "modelValue"),
       meta,
     };
