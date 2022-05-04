@@ -10,6 +10,7 @@
       :id="name"
       :type="type"
       v-model="message"
+      autocomplete="off"
       :value="inputValue"
       :placeholder="placeholder"
       @input="handleChange"

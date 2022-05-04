@@ -201,8 +201,8 @@ export default {
     const searchResults = ref([]);
     const searchTerm = ref("");
     const selectedCardName = ref("");
-    const setTerm = ref("");
     const setsList = ref([]);
+    const setTerm = ref("");
 
     onMounted(async () => {
       await axios.get(`${apiURL}/sets`).then((res) => {
