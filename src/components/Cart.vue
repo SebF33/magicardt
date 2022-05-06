@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute top-0 right-10">
+  <div class="mobileToWork absolute top-0 right-10">
     <transition name="slide-fade" appear>
       <img
         class="absolute left-0 z-10"
@@ -84,7 +84,7 @@
   </div>
   <transition name="el-fade-in-linear" appear>
     <a
-      class="el-button export-btn absolute top-6 right-12"
+      class="mobileToWork el-button export-btn absolute top-6 right-12"
       v-show="show"
       download="Magicardt.xls"
       href="#"
@@ -275,5 +275,12 @@ li {
 .slide-fade-leave-to {
   transform: translateX(20px);
   opacity: 0;
+}
+
+/* 🚧 Mobile à travailler */
+@media all and (max-width: 1400px) {
+  .mobileToWork {
+    display: none;
+  }
 }
 </style>
