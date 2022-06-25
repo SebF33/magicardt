@@ -254,6 +254,18 @@ export default {
           '<abbr class="card-symbol card-symbol-T" title="Engagez ce permanent">{T}</abbr>'
         )
         .replaceAll(
+          "{Q}",
+          '<abbr class="card-symbol card-symbol-Q" title="Dégagez ce permanent">{Q}</abbr>'
+        )
+        .replaceAll(
+          "{E}",
+          '<abbr class="card-symbol card-symbol-E" title="Marqueur "énergie"">{E}</abbr>'
+        )
+        .replaceAll(
+          "{CHAOS}",
+          '<abbr class="card-symbol card-symbol-CHAOS" title="Chaos">{CHAOS}</abbr>'
+        )
+        .replaceAll(
           "{A}",
           '<abbr class="card-symbol card-symbol-A" title="Marqueur "gland"">{A}</abbr>'
         )
@@ -388,6 +400,14 @@ export default {
         .replaceAll(
           "{G}",
           '<abbr class="card-symbol card-symbol-G" title="Mana vert">{G}</abbr>'
+        )
+        .replaceAll(
+          "{C}",
+          '<abbr class="card-symbol card-symbol-C" title="Mana incolore">{C}</abbr>'
+        )
+        .replaceAll(
+          "{S}",
+          '<abbr class="card-symbol card-symbol-S" title="Mana neige">{S}</abbr>'
         );
       return formattedData;
     }
