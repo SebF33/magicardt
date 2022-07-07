@@ -40,9 +40,10 @@
         </transition>
         <transition name="el-fade-in-linear" appear>
           <img
+            v-if="setDatas.icon_svg_uri"
+            @click="setClick"
             class="set-symbol"
             :src="setDatas.icon_svg_uri"
-            v-if="setDatas.icon_svg_uri"
             width="32"
             :alt="setDatas.name"
             :title="setDatas.name"
@@ -68,9 +69,9 @@
           >
         </transition>
         <transition name="el-fade-in-linear" appear>
-          <span class="power" v-if="cardDatas.power"
-            >{{ cardDatas.power }}/{{ cardDatas.toughness }}</span
-          >
+          <span class="power" v-if="cardDatas.power">
+            {{ cardDatas.power }}/{{ cardDatas.toughness }}
+          </span>
         </transition>
         <transition name="el-fade-in-linear" appear>
           <span class="power" v-if="cardDatas.loyalty"
@@ -181,6 +182,10 @@ export default {
   methods: {
     addClick() {
       this.emitter.emit("addItemEvent");
+    },
+
+    setClick() {
+      this.emitter.emit("showGalleryEvent");
     },
 
     getCardBackUrl() {

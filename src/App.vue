@@ -88,8 +88,11 @@
             Afficher
           </button>
         </Form>
-
-        <Card :cardDatas="cardDatas" :setDatas="setDatas" />
+        <component
+          :is="currentComponent"
+          :cardDatas="cardDatas"
+          :setDatas="setDatas"
+        />
       </div>
     </v-main>
   </v-app>
@@ -103,6 +106,7 @@ import { toFormValidator } from "@vee-validate/zod";
 import * as zod from "zod";
 import Card from "./components/Card.vue";
 import Cart from "./components/Cart.vue";
+import Gallery from "./components/Gallery.vue";
 import Logo from "./components/Logo.vue";
 import TextInput from "./components/TextInput.vue";
 
@@ -114,6 +118,7 @@ export default {
   components: {
     Card,
     Cart,
+    Gallery,
     Logo,
     Form,
     TextInput,
@@ -138,6 +143,7 @@ export default {
         toughness: "",
         type_line: "",
       },
+      currentComponent: "Card",
       setDatas: {
         icon_svg_uri: "",
         name: "",
@@ -147,11 +153,15 @@ export default {
   },
 
   methods: {
-    // Récupérer les données de l'API à la soumission du formulaire
+    // Afficher la galerie des cartes du set
+    showGallery() {
+      this.currentComponent = "Gallery";
+    },
+
+    // Récupérer les données de la carte à la soumission du formulaire
     submitForm() {
       let code = this.setTerm;
-      let name =
-        this.selectedCardName === "" ? this.searchTerm : this.selectedCardName;
+      let name = this.selectedCardName === "" ? this.searchTerm : this.selectedCardName;
 
       axios
         .get(`${apiURL}/cards/named`, {
@@ -195,6 +205,12 @@ export default {
           this.setDatas.name = "";
         });
     },
+  },
+
+  mounted() {
+    this.emitter.on("showGalleryEvent", () => {
+      this.showGallery();
+    });
   },
 
   setup() {
