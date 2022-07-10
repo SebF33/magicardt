@@ -7,7 +7,7 @@
     >
       <div v-for="card in cards" :key="card.id" class="w-full p-1 md:p-4">
         <img
-          @click="setClick(card)"
+          @click="setClick(card.id)"
           :src="card.image"
           :alt="card.name"
           class="
@@ -66,8 +66,8 @@ export default {
         });
     },
 
-    setClick(card) {
-      this.emitter.emit("showCardEvent", card);
+    setClick(id) {
+      this.emitter.emit("showCardEvent", id);
     },
   },
 };
@@ -79,7 +79,7 @@ export default {
   transition: all 0.2s ease-in-out;
 }
 .card:hover {
-  transform: scale(1.1);
+  transform: scale(0.90);
 }
 
 /* Bounce animations */

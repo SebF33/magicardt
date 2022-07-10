@@ -35,7 +35,8 @@
           <template #default="scope">
             <transition name="el-zoom-in-center" appear>
               <img
-                class="miniature rounded-sm cursor-help"
+                @click="setClick(scope.row.card_id)"
+                class="miniature rounded-sm cursor-pointer"
                 :src="scope.row.card_image"
                 :alt="scope.row.card_name"
                 :title="scope.row.card_title"
@@ -135,16 +136,10 @@ export default {
   },
 
   methods: {
-    // Suppression d'un item de la liste
-    removeItem(row) {
-      const id = row.id;
-      axios.delete(`${serverURL}/${id}`);
-      this.items = this.items.filter((item) => item.id !== id);
-    },
-
     // Ajout d'un item dans la liste
     async addItem() {
       const res = await axios.post(serverURL, {
+        card_id: this.cardDatas.id,
         card_image: this.cardDatas.image_uris.small,
         card_name: this.cardDatas.name,
         card_price:
@@ -186,6 +181,17 @@ export default {
           },
         ]
       );
+    },
+
+    // Suppression d'un item de la liste
+    removeItem(row) {
+      const id = row.id;
+      axios.delete(`${serverURL}/${id}`);
+      this.items = this.items.filter((item) => item.id !== id);
+    },
+
+    setClick(id) {
+      this.emitter.emit("showCardEvent", id);
     },
   },
 
@@ -254,6 +260,11 @@ export default {
   margin-bottom: 2px;
   -webkit-filter: drop-shadow(2px 2px 2px #222);
   filter: drop-shadow(2px 2px 2px #222);
+  transform: scale(0.94);
+  transition: all 0.16s ease-in-out;
+}
+.el-table .miniature:hover {
+  transform: scale(0.88);
 }
 li {
   font-size: 1.5rem;

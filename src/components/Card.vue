@@ -60,7 +60,7 @@
             v-html="cardDatas.oracle_text"
           ></p>
         </transition>
-        <transition name="el-fade-in-linear" appear>
+        <transition name="scroll-x-reverse-transition" appear>
           <p class="flavor-text" v-if="cardDatas.flavor_text">
             {{ cardDatas.flavor_text }}
           </p>

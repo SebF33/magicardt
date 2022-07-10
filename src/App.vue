@@ -84,7 +84,10 @@
             <span class="font-semibold">{{ selectedCardName }}</span>
           </p>
 
-          <button class="submit-btn bg-primary-color cursor-pointer" type="submit">
+          <button
+            class="submit-btn bg-primary-color cursor-pointer"
+            type="submit"
+          >
             Afficher
           </button>
         </Form>
@@ -155,8 +158,6 @@ export default {
   methods: {
     // Afficher la carte qui provient de la galerie
     showCard(id) {
-      Card.unmount()
-      this.currentComponent = "Card";
       axios
         .get(`${apiURL}/cards/${id}`)
         .then((response) => {
@@ -236,11 +237,16 @@ export default {
   },
 
   mounted() {
-    this.emitter.on("showCardEvent", (card) => {
-      this.showCard(card.id);
+    this.emitter.on("showCardEvent", (id) => {
+      setTimeout(() => {
+        this.currentComponent = "Card";
+        this.showCard(id);
+      }, 200);
     });
     this.emitter.on("showGalleryEvent", () => {
-      this.showGallery();
+      setTimeout(() => {
+        this.showGallery();
+      }, 200);
     });
   },
 
