@@ -39,17 +39,19 @@
           <p v-if="cardDatas.type_line">{{ cardDatas.type_line }}</p>
         </transition>
         <transition name="el-fade-in-linear" appear>
-          <img
+          <a
             v-if="setDatas.icon_svg_uri"
             @click="setClick"
-            class="set-symbol"
-            :src="setDatas.icon_svg_uri"
-            width="32"
-            :alt="setDatas.name"
-            :title="setDatas.name"
-            draggable="false"
-            ondragstart="return false"
-          />
+            class="set-symbol cursor-pointer"
+          >
+            <img
+              :src="setDatas.icon_svg_uri"
+              width="32"
+              :alt="setDatas.name"
+              :title="setDatas.name"
+              draggable="false"
+              ondragstart="return false"
+          /></a>
         </transition>
         <transition name="el-fade-in-linear" appear>
           <p
@@ -340,11 +342,18 @@ export default {
 
 #card .set-symbol {
   position: absolute;
+  display: block;
   top: 60px;
-  right: 25px;
-  width: 32px;
-  max-height: 32px;
-  cursor: help;
+  right: 26px;
+  width: 30px;
+  max-height: 30px;
+}
+#card .set-symbol img {
+  display: block;
+  transition: all .20s ease-in-out;
+}
+#card .set-symbol img:hover {
+  transform: scale(1.18);
 }
 
 #card .oracle-text {

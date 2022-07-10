@@ -35,7 +35,7 @@
           <template #default="scope">
             <transition name="el-zoom-in-center" appear>
               <img
-                class="miniature"
+                class="miniature rounded-sm cursor-help"
                 :src="scope.row.card_image"
                 :alt="scope.row.card_name"
                 :title="scope.row.card_title"
@@ -50,7 +50,7 @@
           <template #default="scope">
             <transition name="el-fade-in-linear" appear>
               <img
-                class="set-icon"
+                class="cursor-help"
                 :src="scope.row.set_icon"
                 :alt="scope.row.set_name"
                 :title="scope.row.set_name"
@@ -145,7 +145,7 @@ export default {
     // Ajout d'un item dans la liste
     async addItem() {
       const res = await axios.post(serverURL, {
-        card_image: this.cardDatas.image_uris.border_crop,
+        card_image: this.cardDatas.image_uris.small,
         card_name: this.cardDatas.name,
         card_price:
           this.cardDatas.prices.eur === null
@@ -254,10 +254,6 @@ export default {
   margin-bottom: 2px;
   -webkit-filter: drop-shadow(2px 2px 2px #222);
   filter: drop-shadow(2px 2px 2px #222);
-}
-.el-table .miniature,
-.el-table .set-icon {
-  cursor: help;
 }
 li {
   font-size: 1.5rem;

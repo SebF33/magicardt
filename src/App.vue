@@ -54,7 +54,7 @@
                 v-for="cardName in searchCardNames"
                 :key="cardName"
                 @click="selectCardName(cardName)"
-                class="cursor-pointer hover:bg-lightest-primary-color p-1"
+                class="hover:bg-lightest-primary-color p-1 cursor-pointer"
               >
                 {{ cardName }}
               </li>
@@ -84,7 +84,7 @@
             <span class="font-semibold">{{ selectedCardName }}</span>
           </p>
 
-          <button class="submit-btn bg-primary-color" type="submit">
+          <button class="submit-btn bg-primary-color cursor-pointer" type="submit">
             Afficher
           </button>
         </Form>
@@ -155,6 +155,7 @@ export default {
   methods: {
     // Afficher la carte qui provient de la galerie
     showCard(id) {
+      Card.unmount()
       this.currentComponent = "Card";
       axios
         .get(`${apiURL}/cards/${id}`)
@@ -598,7 +599,6 @@ form {
   background-color: var(--primary-color);
   box-shadow: 0px 5px 0px 0px var(--darker-primary-color);
   text-decoration: none;
-  cursor: pointer;
 }
 .submit-btn:active {
   transform: translate(-50%, 5px);

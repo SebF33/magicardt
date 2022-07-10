@@ -1,7 +1,7 @@
 <template>
   <div class="container px-5 py-5 mx-5 my-5 lg:pt-12 lg:px-32">
     <TransitionGroup
-      name="gallery"
+      name="bounce"
       tag="div"
       class="lg:gap-2 lg:grid lg:grid-cols-8"
     >
@@ -10,7 +10,15 @@
           @click="setClick(card)"
           :src="card.image"
           :alt="card.name"
-          class="card block object-cover object-center rounded-lg"
+          class="
+            card
+            block
+            object-cover object-center
+            rounded-lg
+            cursor-pointer
+          "
+          draggable="false"
+          ondragstart="return false"
         />
       </div>
     </TransitionGroup>
@@ -66,18 +74,30 @@ export default {
 </script>
 
 <style scoped>
-.gallery-enter-active,
-.gallery-leave-active {
-  transition: all 0.5s ease;
-}
-
-.gallery-enter-from,
-.gallery-leave-to {
-  opacity: 0;
-  transform: translateX(30px);
-}
-
 .card {
   filter: drop-shadow(5px 5px 5px #222);
+  transition: all 0.2s ease-in-out;
+}
+.card:hover {
+  transform: scale(1.1);
+}
+
+/* Bounce animations */
+.bounce-enter-active {
+  animation: bounce-in 0.6s;
+}
+.bounce-leave-active {
+  animation: bounce-in 0.6s reverse;
+}
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 </style>
