@@ -1,16 +1,19 @@
 <template>
-  <div class="container px-5 py-2 mx-auto lg:pt-12 lg:px-32">
-    <div class="flex flex-wrap -m-1 md:-m-2">
-      <div v-for="card in cards" :key="card.id" class="flex flex-wrap w-1/3">
-        <div class="w-full p-1 md:p-2">
-          <img
-            :src="card.image"
-            :alt="card.name"
-            class="block object-cover object-center w-full h-full rounded-lg"
-          />
-        </div>
+  <div class="container px-5 py-5 mx-5 my-5 lg:pt-12 lg:px-32">
+    <TransitionGroup
+      name="gallery"
+      tag="div"
+      class="lg:gap-2 lg:grid lg:grid-cols-8"
+    >
+      <div v-for="card in cards" :key="card.id" class="w-full p-1 md:p-4">
+        <img
+          @click="setClick(card)"
+          :src="card.image"
+          :alt="card.name"
+          class="card block object-cover object-center rounded-lg"
+        />
       </div>
-    </div>
+    </TransitionGroup>
   </div>
 </template>
 
@@ -39,11 +42,9 @@ export default {
   methods: {
     cardsDatas() {
       axios
-        .get(`${apiURL}/cards/search`, {
-          params: {
-            q: this.setDatas.code,
-          },
-        })
+        .get(
+          `${apiURL}/cards/search?include_extras=true&include_variations=true&order=set&q=e%3A${this.setDatas.code}&unique=prints`
+        )
         .then((response) => {
           var results = response.data.data;
           this.cards = results.map((card) => ({
@@ -56,6 +57,27 @@ export default {
           console.log(error);
         });
     },
+
+    setClick(card) {
+      this.emitter.emit("showCardEvent", card);
+    },
   },
 };
 </script>
+
+<style scoped>
+.gallery-enter-active,
+.gallery-leave-active {
+  transition: all 0.5s ease;
+}
+
+.gallery-enter-from,
+.gallery-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.card {
+  filter: drop-shadow(5px 5px 5px #222);
+}
+</style>

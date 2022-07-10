@@ -153,7 +153,33 @@ export default {
   },
 
   methods: {
-    // Afficher la galerie des cartes du set
+    // Afficher la carte qui provient de la galerie
+    showCard(id) {
+      this.currentComponent = "Card";
+      axios
+        .get(`${apiURL}/cards/${id}`)
+        .then((response) => {
+          this.cardDatas = response.data;
+          this.cardDatas.mana_cost = this.formatSymbols(
+            this.cardDatas.mana_cost
+          );
+          this.cardDatas.oracle_text = this.formatOracleText(
+            this.cardDatas.oracle_text
+          );
+        })
+        .then(async () => {
+          await axios
+            .get(`${apiURL}/sets/${this.cardDatas.set}`)
+            .then((res) => {
+              this.setDatas = res.data;
+            });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    // Afficher la galerie
     showGallery() {
       this.currentComponent = "Gallery";
     },
@@ -161,7 +187,8 @@ export default {
     // Récupérer les données de la carte à la soumission du formulaire
     submitForm() {
       let code = this.setTerm;
-      let name = this.selectedCardName === "" ? this.searchTerm : this.selectedCardName;
+      let name =
+        this.selectedCardName === "" ? this.searchTerm : this.selectedCardName;
 
       axios
         .get(`${apiURL}/cards/named`, {
@@ -208,6 +235,9 @@ export default {
   },
 
   mounted() {
+    this.emitter.on("showCardEvent", (card) => {
+      this.showCard(card.id);
+    });
     this.emitter.on("showGalleryEvent", () => {
       this.showGallery();
     });
