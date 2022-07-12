@@ -67,7 +67,7 @@
         </transition>
         <transition name="el-fade-in-linear" appear>
           <span class="artist font-bold" v-if="cardDatas.artist"
-            >Artiste : {{ cardDatas.artist }}</span
+            >Artiste(s) : {{ cardDatas.artist }}</span
           >
         </transition>
         <transition name="el-fade-in-linear" appear>
@@ -350,7 +350,7 @@ export default {
 }
 #card .set-symbol img {
   display: block;
-  transition: all .20s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 #card .set-symbol img:hover {
   transform: scale(1.18);
@@ -370,9 +370,10 @@ export default {
 
 #card .artist {
   position: absolute;
+  max-width: 230px;
   bottom: 25px;
   left: 25px;
-  font-size: 15px;
+  font-size: 13px;
 }
 
 #card .power {

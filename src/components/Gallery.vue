@@ -75,11 +75,12 @@ export default {
 
 <style scoped>
 .card {
-  filter: drop-shadow(5px 5px 5px #222);
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
+    rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
   transition: all 0.2s ease-in-out;
 }
 .card:hover {
-  transform: scale(0.90);
+  transform: scale(0.92);
 }
 
 /* Bounce animations */
@@ -94,7 +95,7 @@ export default {
     transform: scale(0);
   }
   50% {
-    transform: scale(1.12);
+    transform: scale(1.08);
   }
   100% {
     transform: scale(1);

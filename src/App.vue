@@ -183,6 +183,7 @@ export default {
 
     // Afficher la galerie
     showGallery() {
+      this.selectedCardName = "";
       this.currentComponent = "Gallery";
     },
 
