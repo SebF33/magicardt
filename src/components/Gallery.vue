@@ -1,5 +1,5 @@
 <template>
-  <div class="container px-5 py-5 mx-5 my-5 lg:pt-12 lg:px-32">
+  <div class="container mx-auto my-10 px-6 py-6 lg:pt-12 lg:px-32">
     <TransitionGroup
       name="bounce"
       tag="div"
@@ -67,7 +67,7 @@ export default {
     },
 
     setClick(id) {
-      this.emitter.emit("showCardEvent", id);
+      this.emitter.emit("showCardFromGalleryEvent", id);
     },
   },
 };

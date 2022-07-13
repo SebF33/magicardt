@@ -191,7 +191,7 @@ export default {
     },
 
     setClick(id) {
-      this.emitter.emit("showCardEvent", id);
+      this.emitter.emit("showCardFromCartEvent", id);
     },
   },
 
@@ -257,10 +257,9 @@ export default {
   box-shadow: 0 0 3px 3px var(--darker-primary-color);
 }
 .el-table .miniature {
-  margin-bottom: 2px;
+  margin-bottom: 6px;
   -webkit-filter: drop-shadow(2px 2px 2px #222);
   filter: drop-shadow(2px 2px 2px #222);
-  transform: scale(0.94);
   transition: all 0.16s ease-in-out;
 }
 .el-table .miniature:hover {

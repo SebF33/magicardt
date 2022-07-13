@@ -115,6 +115,32 @@ import TextInput from "./components/TextInput.vue";
 
 const apiURL = "https://api.scryfall.com";
 
+const initialState = () => {
+  return {
+    cardDatas: {
+      artist: "",
+      colors: "",
+      flavor_text: "",
+      id: "",
+      image_uris: { png: "", border_crop: "" },
+      loyalty: "",
+      mana_cost: "",
+      name: "",
+      oracle_text: "",
+      power: "",
+      prices: { eur: "", eur_foil: "" },
+      set: "",
+      set_name: "",
+      toughness: "",
+      type_line: "",
+    },
+    setDatas: {
+      icon_svg_uri: "",
+      name: "",
+    },
+  };
+};
+
 export default {
   name: "App",
 
@@ -156,6 +182,11 @@ export default {
   },
 
   methods: {
+    // Réinitialiser les données de la carte
+    reset() {
+      Object.assign(this.$data, initialState());
+    },
+
     // Afficher la carte qui provient de la galerie
     showCard(id) {
       axios
@@ -189,6 +220,7 @@ export default {
 
     // Récupérer les données de la carte à la soumission du formulaire
     submitForm() {
+      this.currentComponent = "Card";
       let code = this.setTerm;
       let name =
         this.selectedCardName === "" ? this.searchTerm : this.selectedCardName;
@@ -238,16 +270,23 @@ export default {
   },
 
   mounted() {
-    this.emitter.on("showCardEvent", (id) => {
+    this.emitter.on("showCardFromGalleryEvent", (id) => {
+      this.reset();
       setTimeout(() => {
         this.currentComponent = "Card";
         this.showCard(id);
-      }, 200);
+      }, 500);
+    });
+    this.emitter.on("showCardFromCartEvent", (id) => {
+      setTimeout(() => {
+        this.currentComponent = "Card";
+        this.showCard(id);
+      }, 300);
     });
     this.emitter.on("showGalleryEvent", () => {
       setTimeout(() => {
         this.showGallery();
-      }, 200);
+      }, 100);
     });
   },
 

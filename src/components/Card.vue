@@ -11,16 +11,16 @@
       <div id="card">
         <div class="card-magnifier-container">
           <transition name="el-fade-in-linear" appear>
-            <div class="card-magnifier-glass" v-show="showMagnifier"></div
-          ></transition>
+            <div v-show="showMagnifier" class="card-magnifier-glass"></div>
+          </transition>
           <img
             id="my-card"
-            class="card-img"
             v-show="isLoaded"
             :src="cardDatas.image_uris.png || cardback"
             @load="handleZoom"
             @error="handleZoom"
             :alt="cardDatas.image_uris.png || cardback"
+            class="card-img"
             draggable="false"
             ondragstart="return false"
           />
@@ -30,9 +30,9 @@
         </transition>
         <transition name="el-fade-in-linear" appear>
           <p
-            class="mana-cost"
             v-if="cardDatas.mana_cost"
             v-html="cardDatas.mana_cost"
+            class="mana-cost"
           ></p>
         </transition>
         <transition name="el-fade-in-linear" appear>
@@ -55,13 +55,18 @@
         </transition>
         <transition name="el-fade-in-linear" appear>
           <p
-            class="oracle-text"
             v-if="cardDatas.oracle_text"
             v-html="cardDatas.oracle_text"
+            class="oracle-text"
           ></p>
         </transition>
-        <transition name="scroll-x-reverse-transition" appear>
-          <p class="flavor-text" v-if="cardDatas.flavor_text">
+        <div v-if="cardDatas.flavor_text" class="flavor-separator"></div>
+        <transition name="scroll-x-transition" appear>
+          <p
+            v-if="cardDatas.flavor_text"
+            v-show="delayShow"
+            class="flavor-text"
+          >
             {{ cardDatas.flavor_text }}
           </p>
         </transition>
@@ -82,10 +87,10 @@
         </transition>
         <transition name="el-fade-in-linear" appear>
           <el-button
-            class="tiny-glass-btn"
-            color="#837c5e"
             v-if="cardDatas.id"
             @click="showMagnifier = !showMagnifier"
+            class="tiny-glass-btn"
+            color="#837c5e"
           >
             <img
               :src="tinyGlass"
@@ -97,10 +102,10 @@
         </transition>
         <transition name="el-fade-in-linear" appear>
           <el-button
-            class="add-btn"
-            color="#837c5e"
             v-if="cardDatas.id"
             @click="addClick"
+            class="add-btn"
+            color="#837c5e"
             >Ajouter</el-button
           >
         </transition>
@@ -138,6 +143,7 @@ export default {
   data() {
     return {
       cardback: "",
+      delayShow: false,
       isLoaded: false,
       showMagnifier: false,
       tinyGlass,
@@ -260,6 +266,12 @@ export default {
       }, 1000);
     },
   },
+
+  mounted() {
+    setTimeout(() => {
+      this.delayShow = true;
+    }, 1200);
+  },
 };
 </script>
 
@@ -279,6 +291,7 @@ export default {
   top: 260px;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 1;
   width: 700px;
   height: 400px;
   padding: 25px;
@@ -287,7 +300,6 @@ export default {
   font-family: "MedievalSharp";
   background-image: linear-gradient(transparent, var(--tertiary-color) 22%);
   box-shadow: -20px 0 35px -25px black, 20px 0 35px -25px black;
-  z-index: 1;
 }
 
 .card-magnifier-container {
@@ -306,11 +318,11 @@ export default {
 /* Loupe */
 .card-magnifier-glass {
   position: absolute;
+  z-index: 100;
   border-radius: 50%;
   cursor: none;
   width: 110px;
   height: 110px;
-  z-index: 100;
   border: 2px solid var(--secondary-color);
   box-shadow: 0 -1px 1px var(--tertiary-color), 0 2px 2px var(--secondary-color),
     inset 0 0 1px var(--darker-primary-color),
@@ -348,10 +360,12 @@ export default {
   width: 30px;
   max-height: 30px;
 }
+
 #card .set-symbol img {
   display: block;
   transition: all 0.2s ease-in-out;
 }
+
 #card .set-symbol img:hover {
   transform: scale(1.18);
 }
@@ -361,9 +375,13 @@ export default {
   font-weight: bold;
 }
 
-#card .flavor-text {
+#card .flavor-separator {
   margin-top: 14px;
   border-top: 1px solid var(--darker-primary-color);
+}
+
+#card .flavor-text {
+  margin-top: 4px;
   font-size: 12px;
   font-style: italic;
 }
@@ -389,16 +407,19 @@ export default {
   position: absolute;
   bottom: 16px;
 }
+
 #card .add-btn {
   left: 50%;
   transform: translateX(-50%);
   color: black;
   font-weight: bold;
 }
+
 #card .tiny-glass-btn {
   left: 38%;
   padding: 4px 6px;
 }
+
 #card .tiny-glass-btn img {
   width: 24px;
 }
@@ -422,6 +443,7 @@ export default {
   color-adjust: exact;
   cursor: help;
 }
+
 .card-symbol + .card-symbol {
   margin-left: 2px;
 }
@@ -430,9 +452,11 @@ export default {
 .bounce-enter-active {
   animation: bounce-in 0.6s;
 }
+
 .bounce-leave-active {
   animation: bounce-in 0.6s reverse;
 }
+
 @keyframes bounce-in {
   0% {
     transform: scale(0);
