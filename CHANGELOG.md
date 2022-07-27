@@ -6,7 +6,7 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 
 **Auteur : Sébastien Flouriot (SebF33)**
 
-## [2022-07-30]
+## [2022-07-27]
 
 ### Nouveautés
 - Ajout de la galerie de cartes du set au clic de l'icône.
