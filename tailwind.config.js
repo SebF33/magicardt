@@ -23,6 +23,15 @@ module.exports = {
         'medievalsharp': ['MedievalSharp'],
         'oswald': ['Oswald'],
       },
+      screens: {
+        'xs': '480px',
+      },
+      spacing: {
+        '1/2': '50%',
+        '1/1': '100%',
+        '3/2': '150%',
+        '2/1': '200%',
+      },
     }
   },
   plugins: [],

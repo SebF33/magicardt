@@ -11,7 +11,11 @@
       <div id="card">
         <div class="card-magnifier-container">
           <transition name="el-fade-in-linear" appear>
-            <div v-show="showMagnifier" class="card-magnifier-glass"></div>
+            <div
+              v-show="showMagnifier"
+              class="card-magnifier-glass"
+              data-html2canvas-ignore="true"
+            ></div>
           </transition>
           <img
             id="my-card"
@@ -90,7 +94,9 @@
             v-if="cardDatas.id"
             @click="showMagnifier = !showMagnifier"
             class="tiny-glass-btn"
+            title="Activer/désactiver la loupe"
             color="#837c5e"
+            data-html2canvas-ignore="true"
           >
             <img
               :src="tinyGlass"
@@ -106,8 +112,26 @@
             @click="addClick"
             class="add-btn"
             color="#837c5e"
+            data-html2canvas-ignore="true"
             >Ajouter</el-button
           >
+        </transition>
+        <transition name="el-fade-in-linear" appear>
+          <el-button
+            v-if="cardDatas.id"
+            @click="createPdf"
+            class="pdf-file-btn"
+            title="Créer un document PDF"
+            color="#837c5e"
+            data-html2canvas-ignore="true"
+          >
+            <img
+              :src="pdfFile"
+              alt="pdf"
+              draggable="false"
+              ondragstart="return false"
+            />
+          </el-button>
         </transition>
       </div>
     </template>
@@ -123,6 +147,10 @@
 </template>
 
 <script>
+import html2canvas from "html2canvas";
+import icon from "../assets/icon.png";
+import { jsPDF } from "jspdf";
+import pdfFile from "../assets/pdf-file.png";
 import Spinner from "./Spinner.vue";
 import tinyGlass from "../assets/tiny-glass.png";
 import VueLoadImage from "vue-load-image";
@@ -144,7 +172,9 @@ export default {
     return {
       cardback: "",
       delayShow: false,
+      icon,
       isLoaded: false,
+      pdfFile,
       showMagnifier: false,
       tinyGlass,
     };
@@ -192,12 +222,52 @@ export default {
       this.emitter.emit("addItemEvent");
     },
 
-    setClick() {
-      this.emitter.emit("showGalleryEvent");
+    // 📜 Création d'un document PDF de la carte
+    createPdf() {
+      var title = this.cardDatas.name + "_" + this.setDatas.code;
+      var iconImage = this.icon;
+      var artImage = this.cardDatas.image_uris.art_crop;
+      var dom = document.getElementById("card");
+      html2canvas(dom, {
+        allowTaint: true,
+        useCORS: true,
+        scrollY: 0,
+        scrollX: 0,
+        height: 600,
+        width: 1000,
+        scale: 1.8,
+        onclone: function (clonedDoc) {
+          clonedDoc.getElementById("card").style.backgroundImage = "none";
+          clonedDoc.getElementById("card").style.boxShadow = "none";
+        },
+        backgroundColor: "#fcf8e8",
+      }).then(function (canvas) {
+        var contentWidth = canvas.width;
+        var contentHeight = canvas.height;
+        var pdfWidth = ((contentWidth + 10) / 2) * 0.75;
+        var pdfHeight = ((contentHeight + 200) / 2) * 0.75;
+        var imgWidth = pdfWidth;
+        var imgHeight = (contentHeight / 2) * 0.75;
+        var pageData = canvas.toDataURL("image/jpeg", 1.0);
+        var pdf = new jsPDF("", "pt", [pdfWidth, pdfHeight]);
+        var pageIcon = new Image();
+        var pageArt = new Image();
+        pageIcon.src = iconImage;
+        pageArt.src = artImage;
+        pdf.addImage(pageIcon, "png", 192, 10, 96, 96);
+        pdf.addImage(pageArt, "jpeg", 82, 130, 313, 228.5);
+        pdf.addImage(pageData, "jpeg", 0, 400, imgWidth, imgHeight);
+        pdf.save(title + ".pdf");
+      });
     },
 
+    // Dos de la carte
     getCardBackUrl() {
       this.cardback = new URL(`../assets/cardback.webp`, import.meta.url).href;
+    },
+
+    setClick() {
+      this.emitter.emit("showGalleryEvent");
     },
 
     // 🔍 Zoom sur la carte
@@ -403,6 +473,7 @@ export default {
 
 /* Boutons */
 #card .add-btn,
+#card .pdf-file-btn,
 #card .tiny-glass-btn {
   position: absolute;
   bottom: 16px;
@@ -415,11 +486,17 @@ export default {
   font-weight: bold;
 }
 
-#card .tiny-glass-btn {
-  left: 38%;
+#card .pdf-file-btn {
+  right: 246px;
   padding: 4px 6px;
 }
 
+#card .tiny-glass-btn {
+  left: 270px;
+  padding: 4px 6px;
+}
+
+#card .pdf-file-btn img,
 #card .tiny-glass-btn img {
   width: 24px;
 }

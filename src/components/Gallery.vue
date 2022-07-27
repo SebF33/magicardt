@@ -1,22 +1,35 @@
 <template>
-  <div class="container mx-auto my-10 px-6 py-6 lg:pt-12 lg:px-32">
+  <div
+    class="
+      container
+      my-28
+      px-16
+      sm:my-32 sm:px-8
+      md:my-32 md:px-16
+      lg:my-40 lg:px-32
+    "
+  >
     <TransitionGroup
       name="bounce"
       tag="div"
-      class="lg:gap-2 lg:grid lg:grid-cols-8"
+      class="
+        grid
+        gap-4
+        sm:gap-8
+        grid-cols-2
+        sm:grid-cols-4
+        md:grid-cols-5
+        lg:grid-cols-6
+        xl:grid-cols-7
+        2xl:grid-cols-8
+      "
     >
-      <div v-for="card in cards" :key="card.id" class="w-full p-1 md:p-4">
+      <div v-for="card in cards" :key="card.id" class="relative pb-3/2">
         <img
           @click="setClick(card.id)"
           :src="card.image"
           :alt="card.name"
-          class="
-            card
-            block
-            object-cover object-center
-            rounded-lg
-            cursor-pointer
-          "
+          class="card absolute object-cover rounded-lg cursor-pointer"
           draggable="false"
           ondragstart="return false"
         />
@@ -58,7 +71,7 @@ export default {
           this.cards = results.map((card) => ({
             id: card.id,
             name: card.name,
-            image: card?.image_uris?.small,
+            image: card?.image_uris?.normal,
           }));
         })
         .catch((error) => {

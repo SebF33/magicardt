@@ -34,15 +34,18 @@
         <el-table-column min-width="36" prop="card_image">
           <template #default="scope">
             <transition name="el-zoom-in-center" appear>
-              <img
-                @click="setClick(scope.row.card_id)"
+              <a
                 class="miniature rounded-sm cursor-pointer"
-                :src="scope.row.card_image"
-                :alt="scope.row.card_name"
-                :title="scope.row.card_title"
-                draggable="false"
-                ondragstart="return false"
-              />
+                @click="setClick(scope.row.card_id)"
+              >
+                <img
+                  :src="scope.row.card_image"
+                  :alt="scope.row.card_name"
+                  :title="scope.row.card_title"
+                  draggable="false"
+                  ondragstart="return false"
+                />
+              </a>
             </transition>
           </template>
         </el-table-column>
@@ -155,7 +158,7 @@ export default {
       this.items = [...this.items, res.data];
     },
 
-    // Export de la liste
+    // 📝 Export de la liste
     openFile(format) {
       var datatable = document.getElementsByClassName("el-table__body");
       datatable[0].setAttribute("id", "datatable");
@@ -237,15 +240,18 @@ export default {
   font-size: 16px;
   font-weight: bold;
 }
+
 .export-btn,
 .el-button:focus,
 .el-button:hover {
   color: black;
 }
+
 .glass-btn {
   right: 130px;
   transition: 0.3s ease-in-out;
 }
+
 .glass-btn:hover {
   transform: scale(0.92);
 }
@@ -256,15 +262,23 @@ export default {
   font-family: "Oswald";
   box-shadow: 0 0 3px 3px var(--darker-primary-color);
 }
+
 .el-table .miniature {
+  display: block;
   margin-bottom: 6px;
   -webkit-filter: drop-shadow(2px 2px 2px #222);
   filter: drop-shadow(2px 2px 2px #222);
   transition: all 0.16s ease-in-out;
 }
+
 .el-table .miniature:hover {
-  transform: scale(0.88);
+  transform: scale(0.9);
 }
+
+.el-table .miniature img {
+  display: block;
+}
+
 li {
   font-size: 1.5rem;
   list-style: none;
@@ -274,9 +288,11 @@ li {
 .slide-fade-enter-active {
   transition: all 0.6s ease-out;
 }
+
 .slide-fade-leave-active {
   transition: all 1s cubic-bezier(1, 0.5, 0.8, 1);
 }
+
 .slide-fade-enter-from,
 .slide-fade-leave-to {
   transform: translateX(20px);
