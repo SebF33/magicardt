@@ -226,8 +226,9 @@ export default {
     createPdf() {
       var title = this.cardDatas.name + "_" + this.setDatas.code;
       var iconImage = this.icon;
-      var artImage = this.cardDatas.image_uris.art_crop;
+      var artImageUrl = this.cardDatas.image_uris.art_crop;
       var dom = document.getElementById("card");
+      var cardImageUrl = this.cardDatas.image_uris.png;
       html2canvas(dom, {
         allowTaint: true,
         useCORS: true,
@@ -248,15 +249,20 @@ export default {
         var pdfHeight = ((contentHeight + 200) / 2) * 0.75;
         var imgWidth = pdfWidth;
         var imgHeight = (contentHeight / 2) * 0.75;
-        var pageData = canvas.toDataURL("image/jpeg", 1.0);
         var pdf = new jsPDF("", "pt", [pdfWidth, pdfHeight]);
+        var pageData = canvas.toDataURL("image/jpeg", 1.0);
         var pageIcon = new Image();
         var pageArt = new Image();
+        var pageCard = new Image();
         pageIcon.src = iconImage;
-        pageArt.src = artImage;
+        pageArt.crossOrigin = "Anonymous";
+        pageArt.src = artImageUrl + "?not-from-cache-please";
+        pageCard.crossOrigin = "Anonymous";
+        pageCard.src = cardImageUrl + "?not-from-cache-please";
         pdf.addImage(pageIcon, "png", 192, 10, 96, 96);
         pdf.addImage(pageArt, "jpeg", 82, 130, 313, 228.5);
         pdf.addImage(pageData, "jpeg", 0, 400, imgWidth, imgHeight);
+        pdf.addImage(pageCard, "jpeg", 14, 413, 156.1, 217.91);
         pdf.save(title + ".pdf");
       });
     },
