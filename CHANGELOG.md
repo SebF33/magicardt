@@ -6,6 +6,11 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 
 **Auteur : Sébastien Flouriot (SebF33)**
 
+## [2022-12-17]
+
+### Nouveautés
+- Ajout d'une bannière d'infos dans la galerie.
+
 ## [2022-07-27]
 
 ### Nouveautés
