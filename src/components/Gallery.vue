@@ -1,18 +1,19 @@
 <template>
-  <div
-    class="
-      container
-      my-28
-      px-16
-      sm:my-32 sm:px-8
-      md:my-32 md:px-16
-      lg:my-40 lg:px-32
-    "
-  >
-    <TransitionGroup
-      name="bounce"
-      tag="div"
-      class="
+  <div class="container my-8 px-16 sm:px-8 md:px-16 lg:px-18">
+    <transition name="el-zoom-in-center" appear>
+      <v-banner class="mt-14 mb-4" elevation="10" rounded>
+        <img class="mr-6" :src="this.setDatas.icon_svg_uri" width="50" :alt="this.setDatas.name" draggable="false"
+          ondragstart="return false" />
+        <v-banner-text>
+          <span class="text-xl font-bold">{{ this.setDatas.name }}</span>
+          <br />
+          <span class="text-xs font-oswald">Date de sortie : {{ this.setDatas.released_at }}</span>
+          <br />
+          <span class="text-xs font-oswald">Nombre de cartes : {{ this.setDatas.card_count }}</span>
+        </v-banner-text>
+      </v-banner>
+    </transition>
+    <TransitionGroup name="bounce" tag="div" class="
         grid
         gap-4
         sm:gap-8
@@ -22,17 +23,10 @@
         lg:grid-cols-6
         xl:grid-cols-7
         2xl:grid-cols-8
-      "
-    >
+      ">
       <div v-for="card in cards" :key="card.id" class="relative pb-3/2">
-        <img
-          @click="setClick(card.id)"
-          :src="card.image"
-          :alt="card.name"
-          class="card absolute object-cover rounded-lg cursor-pointer"
-          draggable="false"
-          ondragstart="return false"
-        />
+        <img @click="setClick(card.id)" :src="card.image" :alt="card.name"
+          class="card absolute object-cover rounded-lg cursor-pointer" draggable="false" ondragstart="return false" />
       </div>
     </TransitionGroup>
   </div>
@@ -92,24 +86,33 @@ export default {
     rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
   transition: all 0.2s ease-in-out;
 }
+
 .card:hover {
   transform: scale(0.92);
+}
+
+.v-banner {
+  background-color: var(--lighter-primary-color);
 }
 
 /* Bounce animations */
 .bounce-enter-active {
   animation: bounce-in 0.6s;
 }
+
 .bounce-leave-active {
   animation: bounce-in 0.6s reverse;
 }
+
 @keyframes bounce-in {
   0% {
     transform: scale(0);
   }
+
   50% {
     transform: scale(1.08);
   }
+
   100% {
     transform: scale(1);
   }
