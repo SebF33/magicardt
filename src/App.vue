@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main id="main" class="min-w-screen min-h-screen flex items-center">
+    <v-main id="main" class="min-w-screen mt-16 flex items-center">
       <Cart :cardDatas="cardDatas" :setDatas="setDatas" />
 
       <Logo />
