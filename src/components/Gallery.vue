@@ -1,7 +1,7 @@
 <template>
   <div class="container my-8 px-16 sm:px-8 md:px-16 lg:px-18">
     <transition name="el-zoom-in-center" appear>
-      <v-banner class="mt-14 mb-4" elevation="10" rounded>
+      <v-banner class="mt-14 mb-4 z-10" elevation="10" rounded>
         <img class="mr-6" :src="this.setDatas.icon_svg_uri" width="50" :alt="this.setDatas.name" draggable="false"
           ondragstart="return false" />
         <v-banner-text>
@@ -10,6 +10,10 @@
           <span class="text-xs font-oswald">Date de sortie : {{ this.setDatas.released_at }}</span>
           <br />
           <span class="text-xs font-oswald">Nombre de cartes : {{ this.setDatas.card_count }}</span>
+          <br />
+          <v-slider class="mx-6 text-xs font-oswald" v-model="sliderValue" :ticks="tickLabels" :max="6" step="1"
+            show-ticks="always" tick-size="1" hide-details=true thumb-size=12 color="#57523d" thumb-color="#2e1d22"
+            track-color="#dbd9bd"></v-slider>
         </v-banner-text>
       </v-banner>
     </transition>
@@ -24,7 +28,7 @@
         xl:grid-cols-7
         2xl:grid-cols-8
       ">
-      <div v-for="card in cards" :key="card.id" class="relative pb-3/2">
+      <div v-for="card in cards" :key="card.id" :class="slider[sliderValue]" class="relative transition-all">
         <img @click="setClick(card.id)" :src="card.image" :alt="card.name"
           class="card absolute object-cover rounded-lg cursor-pointer" draggable="false" ondragstart="return false" />
       </div>
@@ -47,6 +51,25 @@ export default {
   data() {
     return {
       cards: [],
+      slider: {
+        0: "pb-0/1",
+        1: "pb-1/4",
+        2: "pb-1/2",
+        3: "pb-3/4",
+        4: "pb-1/1",
+        5: "pb-5/4",
+        6: "pb-3/2",
+      },
+      sliderValue: 6,
+      tickLabels: {
+        0: "0%",
+        1: "25%",
+        2: "50%",
+        3: "75%",
+        4: "100%",
+        5: "125%",
+        6: "150%",
+      },
     };
   },
 
@@ -91,6 +114,7 @@ export default {
   transform: scale(0.92);
 }
 
+/* Vuetify components */
 .v-banner {
   background-color: var(--lighter-primary-color);
 }

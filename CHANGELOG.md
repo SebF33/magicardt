@@ -6,6 +6,11 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 
 **Auteur : Sébastien Flouriot (SebF33)**
 
+## [2022-12-27]
+
+### Nouveautés
+- Ajout d'une glissière de réglage de l'espacement entre les cartes dans la bannière d'infos.
+
 ## [2022-12-17]
 
 ### Nouveautés
