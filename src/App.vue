@@ -1,5 +1,7 @@
 <template>
   <v-app>
+    <Tabs :setDatas="setDatas" :setsList="setsList" />
+
     <v-main id="main" class="min-w-screen mt-16 flex items-center">
       <Cart :cardDatas="cardDatas" :setDatas="setDatas" />
 
@@ -94,6 +96,8 @@
         <component
           :is="currentComponent"
           :cardDatas="cardDatas"
+          :key="componentKey"
+          :setCode="setCode"
           :setDatas="setDatas"
         />
       </div>
@@ -111,11 +115,12 @@ import Card from "./components/Card.vue";
 import Cart from "./components/Cart.vue";
 import Gallery from "./components/Gallery.vue";
 import Logo from "./components/Logo.vue";
+import Tabs from "./components/Tabs.vue";
 import TextInput from "./components/TextInput.vue";
 
 const apiURL = "https://api.scryfall.com";
 
-const initialState = () => {
+const initialCardState = () => {
   return {
     cardDatas: {
       artist: "",
@@ -135,9 +140,16 @@ const initialState = () => {
       type_line: "",
     },
     setDatas: {
+      code: "",
       icon_svg_uri: "",
       name: "",
     },
+  };
+};
+
+const initialGalleryState = () => {
+  return {
+    setCode: "",
   };
 };
 
@@ -150,6 +162,7 @@ export default {
     Gallery,
     Logo,
     Form,
+    Tabs,
     TextInput,
   },
 
@@ -172,8 +185,11 @@ export default {
         toughness: "",
         type_line: "",
       },
+      componentKey: 0,
       currentComponent: "Card",
+      setCode: "",
       setDatas: {
+        code: "",
         icon_svg_uri: "",
         name: "",
       },
@@ -182,9 +198,19 @@ export default {
   },
 
   methods: {
+    // Réinitialiser le composant "carte" ou "galerie"
+    forceRerender() {
+      this.componentKey += 1;
+    },
+
     // Réinitialiser les données de la carte
-    reset() {
-      Object.assign(this.$data, initialState());
+    resetCard() {
+      Object.assign(this.$data, initialCardState());
+    },
+
+    // Réinitialiser les données de la galerie
+    resetGallery() {
+      Object.assign(this.$data, initialGalleryState());
     },
 
     // Afficher la carte qui provient de la galerie
@@ -210,17 +236,32 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+
+      this.currentComponent = "Card";
     },
 
     // Afficher la galerie
-    showGallery() {
+    showGallery(code) {
       this.selectedCardName = "";
+
+      this.setCode = code;
+
+      axios
+        .get(`${apiURL}/sets/${this.setCode}`)
+        .then((response) => {
+          this.setDatas = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
       this.currentComponent = "Gallery";
     },
 
     // Récupérer les données de la carte à la soumission du formulaire
     submitForm() {
-      this.currentComponent = "Card";
+      this.resetCard();
+
       let code = this.setTerm;
       let name =
         this.selectedCardName === "" ? this.searchTerm : this.selectedCardName;
@@ -266,26 +307,29 @@ export default {
           this.setDatas.icon_svg_uri = "";
           this.setDatas.name = "";
         });
+
+      this.currentComponent = "Card";
     },
   },
 
+  // Évènements
   mounted() {
-    this.emitter.on("showCardFromGalleryEvent", (id) => {
-      this.reset();
-      setTimeout(() => {
-        this.currentComponent = "Card";
-        this.showCard(id);
-      }, 500);
-    });
     this.emitter.on("showCardFromCartEvent", (id) => {
       setTimeout(() => {
-        this.currentComponent = "Card";
         this.showCard(id);
       }, 300);
     });
-    this.emitter.on("showGalleryEvent", () => {
+    this.emitter.on("showCardFromGalleryEvent", (id) => {
       setTimeout(() => {
-        this.showGallery();
+        this.resetCard();
+        this.showCard(id);
+      }, 500);
+    });
+    this.emitter.on("showGalleryEvent", (code) => {
+      setTimeout(() => {
+        this.resetGallery();
+        this.showGallery(code);
+        this.forceRerender();
       }, 100);
     });
   },

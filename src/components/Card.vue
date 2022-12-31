@@ -45,7 +45,7 @@
         <transition name="el-fade-in-linear" appear>
           <a
             v-if="setDatas.icon_svg_uri"
-            @click="setClick"
+            @click="setClick(setDatas.code)"
             class="set-symbol cursor-pointer"
           >
             <img
@@ -165,6 +165,7 @@ export default {
 
   props: {
     cardDatas: Object,
+    setCode: String,
     setDatas: Object,
   },
 
@@ -272,8 +273,8 @@ export default {
       this.cardback = new URL(`../assets/cardback.webp`, import.meta.url).href;
     },
 
-    setClick() {
-      this.emitter.emit("showGalleryEvent");
+    setClick(code) {
+      this.emitter.emit("showGalleryEvent", code);
     },
 
     // 🔍 Zoom sur la carte
