@@ -1,5 +1,5 @@
 <template>
-  <div class="mobileToWork absolute top-0 right-10">
+  <div class="mobileToWork absolute top-16 right-10">
     <transition name="slide-fade" appear>
       <img
         class="absolute left-0 z-10"
@@ -12,7 +12,7 @@
       />
     </transition>
     <a
-      class="glass-btn absolute z-10"
+      class="glass-btn cursor-pointer absolute z-10"
       @click="show = !show"
       style="width: 32.2955px"
       draggable="false"
@@ -85,20 +85,20 @@
         </el-table-column>
       </el-table>
     </transition>
+    <transition name="el-fade-in-linear" appear>
+      <a
+        class="mobileToWork el-button export-btn absolute top-6 right-2"
+        v-show="show"
+        download="Magicardt.xls"
+        href="#"
+        id="anchorNewApi-xls"
+        @click="openFile('xls')"
+        draggable="false"
+        ondragstart="return false"
+        >Export
+      </a>
+    </transition>
   </div>
-  <transition name="el-fade-in-linear" appear>
-    <a
-      class="mobileToWork el-button export-btn absolute top-6 right-12"
-      v-show="show"
-      download="Magicardt.xls"
-      href="#"
-      id="anchorNewApi-xls"
-      @click="openFile('xls')"
-      draggable="false"
-      ondragstart="return false"
-      >Export</a
-    >
-  </transition>
 </template>
 
 <script>

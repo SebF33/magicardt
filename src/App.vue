@@ -1,11 +1,11 @@
 <template>
   <v-app>
-    <Tabs :setDatas="setDatas" :setsList="setsList" />
+    <Tabs />
 
-    <v-main id="main" class="min-w-screen mt-16 flex items-center">
+    <Logo class="mt-8" />
+
+    <v-main id="main" class="min-w-screen flex items-center">
       <Cart :cardDatas="cardDatas" :setDatas="setDatas" />
-
-      <Logo />
 
       <div class="inline-block container mx-auto">
         <div
