@@ -1,41 +1,41 @@
 <template>
   <div class="container my-8 px-16 sm:px-8 md:px-16 lg:px-18">
     <transition name="el-zoom-in-center" appear>
-      <v-banner class="mt-14 mb-4 z-10" elevation="10" rounded>
-        <img
-          class="mr-6"
-          :src="this.setDatas.icon_svg_uri"
-          width="50"
-          :alt="this.setDatas.name"
-          draggable="false"
-          ondragstart="return false"
-        />
+      <v-banner class="mt-16 mb-10 z-10" elevation="10" rounded>
         <v-banner-text>
-          <span class="text-xl font-bold">{{ this.setDatas.name }}</span>
-          <br />
-          <span class="text-xs font-oswald"
-            >Date de sortie : {{ this.setDatas.released_at }}</span
-          >
-          <br />
-          <span class="text-xs font-oswald"
-            >Nombre de cartes : {{ this.setDatas.card_count }}</span
-          >
-          <br />
-          <v-slider
-            class="mx-6 text-xs font-oswald"
-            v-model="sliderValue"
-            :ticks="tickLabels"
-            :max="6"
-            step="1"
-            show-ticks="always"
-            tick-size="1"
-            hide-details="true"
-            thumb-size="12"
-            color="#57523d"
-            thumb-color="#2e1d22"
-            track-color="#dbd9bd"
-          ></v-slider>
+          <div class="flex">
+            <img
+              class="mr-6"
+              :src="this.setDatas.icon_svg_uri"
+              width="60"
+              :alt="this.setDatas.name"
+              draggable="false"
+              ondragstart="return false"
+            />
+            <p class="text-xl font-bold">{{ this.setDatas.name }}</p>
+          </div>
+          <p class="mt-1 text-xs font-oswald">
+            Date de sortie : {{ this.setDatas.released_at }}
+          </p>
+          <p class="text-xs font-oswald">
+            Nombre de cartes : {{ this.setDatas.card_count }}
+          </p>
         </v-banner-text>
+        <v-slider
+          class="text-xs font-oswald"
+          v-model="sliderValue"
+          :ticks="tickLabels"
+          :max="6"
+          step="1"
+          show-ticks="always"
+          tick-size="1"
+          hide-details="true"
+          thumb-size="12"
+          color="#57523d"
+          thumb-color="#2e1d22"
+          track-color="#dbd9bd"
+        >
+        </v-slider>
       </v-banner>
     </transition>
     <TransitionGroup
@@ -97,7 +97,7 @@ export default {
         5: "pb-5/4",
         6: "pb-3/2",
       },
-      sliderValue: 6,
+      sliderValue: 2,
       tickLabels: {
         0: "0%",
         1: "25%",
@@ -158,6 +158,10 @@ export default {
 
 .v-banner-text {
   width: 100%;
+}
+
+.v-slider {
+  max-width: 360px;
 }
 
 /* Bounce animations */
