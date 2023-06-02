@@ -1,26 +1,32 @@
 <template>
-  <v-sheet elevation="14">
-    <v-tabs
-      bg-color="primary-color"
-      slider-color="primary-color"
-      center-active
-      show-arrows="always"
-      next-icon="mdi-arrow-right-bold-box-outline"
-      prev-icon="mdi-arrow-left-bold-box-outline"
-    >
-      <v-tab v-for="item in setsList" @click="setClick(item.code)" :key="item">
-        <img
-          :src="item.icon_svg_uri"
-          class="icon-svg"
-          width="26"
-          :alt="item.name"
-          :title="item.name"
-          draggable="false"
-          ondragstart="return false"
-        />
-      </v-tab>
-    </v-tabs>
-  </v-sheet>
+  <transition name="el-zoom-in-center" appear>
+    <v-sheet elevation="14">
+      <v-tabs
+        bg-color="primary-color"
+        slider-color="primary-color"
+        center-active
+        show-arrows="always"
+        next-icon="mdi-arrow-right-bold-box-outline"
+        prev-icon="mdi-arrow-left-bold-box-outline"
+      >
+        <v-tab
+          v-for="item in setsList"
+          @click="setClick(item.code)"
+          :key="item"
+        >
+          <img
+            :src="item.icon_svg_uri"
+            class="icon-svg"
+            width="26"
+            :alt="item.name"
+            :title="item.name"
+            draggable="false"
+            ondragstart="return false"
+          />
+        </v-tab>
+      </v-tabs>
+    </v-sheet>
+  </transition>
 </template>
 
 <script>
@@ -46,8 +52,7 @@ export default {
         setsList.value = res.data.data
           .filter(function (item) {
             return (
-              item.released_at.startsWith("202") &&
-              item.set_type !== "treasure_chest"
+              item.set_type === "commander" || item.set_type === "expansion"
             );
           })
           .map((item) => {
