@@ -143,7 +143,9 @@ export default {
     async addItem() {
       const res = await axios.post(serverURL, {
         card_id: this.cardDatas.id,
-        card_image: this.cardDatas.image_uris.small,
+        card_image:
+          this.cardDatas?.image_uris?.small ??
+          this.cardDatas.card_faces[0].image_uris.small,
         card_name: this.cardDatas.name,
         card_price:
           this.cardDatas.prices.eur === null

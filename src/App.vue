@@ -11,7 +11,10 @@
         <div
           class="bg-container"
           :style="{
-            backgroundImage: `url(${cardDatas.image_uris.border_crop})`,
+            backgroundImage: `url(${
+              cardDatas?.image_uris?.border_crop ??
+              cardDatas.card_faces[0].image_uris.border_crop
+            })`,
           }"
         ></div>
 
@@ -35,18 +38,7 @@
           <v-slide-y-transition>
             <ul
               v-if="searchCardNames.length"
-              class="
-                autocompletion
-                w-96
-                rounded
-                bg-light-color
-                border
-                px-3
-                py-3
-                space-y-1
-                absolute
-                z-20
-              "
+              class="autocompletion w-96 rounded bg-light-color border px-3 py-3 space-y-1 absolute z-20"
             >
               <li class="px-1 pt-1 pb-2 font-bold border-b border-gray-200">
                 Affichage de {{ searchCardNames.length }} résultat(s) sur
@@ -124,6 +116,7 @@ const initialCardState = () => {
   return {
     cardDatas: {
       artist: "",
+      card_faces: { 0: { image_uris: { png: "", border_crop: "" } } },
       colors: "",
       flavor_text: "",
       id: "",
@@ -170,6 +163,7 @@ export default {
     return {
       cardDatas: {
         artist: "",
+        card_faces: { 0: { image_uris: { png: "", border_crop: "" } } },
         colors: "",
         flavor_text: "",
         id: "",
@@ -562,8 +556,7 @@ export default {
     const validationSchema = toFormValidator(
       zod.object({
         name: zod
-          .string()
-          .nonempty("Ce champ est requis...")
+          .string("Ce champ est requis...")
           .min(2, { message: "Saisissez 2 caractères minimum..." }),
       })
     );

@@ -41,17 +41,7 @@
     <TransitionGroup
       name="bounce"
       tag="div"
-      class="
-        grid
-        gap-4
-        sm:gap-8
-        grid-cols-2
-        sm:grid-cols-4
-        md:grid-cols-5
-        lg:grid-cols-6
-        xl:grid-cols-7
-        2xl:grid-cols-8
-      "
+      class="grid gap-4 sm:gap-8 grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8"
     >
       <div
         v-for="card in cards"
@@ -118,14 +108,16 @@ export default {
     cardsDatas() {
       axios
         .get(
-          `${apiURL}/cards/search?include_extras=true&include_variations=true&order=set&q=e%3A${this.setCode}&unique=prints`
+          `${apiURL}/cards/search?unique=cards&order=name&include_extras=true&include_variations=false&q=e%3A${this.setCode}`
         )
         .then((response) => {
-          var results = response.data.data;
+          let results = response.data.data;
+
           this.cards = results.map((card) => ({
             id: card.id,
             name: card.name,
-            image: card?.image_uris?.normal,
+            image:
+              card?.image_uris?.normal ?? card.card_faces[0].image_uris.normal,
           }));
         })
         .catch((error) => {

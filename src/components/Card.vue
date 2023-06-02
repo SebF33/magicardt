@@ -20,10 +20,10 @@
           <img
             id="my-card"
             v-show="isLoaded"
-            :src="cardDatas.image_uris.png || cardback"
+            :src="(cardDatas?.image_uris?.png ?? cardDatas.card_faces[0].image_uris.png) || cardback"
+            :alt="(cardDatas?.image_uris?.png ?? cardDatas.card_faces[0].image_uris.png) || cardback"
             @load="handleZoom"
             @error="handleZoom"
-            :alt="cardDatas.image_uris.png || cardback"
             class="card-img"
             draggable="false"
             ondragstart="return false"
@@ -89,50 +89,52 @@
             >Loyauté : {{ cardDatas.loyalty }}</span
           >
         </transition>
-        <transition name="el-fade-in-linear" appear>
-          <el-button
-            v-if="cardDatas.id"
-            @click="showMagnifier = !showMagnifier"
-            class="tiny-glass-btn"
-            title="Activer/désactiver la loupe"
-            color="#837c5e"
-            data-html2canvas-ignore="true"
-          >
-            <img
-              :src="tinyGlass"
-              alt="glass"
-              draggable="false"
-              ondragstart="return false"
-            />
-          </el-button>
-        </transition>
-        <transition name="el-fade-in-linear" appear>
-          <el-button
-            v-if="cardDatas.id"
-            @click="addClick"
-            class="add-btn"
-            color="#837c5e"
-            data-html2canvas-ignore="true"
-            >Ajouter</el-button
-          >
-        </transition>
-        <transition name="el-fade-in-linear" appear>
-          <el-button
-            v-if="cardDatas.id"
-            @click="createPdf"
-            class="pdf-file-btn"
-            title="Créer un document PDF"
-            color="#837c5e"
-            data-html2canvas-ignore="true"
-          >
-            <img
-              :src="pdfFile"
-              alt="pdf"
-              draggable="false"
-              ondragstart="return false"
-            />
-          </el-button>
-        </transition>
+        <div class="card-buttons">
+          <transition name="el-fade-in-linear" appear>
+            <el-button
+              v-if="cardDatas.id"
+              @click="showMagnifier = !showMagnifier"
+              class="tiny-glass-btn"
+              title="Activer/désactiver la loupe"
+              color="#837c5e"
+              data-html2canvas-ignore="true"
+            >
+              <img
+                :src="tinyGlass"
+                alt="glass"
+                draggable="false"
+                ondragstart="return false"
+              />
+            </el-button>
+          </transition>
+          <transition name="el-fade-in-linear" appear>
+            <el-button
+              v-if="cardDatas.id"
+              @click="addClick"
+              class="add-btn"
+              color="#837c5e"
+              data-html2canvas-ignore="true"
+              >Ajouter
+            </el-button>
+          </transition>
+          <transition name="el-fade-in-linear" appear>
+            <el-button
+              v-if="cardDatas.id"
+              @click="createPdf"
+              class="pdf-file-btn"
+              title="Créer un document PDF"
+              color="#837c5e"
+              data-html2canvas-ignore="true"
+            >
+              <img
+                :src="pdfFile"
+                alt="pdf"
+                draggable="false"
+                ondragstart="return false"
+              />
+            </el-button>
+          </transition>
+        </div>
       </div>
     </template>
     <template v-slot:preloader>
@@ -188,32 +190,53 @@ export default {
   computed: {
     // 🏳‍🌈 Création du bandeau de couleur(s)
     createGradientString() {
-      let data = this.cardDatas.colors;
+      const data = this.cardDatas.colors;
+      let gradientString = "";
+
       if (data !== "") {
-        let cardColors = data
-          .map((w) => (w === "W" ? "#f3f2f9" : w))
-          .map((u) => (u === "U" ? "#246bc6" : u))
-          .map((b) => (b === "B" ? "#3b3b3f" : b))
-          .map((r) => (r === "R" ? "#ce372d" : r))
-          .map((g) => (g === "G" ? "#006744" : g));
-        let percentage = Math.round(100 / cardColors.length);
+        const cardColors = data.reduce((colors, color) => {
+          switch (color) {
+            case "W":
+              colors.push("#f3f2f9");
+              break;
+            case "U":
+              colors.push("#246bc6");
+              break;
+            case "B":
+              colors.push("#3b3b3f");
+              break;
+            case "R":
+              colors.push("#ce372d");
+              break;
+            case "G":
+              colors.push("#006744");
+              break;
+            default:
+              colors.push(color);
+          }
+          return colors;
+        }, []);
+
+        const percentage = Math.round(100 / cardColors.length);
         let gradientColors = [];
+
         if (data.length === 1) {
-          var gradientString = `background-color: ${cardColors}`;
+          gradientString = `background-color: ${cardColors[0]}`;
         } else {
           for (let i = 0; i < cardColors.length; ++i) {
             gradientColors[i] =
               cardColors[i] + " " + (percentage * i + percentage) + "%";
-            if (i + 1 == cardColors.length) {
+            if (i + 1 === cardColors.length) {
               gradientColors[i] =
                 cardColors[i] + " " + (percentage * i + 20) + "%";
             }
           }
-          var gradientString = `background-image: linear-gradient(${gradientColors})`;
+          gradientString = `background-image: linear-gradient(${gradientColors})`;
         }
       } else {
-        var gradientString = `background-color: transparent`;
+        gradientString = `background-color: transparent`;
       }
+
       return gradientString;
     },
   },
@@ -479,27 +502,20 @@ export default {
 }
 
 /* Boutons */
-#card .add-btn,
-#card .pdf-file-btn,
-#card .tiny-glass-btn {
+#card .card-buttons {
   position: absolute;
   bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 #card .add-btn {
-  left: 50%;
-  transform: translateX(-50%);
   color: black;
   font-weight: bold;
 }
 
-#card .pdf-file-btn {
-  right: 246px;
-  padding: 4px 6px;
-}
-
+#card .pdf-file-btn,
 #card .tiny-glass-btn {
-  left: 270px;
   padding: 4px 6px;
 }
 
