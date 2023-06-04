@@ -31,7 +31,7 @@
             name="name"
             type="text"
             label="Nom de la carte :"
-            placeholder="Exemple : The Wanderer"
+            :placeholder="placeholder"
             success-message="Bonne recherche !"
           />
 
@@ -181,6 +181,7 @@ export default {
       },
       componentKey: 0,
       currentComponent: "Card",
+      placeholder: "",
       setCode: "",
       setDatas: {
         code: "",
@@ -191,10 +192,21 @@ export default {
     };
   },
 
+  created: function () {
+    this.randomPlaceholder();
+  },
+
   methods: {
     // Réinitialiser le composant "carte" ou "galerie"
     forceRerender() {
       this.componentKey += 1;
+    },
+
+    // Placeholder
+    randomPlaceholder() {
+      const list = ["Lotus", "Mox", "The Wanderer", "Urza"];
+      const randomIndex = Math.floor(Math.random() * list.length);
+      this.placeholder = "Exemple : " + list[randomIndex];
     },
 
     // Réinitialiser les données de la carte
