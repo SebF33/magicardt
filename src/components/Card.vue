@@ -248,11 +248,12 @@ export default {
 
     // 📜 Création d'un document PDF de la carte
     createPdf() {
-      var title = this.cardDatas.name + "_" + this.setDatas.code;
-      var iconImage = this.icon;
-      var artImageUrl = this.cardDatas.image_uris.art_crop;
-      var dom = document.getElementById("card");
-      var cardImageUrl = this.cardDatas.image_uris.png;
+      let title = this.cardDatas.name + "_" + this.setDatas.code;
+      let iconImage = this.icon;
+      let artImageUrl = this.cardDatas.image_uris.art_crop;
+      let dom = document.getElementById("card");
+      let cardImageUrl = this.cardDatas.image_uris.png;
+
       html2canvas(dom, {
         allowTaint: true,
         useCORS: true,
@@ -261,33 +262,45 @@ export default {
         height: 600,
         width: 1000,
         scale: 1.8,
+        backgroundColor: "#fcf8e8",
         onclone: function (clonedDoc) {
           clonedDoc.getElementById("card").style.backgroundImage = "none";
           clonedDoc.getElementById("card").style.boxShadow = "none";
         },
-        backgroundColor: "#fcf8e8",
       }).then(function (canvas) {
-        var contentWidth = canvas.width;
-        var contentHeight = canvas.height;
-        var pdfWidth = ((contentWidth + 10) / 2) * 0.75;
-        var pdfHeight = ((contentHeight + 200) / 2) * 0.75;
-        var imgWidth = pdfWidth;
-        var imgHeight = (contentHeight / 2) * 0.75;
-        var pdf = new jsPDF("", "pt", [pdfWidth, pdfHeight]);
-        var pageData = canvas.toDataURL("image/jpeg", 1.0);
-        var pageIcon = new Image();
-        var pageArt = new Image();
-        var pageCard = new Image();
-        pageIcon.src = iconImage;
+        let contentWidth = canvas.width;
+        let contentHeight = canvas.height;
+        let pdfWidth = ((contentWidth + 10) / 2) * 0.75;
+        let pdfHeight = ((contentHeight + 200) / 2) * 0.75;
+        let imgWidth = pdfWidth;
+        let imgHeight = (contentHeight / 2) * 0.75;
+        let pdf = new jsPDF("", "pt", [pdfWidth, pdfHeight]);
+        let pageData = canvas.toDataURL("image/jpeg", 1.0);
+        let pageArt = new Image();
+        let pageCard = new Image();
+        let pageIcon = new Image();
+
         pageArt.crossOrigin = "Anonymous";
         pageArt.src = artImageUrl + "?not-from-cache-please";
         pageCard.crossOrigin = "Anonymous";
         pageCard.src = cardImageUrl + "?not-from-cache-please";
-        pdf.addImage(pageIcon, "png", 192, 10, 96, 96);
-        pdf.addImage(pageArt, "jpeg", 82, 130, 313, 228.5);
-        pdf.addImage(pageData, "jpeg", 0, 400, imgWidth, imgHeight);
-        pdf.addImage(pageCard, "jpeg", 14, 413, 156.1, 217.91);
-        pdf.save(title + ".pdf");
+        pageIcon.src = iconImage;
+
+        pdf.setFillColor(252, 248, 232);
+        pdf.rect(0, 0, pdfWidth, pdfHeight, "F");
+        
+        pageArt.onload = function()
+        {
+          let artHeight = pageArt.naturalHeight * 0.52;
+          let artWidth = pageArt.naturalWidth * 0.52;
+          
+          pdf.addImage(pageIcon, "png", 192, 10, 96, 96);
+          pdf.addImage(pageArt, "jpeg", ((pdf.internal.pageSize.getWidth() - artWidth) / 2), 135, artWidth, artHeight);
+          pdf.addImage(pageData, "jpeg", 0, 400, imgWidth, imgHeight);
+          pdf.addImage(pageCard, "jpeg", 14, 413, 156.1, 217.91);
+          
+          pdf.save(title + ".pdf");
+        }
       });
     },
 
