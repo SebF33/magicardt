@@ -121,17 +121,20 @@
             <el-button
               v-if="cardDatas.id"
               @click="createPdf"
+              :disabled="pdfGenerating"
               class="pdf-file-btn"
               title="Créer un document PDF"
               color="#837c5e"
               data-html2canvas-ignore="true"
             >
               <img
+                v-if="!pdfGenerating"
                 :src="pdfFile"
                 alt="pdf"
                 draggable="false"
                 ondragstart="return false"
               />
+              <TinySpinner v-else :animation-duration="2000" :size="24" />
             </el-button>
           </transition>
         </div>
@@ -155,6 +158,7 @@ import { jsPDF } from "jspdf";
 import pdfFile from "../assets/pdf-file.png";
 import Spinner from "./Spinner.vue";
 import tinyGlass from "../assets/tiny-glass.png";
+import TinySpinner from "./TinySpinner.vue";
 import VueLoadImage from "vue-load-image";
 
 export default {
@@ -162,6 +166,7 @@ export default {
 
   components: {
     Spinner,
+    TinySpinner,
     "vue-load-image": VueLoadImage,
   },
 
@@ -178,6 +183,7 @@ export default {
       icon,
       isLoaded: false,
       pdfFile,
+      pdfGenerating: false,
       showMagnifier: false,
       tinyGlass,
     };
@@ -248,6 +254,9 @@ export default {
 
     // 📜 Création d'un document PDF de la carte
     createPdf() {
+
+      this.pdfGenerating = true;
+
       let title = this.cardDatas.name + "_" + this.setDatas.code;
       let iconImage = this.icon;
       let artImageUrl = this.cardDatas.image_uris.art_crop;
@@ -302,6 +311,12 @@ export default {
           pdf.save(title + ".pdf");
         }
       });
+
+      setTimeout(() => {
+        this.$nextTick(() => {
+          this.pdfGenerating = false;
+        });
+      }, 3000)
     },
 
     // Dos de la carte
