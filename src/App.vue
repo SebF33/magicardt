@@ -599,6 +599,7 @@ html,
 body {
   width: 100%;
   height: 100%;
+  background: var(--background-color);
   overflow: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;

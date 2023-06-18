@@ -11,6 +11,7 @@
   --secondary-color: #2e1d22;
   --tertiary-color: #fcf8e8;
   --light-color: #f8f8f5;
+  --background-color: #fffcf0;
   --error-color: #e44051;
   --error-bg-color: #fddfe2;
   --success-color: var(--secondary-color);
