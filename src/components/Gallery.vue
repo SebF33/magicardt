@@ -31,11 +31,19 @@
           tick-size="1"
           hide-details="true"
           thumb-size="12"
-          color="#57523d"
-          thumb-color="#2e1d22"
-          track-color="#dbd9bd"
+          color="darkerPrimary"
+          thumb-color="secondary"
+          track-color="lightestPrimary"
         >
         </v-slider>
+        <v-pagination
+          v-if="currentPage > 1 || hasMoreCards"
+          v-model="currentPage"
+          :color="primary"
+          :length="totalPages"
+          :total-visible="5"
+        >
+        </v-pagination>
       </v-banner>
     </transition>
     <TransitionGroup
@@ -78,6 +86,8 @@ export default {
   data() {
     return {
       cards: [],
+      currentPage: 1,
+      hasMoreCards: false,
       slider: {
         0: "pb-0/1",
         1: "pb-1/4",
@@ -97,21 +107,28 @@ export default {
         5: "125%",
         6: "150%",
       },
+      totalPages: 1,
     };
   },
 
-  beforeMount() {
-    this.cardsDatas();
-  },
-
   methods: {
-    cardsDatas() {
+    fetchCardsData() {
+      const url = `${apiURL}/cards/search`;
+
       axios
-        .get(
-          `${apiURL}/cards/search?unique=cards&order=name&include_extras=true&include_variations=false&q=e%3A${this.setCode}`
-        )
+        .get(url, {
+          params: {
+            unique: "cards",
+            order: "name",
+            include_extras: true,
+            include_variations: false,
+            q: `e:${this.setCode}`,
+            page: this.currentPage,
+          },
+        })
         .then((response) => {
           let results = response.data.data;
+          let totalCards = response.data.total_cards;
 
           this.cards = results.map((card) => ({
             id: card.id,
@@ -119,6 +136,10 @@ export default {
             image:
               card?.image_uris?.normal ?? card.card_faces[0].image_uris.normal,
           }));
+          this.hasMoreCards = response.data.has_more;
+          if (this.hasMoreCards)
+            this.totalPages = Math.ceil(totalCards / results.length);
+          else this.totalPages = this.currentPage;
         })
         .catch((error) => {
           console.log(error);
@@ -127,6 +148,19 @@ export default {
 
     setClick(id) {
       this.emitter.emit("showCardFromGalleryEvent", id);
+    },
+  },
+
+  mounted() {
+    this.fetchCardsData();
+  },
+
+  watch: {
+    currentPage: {
+      handler() {
+        this.fetchCardsData();
+      },
+      immediate: true,
     },
   },
 };
