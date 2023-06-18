@@ -279,6 +279,7 @@ export default {
 
 .el-table .miniature img {
   display: block;
+  will-change: transform;
 }
 
 li {

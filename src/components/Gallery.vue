@@ -5,7 +5,7 @@
         <v-banner-text>
           <div class="flex">
             <img
-              class="mr-6"
+              class="banner-symbol mr-6"
               :src="this.setDatas.icon_svg_uri"
               width="60"
               :alt="this.setDatas.name"
@@ -137,6 +137,7 @@ export default {
   box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
     rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
   transition: all 0.2s ease-in-out;
+  will-change: transform;
 }
 
 .card:hover {
@@ -154,6 +155,10 @@ export default {
 
 .v-slider {
   max-width: 360px;
+}
+
+.banner-symbol {
+  will-change: transform;
 }
 
 /* Bounce animations */

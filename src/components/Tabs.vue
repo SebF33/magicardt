@@ -18,7 +18,6 @@
             :src="item.icon_svg_uri"
             class="icon-svg"
             width="26"
-            :alt="item.name"
             :title="item.name"
             draggable="false"
             ondragstart="return false"
