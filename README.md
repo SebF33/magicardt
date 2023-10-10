@@ -48,13 +48,13 @@ https://github.com/jesperorb/json-server-heroku
 
 ### ![Vite_tiny](/.github/Vite_tiny.png) Vite
 Compiler et "Hot-Reload" pour le développement :
-`yarn run dev`
+`npm run dev`
 
 Compiler et minifier pour la production :
-`yarn run build`
+`npm run build`
 
 Tester l'application pour la production :
-`yarn run preview`
+`npm run preview`
 
 
 ### ![Git_tiny](/.github/Git_tiny.png) Git
