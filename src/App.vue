@@ -667,9 +667,9 @@ form {
 .sets-list {
   width: 260px;
 }
-.sets-list .el-input__inner {
+.sets-list .el-input__wrapper {
   background-color: unset;
-  color: var(--success-color);
+  color: var(--secondary-color);
   box-shadow: unset;
 }
 .el-popper {

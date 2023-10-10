@@ -20,32 +20,35 @@
           <p class="text-xs font-oswald">
             Nombre de cartes : {{ this.setDatas.card_count }}
           </p>
+
+          <v-slider
+            class="text-xs font-oswald"
+            color="darkerPrimary"
+            hide-details="true"
+            :max="6"
+            show-ticks="always"
+            step="1"
+            thumb-color="secondary"
+            thumb-size="12"
+            tick-size="1"
+            :ticks="tickLabels"
+            track-color="lightestPrimary"
+            v-model="sliderValue"
+          >
+          </v-slider>
+
+          <v-pagination
+            v-if="currentPage >= 1 || hasMoreCards"
+            v-model="currentPage"
+            :color="primary"
+            :length="totalPages"
+            :total-visible="5"
+          >
+          </v-pagination>
         </v-banner-text>
-        <v-slider
-          class="text-xs font-oswald"
-          v-model="sliderValue"
-          :ticks="tickLabels"
-          :max="6"
-          step="1"
-          show-ticks="always"
-          tick-size="1"
-          hide-details="true"
-          thumb-size="12"
-          color="darkerPrimary"
-          thumb-color="secondary"
-          track-color="lightestPrimary"
-        >
-        </v-slider>
-        <v-pagination
-          v-if="currentPage > 1 || hasMoreCards"
-          v-model="currentPage"
-          :color="primary"
-          :length="totalPages"
-          :total-visible="5"
-        >
-        </v-pagination>
       </v-banner>
     </transition>
+
     <TransitionGroup
       name="bounce"
       tag="div"
@@ -184,6 +187,7 @@ export default {
 }
 
 .v-banner-text {
+  padding: 0;
   width: 100%;
 }
 
@@ -192,6 +196,7 @@ export default {
 }
 
 .banner-symbol {
+  max-height: 56px;
   will-change: transform;
 }
 
