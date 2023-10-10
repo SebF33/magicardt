@@ -6,8 +6,6 @@ import "./app.css";
 import ElementPlus from "element-plus";
 import fr from "element-plus/es/locale/lang/fr";
 import "element-plus/dist/index.css";
-import { loadFonts } from "./plugins/webfontloader";
-loadFonts();
 
 const emitter = mitt();
 const app = createApp(App);
