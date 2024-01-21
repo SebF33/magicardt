@@ -667,7 +667,7 @@ form {
 .sets-list {
   width: 260px;
 }
-.sets-list .el-input__wrapper {
+.sets-list .el-select__wrapper {
   background-color: unset;
   color: var(--secondary-color);
   box-shadow: unset;
