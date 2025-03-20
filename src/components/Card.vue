@@ -13,8 +13,7 @@
           <transition name="el-fade-in-linear" appear>
             <div
               v-show="showMagnifier"
-              class="card-magnifier-glass"
-              data-html2canvas-ignore="true"
+              class="card-magnifier-glass data-html2canvas-ignore"
             ></div>
           </transition>
           <img
@@ -24,7 +23,7 @@
             :alt="(cardDatas?.image_uris?.png ?? cardDatas.card_faces[0].image_uris.png) || cardback"
             @load="handleZoom"
             @error="handleZoom"
-            class="card-img"
+            class="card-img data-html2canvas-ignore"
             draggable="false"
             ondragstart="return false"
           />
@@ -94,10 +93,9 @@
             <el-button
               v-if="cardDatas.id"
               @click="showMagnifier = !showMagnifier"
-              class="tiny-glass-btn"
+              class="tiny-glass-btn data-html2canvas-ignore"
               title="Activer/désactiver la loupe"
               color="#837c5e"
-              data-html2canvas-ignore="true"
             >
               <img
                 :src="tinyGlass"
@@ -111,9 +109,8 @@
             <el-button
               v-if="cardDatas.id"
               @click="addClick"
-              class="add-btn"
+              class="add-btn data-html2canvas-ignore"
               color="#837c5e"
-              data-html2canvas-ignore="true"
               >Ajouter
             </el-button>
           </transition>
@@ -122,10 +119,9 @@
               v-if="cardDatas.id"
               @click="createPdf"
               :disabled="pdfGenerating"
-              class="pdf-file-btn"
+              class="pdf-file-btn data-html2canvas-ignore"
               title="Créer un document PDF"
               color="#837c5e"
-              data-html2canvas-ignore="true"
             >
               <img
                 v-if="!pdfGenerating"
@@ -151,11 +147,13 @@
   </vue-load-image>
 </template>
 
+
 <script>
 import html2canvas from "html2canvas";
 import icon from "../assets/icon.png";
 import { jsPDF } from "jspdf";
 import pdfFile from "../assets/pdf-file.png";
+import { replaceCardSymbolsWithImg } from "../utils/replaceCardSymbolsWithImg";
 import Spinner from "./Spinner.vue";
 import tinyGlass from "../assets/tiny-glass.png";
 import TinySpinner from "./TinySpinner.vue";
@@ -253,70 +251,103 @@ export default {
     },
 
     // 📜 Création d'un document PDF de la carte
-    createPdf() {
-
+    async createPdf() {
       this.pdfGenerating = true;
 
-      let title = this.cardDatas.name + "_" + this.setDatas.code;
-      let iconImage = this.icon;
-      let artImageUrl = this.cardDatas.image_uris.art_crop;
-      let dom = document.getElementById("card");
-      let cardImageUrl = this.cardDatas.image_uris.png;
+      const artImageUrl = this.cardDatas.image_uris.art_crop + "?not-from-cache-please";
+      const cardImageUrl = this.cardDatas.image_uris.png + "?not-from-cache-please";
+      const iconImage = this.icon;
+      const title = `${this.cardDatas.name}_${this.setDatas.code}`;
 
-      html2canvas(dom, {
+      const dom = document.getElementById("card");
+      const that = this; // pour garder le contexte dans les callbacks
+      
+      // clone provisoire du DOM original..
+      const clonedDom = dom.cloneNode(true);
+      document.body.appendChild(clonedDom);
+      clonedDom.querySelectorAll(".data-html2canvas-ignore").forEach(el => { el.style.visibility = "hidden"; });
+      clonedDom.id = "card-clone";
+      clonedDom.style.position = "fixed";
+      clonedDom.style.left = "-9999px";
+      clonedDom.style.backgroundImage = "none";
+      clonedDom.style.boxShadow = "none";
+      // ..pour le remplacement à la volée des symboles en base64
+      await replaceCardSymbolsWithImg(clonedDom);
+
+      html2canvas(clonedDom, {
         allowTaint: true,
-        useCORS: true,
-        scrollY: 0,
-        scrollX: 0,
-        height: 600,
-        width: 1000,
-        scale: 1.8,
         backgroundColor: "#fcf8e8",
-        onclone: function (clonedDoc) {
-          clonedDoc.getElementById("card").style.backgroundImage = "none";
-          clonedDoc.getElementById("card").style.boxShadow = "none";
-        },
-      }).then(function (canvas) {
-        let contentWidth = canvas.width;
-        let contentHeight = canvas.height;
-        let pdfWidth = ((contentWidth + 10) / 2) * 0.75;
-        let pdfHeight = ((contentHeight + 200) / 2) * 0.75;
-        let imgWidth = pdfWidth;
-        let imgHeight = (contentHeight / 2) * 0.75;
-        let pdf = new jsPDF("", "pt", [pdfWidth, pdfHeight]);
-        let pageData = canvas.toDataURL("image/jpeg", 1.0);
-        let pageArt = new Image();
-        let pageCard = new Image();
-        let pageIcon = new Image();
+        height: 600,
+        scale: 1.8,
+        scrollX: 0,
+        scrollY: 0,
+        useCORS: true,
+        width: 1000
+      }).then(async function (canvas) {
+        clonedDom.remove();
 
+        const contentWidth = canvas.width;
+        const contentHeight = canvas.height;
+        const pdfWidth = ((contentWidth + 10) / 2) * 0.75;
+        const pdfHeight = ((contentHeight + 200) / 2) * 0.75;
+        const imgWidth = pdfWidth;
+        const imgHeight = (contentHeight / 2) * 0.75;
+
+        const pdf = new jsPDF("", "pt", [pdfWidth, pdfHeight]);
+        const pageData = canvas.toDataURL("image/jpeg", 1.0);
+
+        // création des images
+        const pageArt = new Image();
         pageArt.crossOrigin = "Anonymous";
-        pageArt.src = artImageUrl + "?not-from-cache-please";
+        pageArt.src = artImageUrl;
+
+        const pageCard = new Image();
         pageCard.crossOrigin = "Anonymous";
-        pageCard.src = cardImageUrl + "?not-from-cache-please";
+        pageCard.src = cardImageUrl;
+
+        const pageIcon = new Image();
         pageIcon.src = iconImage;
 
-        pdf.setFillColor(252, 248, 232);
-        pdf.rect(0, 0, pdfWidth, pdfHeight, "F");
-        
-        pageArt.onload = function()
-        {
-          let artHeight = pageArt.naturalHeight * 0.52;
-          let artWidth = pageArt.naturalWidth * 0.52;
-          
-          pdf.addImage(pageIcon, "png", 192, 10, 96, 96);
-          pdf.addImage(pageArt, "jpeg", ((pdf.internal.pageSize.getWidth() - artWidth) / 2), 135, artWidth, artHeight);
+        // chargement simultané des 3 images supplémentaires
+        Promise.all([
+          loadImage(pageArt),
+          loadImage(pageCard),
+          loadImage(pageIcon)
+        ]).then(([artImg, cardImg, iconImg]) => {
+          const scale = 0.52;
+          const artHeight = artImg.naturalHeight * scale;
+          const artWidth = artImg.naturalWidth * scale;
+          const centerX = (pdf.internal.pageSize.getWidth() - artWidth) / 2;
+
+          // fond
+          pdf.setFillColor(252, 248, 232);
+          pdf.rect(0, 0, pdfWidth, pdfHeight, "F");
+
+          // ajout de toutes les images dans le PDF
+          pdf.addImage(iconImg, "png", 192, 10, 96, 96);
+          pdf.addImage(artImg, "jpeg", centerX, 135, artWidth, artHeight);
           pdf.addImage(pageData, "jpeg", 0, 400, imgWidth, imgHeight);
-          pdf.addImage(pageCard, "jpeg", 14, 413, 156.1, 217.91);
-          
+          pdf.addImage(cardImg, "jpeg", 14, 413, 156.1, 217.91);
+
           pdf.save(title + ".pdf");
-        }
+        }).catch(error => {
+          console.error("Erreur lors du chargement des images :", error);
+          alert("Une erreur est survenue lors de la génération du PDF.");
+        }).finally(() => {
+          that.pdfGenerating = false;
+        });
+      }).catch(error => {
+        console.error("Erreur lors de la capture du DOM :", error);
+        alert("Impossible de capturer la carte pour le PDF.");
+        that.pdfGenerating = false;
       });
 
-      setTimeout(() => {
-        this.$nextTick(() => {
-          this.pdfGenerating = false;
+      function loadImage(img) {
+        return new Promise((resolve, reject) => {
+          img.onload = () => resolve(img);
+          img.onerror = () => reject(new Error(`Erreur de chargement : ${img.src}`));
         });
-      }, 3000)
+      }
     },
 
     // Dos de la carte
@@ -403,6 +434,7 @@ export default {
 };
 </script>
 
+
 <style>
 #gradient {
   margin: 0 auto;
@@ -414,7 +446,7 @@ export default {
     rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
 
-#card {
+#card, #card-clone {
   position: absolute;
   top: 260px;
   left: 50%;
@@ -434,7 +466,7 @@ export default {
   position: relative;
 }
 
-#card .card-img {
+#card .card-img, #card-clone .card-img {
   float: left;
   margin-top: 20px;
   margin-right: 20px;
@@ -461,7 +493,7 @@ export default {
     inset 0 0 0 0.375em var(--secondary-color);
 }
 
-#card h2 {
+#card h2, #card-clone h2 {
   margin-top: 40px;
   padding: 0;
   color: var(--secondary-color);
@@ -469,18 +501,18 @@ export default {
   font-weight: bold;
 }
 
-#card p {
+#card p, #card-clone p {
   color: var(--darker-primary-color);
   font-size: 13px;
 }
 
-#card .mana-cost {
+#card .mana-cost, #card-clone .mana-cost {
   position: absolute;
   top: 16px;
   right: 25px;
 }
 
-#card .set-symbol {
+#card .set-symbol, #card-clone .set-symbol {
   position: absolute;
   display: block;
   top: 60px;
@@ -489,32 +521,32 @@ export default {
   max-height: 30px;
 }
 
-#card .set-symbol img {
+#card .set-symbol img, #card-clone .set-symbol img {
   display: block;
   transition: all 0.2s ease-in-out;
 }
 
-#card .set-symbol img:hover {
+#card .set-symbol img:hover, #card-clone .set-symbol img:hover {
   transform: scale(1.18);
 }
 
-#card .oracle-text {
+#card .oracle-text, #card-clone .oracle-text {
   margin-top: 20px;
   font-weight: bold;
 }
 
-#card .flavor-separator {
+#card .flavor-separator, #card-clone .flavor-separator {
   margin-top: 14px;
   border-top: 1px solid var(--darker-primary-color);
 }
 
-#card .flavor-text {
+#card .flavor-text, #card-clone .flavor-text {
   margin-top: 4px;
   font-size: 12px;
   font-style: italic;
 }
 
-#card .artist {
+#card .artist, #card-clone .artist {
   position: absolute;
   max-width: 230px;
   bottom: 25px;
@@ -522,7 +554,7 @@ export default {
   font-size: 13px;
 }
 
-#card .power {
+#card .power, #card-clone .power {
   position: absolute;
   bottom: 25px;
   right: 25px;
@@ -530,25 +562,25 @@ export default {
 }
 
 /* Boutons */
-#card .card-buttons {
+#card .card-buttons, #card-clone .card-buttons {
   position: absolute;
   bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
 }
 
-#card .add-btn {
+#card .add-btn, #card-clone .add-btn {
   color: black;
   font-weight: bold;
 }
 
-#card .pdf-file-btn,
-#card .tiny-glass-btn {
+#card .pdf-file-btn, #card-clone .pdf-file-btn,
+#card .tiny-glass-btn, #card-clone .tiny-glass-btn {
   padding: 4px 6px;
 }
 
-#card .pdf-file-btn img,
-#card .tiny-glass-btn img {
+#card .pdf-file-btn img, #card-clone .pdf-file-btn img,
+#card .tiny-glass-btn img, #card-clone .tiny-glass-btn img {
   width: 24px;
 }
 
@@ -565,7 +597,10 @@ export default {
   width: 14px;
   height: 14px;
   -webkit-background-size: 100% 100%;
-  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  background-origin: border-box;
+  background-size: contain;
   background-position: top left;
   -webkit-print-color-adjust: exact;
   color-adjust: exact;
