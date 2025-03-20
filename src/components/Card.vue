@@ -109,7 +109,7 @@
             <el-button
               v-if="cardDatas.id"
               @click="addClick"
-              class="add-btn data-html2canvas-ignore"
+              class="add-btn data-html2canvas-ignore text-lighterPrimary font-bold shadow-inner"
               color="#837c5e"
               >Ajouter
             </el-button>
@@ -125,8 +125,10 @@
             >
               <img
                 v-if="!pdfGenerating"
-                :src="pdfFile"
+                src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4IiBmaWxsPSJub25lIj4KICA8cGF0aCBkPSJNMTAgNkM4LjkgNiA4IDYuOSA4IDhWNDBDOCA0MS4xIDguOSA0MiAxMCA0MkgzOEMzOS4xIDQyIDQwIDQxLjEgNDAgNDBWMTZMMzAgNkgxMFoiIGZpbGw9IiNGRjAwMDAiLz4KICA8cGF0aCBkPSJNMzAgNlYxNkg0MCIgZmlsbD0iI0NDMDAwMCIvPgogIDx0ZXh0IHg9IjI0IiB5PSIzNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3R5bGU9ImZvbnQtZmFtaWx5OkFyaWFsLCBzYW5zLXNlcmlmO2ZvbnQtc2l6ZToxM3B4O2ZvbnQtd2VpZ2h0OmJvbGQ7ZmlsbDp3aGl0ZTsiPlBERjwvdGV4dD4KPC9zdmc+"
                 alt="pdf"
+                width="100%"
+                height="100%"
                 draggable="false"
                 ondragstart="return false"
               />
@@ -149,10 +151,10 @@
 
 
 <script>
+import { createFadedImage } from "../utils/createFadedImage";
 import html2canvas from "html2canvas";
 import icon from "../assets/icon.png";
 import { jsPDF } from "jspdf";
-import pdfFile from "../assets/pdf-file.png";
 import { replaceCardSymbolsWithImg } from "../utils/replaceCardSymbolsWithImg";
 import Spinner from "./Spinner.vue";
 import tinyGlass from "../assets/tiny-glass.png";
@@ -180,7 +182,6 @@ export default {
       delayShow: false,
       icon,
       isLoaded: false,
-      pdfFile,
       pdfGenerating: false,
       showMagnifier: false,
       tinyGlass,
@@ -318,6 +319,7 @@ export default {
           const artHeight = artImg.naturalHeight * scale;
           const artWidth = artImg.naturalWidth * scale;
           const centerX = (pdf.internal.pageSize.getWidth() - artWidth) / 2;
+          const fadedArt = createFadedImage(artImg, artWidth, artHeight, 2, "rgba(252, 248, 232, 1)");
 
           // fond
           pdf.setFillColor(252, 248, 232);
@@ -325,7 +327,7 @@ export default {
 
           // ajout de toutes les images dans le PDF
           pdf.addImage(iconImg, "png", 192, 10, 96, 96);
-          pdf.addImage(artImg, "jpeg", centerX, 135, artWidth, artHeight);
+          pdf.addImage(fadedArt, "png", centerX, 135, artWidth, artHeight);
           pdf.addImage(pageData, "jpeg", 0, 400, imgWidth, imgHeight);
           pdf.addImage(cardImg, "jpeg", 14, 413, 156.1, 217.91);
 
@@ -570,8 +572,8 @@ export default {
 }
 
 #card .add-btn, #card-clone .add-btn {
-  color: black;
-  font-weight: bold;
+  text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000,
+    -1px -1px 0 #000, 2px 0 0 #000, -2px 0 0 #000, 0 2px 0 #000, 0 -2px 0 #000;
 }
 
 #card .pdf-file-btn, #card-clone .pdf-file-btn,
