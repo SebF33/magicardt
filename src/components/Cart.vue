@@ -88,6 +88,7 @@
     <transition name="el-fade-in-linear" appear>
       <a
         class="mobileToWork el-button export-btn absolute top-6 right-2"
+        title="Créer un fichier Excel"
         v-show="show"
         download="Magicardt.xls"
         href="#"
@@ -95,7 +96,15 @@
         @click="openFile('xls')"
         draggable="false"
         ondragstart="return false"
-        >Export
+      >
+        <img
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4IiBmaWxsPSJub25lIj4KICA8cGF0aCBkPSJNMTAgNkM4LjkgNiA4IDYuOSA4IDhWNDBDOCA0MS4xIDguOSA0MiAxMCA0MkgzOEMzOS4xIDQyIDQwIDQxLjEgNDAgNDBWMTZMMzAgNkgxMFoiIGZpbGw9IiMyMTczNDYiLz4KICA8cGF0aCBkPSJNMzAgNlYxNkg0MCIgZmlsbD0iIzE1NTY0MyIvPgogIDx0ZXh0IHg9IjI0IiB5PSIzNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3R5bGU9ImZvbnQtZmFtaWx5OkFyaWFsLCBzYW5zLXNlcmlmO2ZvbnQtc2l6ZToxM3B4O2ZvbnQtd2VpZ2h0OmJvbGQ7ZmlsbDp3aGl0ZTsiPlhMUzwvdGV4dD4KPC9zdmc+"
+          alt="xls"
+          width="100%"
+          height="100%"
+          draggable="false"
+          ondragstart="return false"
+        />
       </a>
     </transition>
   </div>
@@ -241,12 +250,17 @@ export default {
   --el-button-active-border-color: rgb(105, 99, 75);
   font-size: 16px;
   font-weight: bold;
+  padding: 4px 6px;
 }
 
 .export-btn,
 .el-button:focus,
 .el-button:hover {
   color: black;
+}
+
+.export-btn img {
+  width: 24px;
 }
 
 .glass-btn {
