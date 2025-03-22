@@ -110,6 +110,8 @@
   </div>
 </template>
 
+
+
 <script>
 import axios from "axios";
 import { computed, ref } from "vue";
@@ -171,8 +173,38 @@ export default {
 
     // 📝 Export de la liste
     openFile(format) {
-      var datatable = document.getElementsByClassName("el-table__body");
-      datatable[0].setAttribute("id", "datatable");
+      const tableElement = document.querySelector(".el-table__body");
+
+      if (!tableElement) {
+        console.warn("Table introuvable");
+        return;
+      }
+
+      // données de la table
+      const rows = tableElement.querySelectorAll("tr");
+      // en-têtes personnalisés
+      const data = [];
+      data.push(["Liste des cartes Magicardt"]);
+      data.push(["Date :", new Date().toLocaleDateString()]);
+      data.push([]);
+      data.push(["Nom", "Prix (€)"]);
+      // lignes de données
+      for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i].querySelectorAll("td");
+        const row = [];
+        cells.forEach((cell, index) => {
+          if (![0, 2].includes(index)) {
+            // retirer des colonnes
+            const text = cell.innerHTML
+              .replace(/<br\s*\/?>/gi, "\n")
+              .replace(/(<([^>]+)>)/gi, "");
+            row.push(text.trim());
+          }
+        });
+        data.push(row);
+      }
+
+      // export
       return ExcellentExport.convert(
         {
           anchor: "anchorNewApi-" + format,
@@ -184,14 +216,8 @@ export default {
           {
             name: "Magicardt",
             from: {
-              table: "datatable",
+              array: data,
             },
-            fixValue: (value, row, col) => {
-              let v = value.replace(/<br>/gi, "\n");
-              let strippedString = v.replace(/(<([^>]+)>)/gi, "");
-              return strippedString;
-            },
-            removeColumns: [0, 2],
           },
         ]
       );
@@ -238,6 +264,8 @@ export default {
   },
 };
 </script>
+
+
 
 <style scoped>
 /* Boutons */
