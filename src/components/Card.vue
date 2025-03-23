@@ -150,6 +150,7 @@
 </template>
 
 
+
 <script>
 import { createFadedImage } from "../utils/createFadedImage";
 import html2canvas from "html2canvas";
@@ -198,52 +199,70 @@ export default {
       const data = this.cardDatas.colors;
       let gradientString = "";
 
-      if (data !== "") {
+      if (data && data.length > 0) {
         const cardColors = data.reduce((colors, color) => {
           switch (color) {
-            case "W":
-              colors.push("#f3f2f9");
-              break;
-            case "U":
-              colors.push("#246bc6");
-              break;
-            case "B":
-              colors.push("#3b3b3f");
-              break;
-            case "R":
-              colors.push("#ce372d");
-              break;
-            case "G":
-              colors.push("#006744");
-              break;
-            default:
-              colors.push(color);
+            case "W": colors.push("#f3f2f9"); break;
+            case "U": colors.push("#246bc6"); break;
+            case "B": colors.push("#3b3b3f"); break;
+            case "R": colors.push("#ce372d"); break;
+            case "G": colors.push("#006744"); break;
+            default: colors.push(color);
           }
           return colors;
         }, []);
 
-        const percentage = Math.round(100 / cardColors.length);
-        let gradientColors = [];
-
-        if (data.length === 1) {
+        if (cardColors.length === 1) {
           gradientString = `background-color: ${cardColors[0]}`;
         } else {
-          for (let i = 0; i < cardColors.length; ++i) {
-            gradientColors[i] =
-              cardColors[i] + " " + (percentage * i + percentage) + "%";
-            if (i + 1 === cardColors.length) {
-              gradientColors[i] =
-                cardColors[i] + " " + (percentage * i + 20) + "%";
+          const gradientColors = [];
+          const n = cardColors.length;
+          const step = 100 / n;
+          // chevauchement pour fondu    
+          let fadeOverlap;
+          switch (n) {
+            case 2: fadeOverlap = 24; break;
+            case 3: fadeOverlap = 16; break;
+            case 4: fadeOverlap = 10; break;
+            default: fadeOverlap = 8; break;
+          }
+          // conversion hex -> rgba
+          const hexToRGBA = (hex, alpha) => {
+            const bigint = parseInt(hex.slice(1), 16);
+            const r = (bigint >> 16) & 255;
+            const g = (bigint >> 8) & 255;
+            const b = bigint & 255;
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+          };
+
+          for (let i = 0; i < n; i++) {
+            const color = cardColors[i];
+            const from = i * step;
+            const to = (i + 1) * step;
+            // si c’est la première couleur : fade in seulement
+            if (i === 0) {
+              gradientColors.push(`${hexToRGBA(color, 1)} ${from}%`);
+              gradientColors.push(`${hexToRGBA(color, 1)} ${to}%`);
+            } else {
+              const prevColor = cardColors[i - 1];
+              // transition douce entre la précédente et la courante
+              gradientColors.push(`${hexToRGBA(prevColor, 1)} ${from - fadeOverlap / 2}%`);
+              gradientColors.push(`${hexToRGBA(color, 1)} ${from + fadeOverlap / 2}%`);
+            }
+            // dernière couleur : finir à 100%
+            if (i === n - 1) {
+              gradientColors.push(`${hexToRGBA(color, 1)} ${to}%`);
             }
           }
-          gradientString = `background-image: linear-gradient(${gradientColors})`;
+
+          gradientString = `background-image: linear-gradient(to bottom, ${gradientColors.join(', ')})`;
         }
       } else {
         gradientString = `background-color: transparent`;
       }
 
       return gradientString;
-    },
+    }
   },
 
   methods: {
@@ -435,6 +454,7 @@ export default {
   },
 };
 </script>
+
 
 
 <style>
