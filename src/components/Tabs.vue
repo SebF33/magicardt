@@ -11,14 +11,15 @@
       >
         <v-tab
           v-for="item in setsList"
+          :key="item.id"
           @click="setClick(item.code)"
-          :key="item"
         >
           <img
             :src="item.icon_svg_uri"
+            :alt="item.name"
+            :title="item.name"
             class="icon-svg"
             width="26"
-            :title="item.name"
             draggable="false"
             ondragstart="return false"
           />
@@ -27,6 +28,8 @@
     </v-sheet>
   </transition>
 </template>
+
+
 
 <script>
 import axios from "axios";
@@ -47,20 +50,20 @@ export default {
     const setsList = ref([]);
 
     onBeforeMount(async () => {
-      await axios.get(`${apiURL}/sets`).then((res) => {
+      try {
+        const res = await axios.get(`${apiURL}/sets`);
         setsList.value = res.data.data
-          .filter(function (item) {
-            return (
+          .filter(
+            (item) =>
               item.set_type === "commander" || item.set_type === "expansion"
-            );
-          })
-          .map((item) => {
-            return {
-              id: item.id,
-              ...item,
-            };
-          });
-      });
+          )
+          .map((item) => ({
+            id: item.id,
+            ...item,
+          }));
+      } catch (error) {
+        console.error("Erreur lors du chargement des sets :", error);
+      }
     });
 
     return {
@@ -69,6 +72,8 @@ export default {
   },
 };
 </script>
+
+
 
 <style scoped>
 /* Conversion de "secondary-color" pour les sources SVG */
