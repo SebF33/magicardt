@@ -2,7 +2,7 @@
   <v-app>
     <Tabs />
 
-    <Logo class="mt-8" />
+    <Logo />
 
     <v-main id="main" class="min-w-screen flex items-center">
       <Cart :cardDatas="cardDatas" :setDatas="setDatas" />
@@ -96,6 +96,8 @@
     </v-main>
   </v-app>
 </template>
+
+
 
 <script>
 import axios from "axios";
@@ -589,6 +591,8 @@ export default {
   },
 };
 </script>
+
+
 
 <style>
 * {

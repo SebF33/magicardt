@@ -6,6 +6,11 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 
 **Auteur : Sébastien Flouriot (SebF33)**
 
+## [2025-04-01]
+
+### Nouveautés
+- Ajout de filtres pour la liste horizontale des sets.
+
 ## [2023-01-02]
 
 ### Nouveautés
