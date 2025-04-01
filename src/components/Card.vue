@@ -8,7 +8,10 @@
           :style="createGradientString"
         ></div>
       </transition>
-      <div id="card">
+      <div
+        v-if="!isLoading"
+        id="card"
+      >
         <div class="card-magnifier-container">
           <transition name="el-fade-in-linear" appear>
             <div

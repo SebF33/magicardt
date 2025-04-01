@@ -183,6 +183,7 @@ export default {
       },
       componentKey: 0,
       currentComponent: "Card",
+      isLoading: false,
       placeholder: "",
       setCode: "",
       setDatas: {
@@ -221,31 +222,35 @@ export default {
       Object.assign(this.$data, initialGalleryState());
     },
 
-    // Afficher la carte qui provient de la galerie
-    showCard(id) {
-      axios
-        .get(`${apiURL}/cards/${id}`)
-        .then((response) => {
-          this.cardDatas = response.data;
-          this.cardDatas.mana_cost = this.formatSymbols(
-            this.cardDatas.mana_cost
-          );
-          this.cardDatas.oracle_text = this.formatOracleText(
-            this.cardDatas.oracle_text
-          );
-        })
-        .then(async () => {
-          await axios
-            .get(`${apiURL}/sets/${this.cardDatas.set}`)
-            .then((res) => {
-              this.setDatas = res.data;
-            });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    // Afficher la carte
+    async showCard(id) {
+      try {
+        const response = await axios.get(`${apiURL}/cards/${id}`);
 
-      this.currentComponent = "Card";
+        if (response && response.data) {
+          this.cardDatas = response.data;
+          // formater
+          if (this.cardDatas.mana_cost) {
+            this.cardDatas.mana_cost = this.formatSymbols(this.cardDatas.mana_cost);
+          }
+          if (this.cardDatas.oracle_text) {
+            this.cardDatas.oracle_text = this.formatOracleText(this.cardDatas.oracle_text);
+          }
+        } else {
+          throw new Error("Données de la carte non disponibles.");
+        }
+
+        if (this.cardDatas.set) {
+          const setResponse = await axios.get(`${apiURL}/sets/${this.cardDatas.set}`);
+          if (setResponse && setResponse.data) {
+            this.setDatas = setResponse.data;
+          }
+        }
+        
+        this.currentComponent = "Card";
+      } catch (error) {
+        console.error("Erreur lors de l'affichage de la carte :", error);
+      }
     },
 
     // Afficher la galerie
@@ -328,10 +333,10 @@ export default {
       }, 300);
     });
     this.emitter.on("showCardFromGalleryEvent", (id) => {
-      setTimeout(() => {
-        this.resetCard();
-        this.showCard(id);
-      }, 500);
+      this.isLoading = true;
+      this.showCard(id).then(() => {
+        this.isLoading = false;
+      });
     });
     this.emitter.on("showGalleryEvent", (code) => {
       setTimeout(() => {
