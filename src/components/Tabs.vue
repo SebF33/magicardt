@@ -113,9 +113,9 @@ export default {
 
     // Valeurs stockées
     const storedType = localStorage.getItem("preferredSetType");
-    const defaultType = storedType ? storedType : "";
+    const defaultType = storedType ? storedType : "expansion";
     const storedYear = localStorage.getItem("preferredSetYear");
-    const defaultYear = storedYear ? storedYear : "Toutes années";
+    const defaultYear = storedYear ? storedYear : new Date().getFullYear().toString();
 
     // Filtre par type
     const selectedSetType = ref(defaultType);
@@ -191,6 +191,7 @@ export default {
 <style scoped>
 /* Onglets */
 .icon-svg {
+  /* conversion de "secondary-color" pour les sources SVG */
   filter: invert(10%) sepia(29%) saturate(656%) hue-rotate(291deg)
     brightness(92%) contrast(92%);
 }
