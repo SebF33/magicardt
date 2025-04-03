@@ -1,10 +1,11 @@
+<!-- Cart.vue -->
 <template>
   <div class="mobileToWork absolute top-16 right-10">
     <transition name="slide-fade" appear>
       <img
         class="absolute left-0 z-10"
         v-show="show"
-        :src="fullLogo"
+        :src="fullLogoImage"
         alt="magicardt"
         style="width: 340px"
         draggable="false"
@@ -13,12 +14,12 @@
     </transition>
     <a
       class="glass-btn cursor-pointer absolute z-10"
-      @click="show = !show"
+      @click="toggleShow"
       style="width: 32.2955px"
       draggable="false"
       ondragstart="return false"
     >
-      <img :src="glass" alt="magicardt" />
+      <img :src="glassImage" alt="magicardt" />
     </a>
     <transition name="el-zoom-in-top" appear>
       <el-table
@@ -79,7 +80,7 @@
               size="small"
               type="danger"
               :icon="Delete"
-              @click="removeItem(scope.row)"
+              @click="store.removeItem(scope.row.id)"
             />
           </template>
         </el-table-column>
@@ -113,66 +114,41 @@
 
 
 <script>
-import axios from "axios";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { Delete } from "@element-plus/icons-vue";
 import ExcellentExport from "excellentexport";
-import fullLogo from "../assets/full-logo.png";
-import glass from "../assets/glass.png";
-
-const serverURL = "https://magicardt.herokuapp.com/cards";
+import fullLogoImage from "../assets/full-logo.png";
+import glassImage from "../assets/glass.png";
+import { useMainStore } from "../utils/mainStore";
 
 export default {
   name: "Cart",
 
-  props: {
-    cardDatas: Object,
-    setDatas: Object,
-  },
+  setup() {
+    const store = useMainStore();
 
-  data() {
-    return {
-      fullLogo,
-      glass,
-      itemName: "",
-      items: [],
+    // Accès aux données du store
+    const items = computed(() => store.items);
+
+    // Variables locales pour la recherche et l'affichage du tableau
+    const search = ref("");
+    const show = ref(true);
+
+    const filterTableData = computed(() =>
+      items.value.filter(
+        (data) =>
+          !search.value ||
+          data.card_name.toLowerCase().includes(search.value.toLowerCase())
+      )
+    );
+
+    // Toggle de l'affichage (pour masquer/afficher le tableau)
+    const toggleShow = () => {
+      show.value = !show.value;
     };
-  },
-
-  // Item(s) dans la liste
-  async created() {
-    try {
-      const res = await axios.get(serverURL);
-      this.items = res.data;
-    } catch (e) {
-      console.error(e);
-    }
-  },
-
-  methods: {
-    // Ajout d'un item dans la liste
-    async addItem() {
-      const res = await axios.post(serverURL, {
-        card_id: this.cardDatas.id,
-        card_image:
-          this.cardDatas?.image_uris?.small ??
-          this.cardDatas.card_faces[0].image_uris.small,
-        card_name: this.cardDatas.name,
-        card_price:
-          this.cardDatas.prices.eur === null
-            ? "N/A"
-            : this.cardDatas.prices.eur
-                .replace(/(\.0+|0+)$/, "")
-                .replace(".", ","),
-        card_title: this.cardDatas.name + " (" + this.cardDatas.set_name + ")",
-        set_icon: this.setDatas.icon_svg_uri,
-        set_name: this.setDatas.name,
-      });
-      this.items = [...this.items, res.data];
-    },
 
     // 📝 Export de la liste
-    openFile(format) {
+    const openFile = (format) => {
       const tableElement = document.querySelector(".el-table__body");
 
       if (!tableElement) {
@@ -221,45 +197,29 @@ export default {
           },
         ]
       );
-    },
+    };
 
-    // Suppression d'un item de la liste
-    removeItem(row) {
-      const id = row.id;
-      axios.delete(`${serverURL}/${id}`);
-      this.items = this.items.filter((item) => item.id !== id);
-    },
+    // Clic sur une miniature
+    const setClick = (id) => {
+      store.fetchCardById(id);
+    };
 
-    setClick(id) {
-      this.emitter.emit("showCardFromCartEvent", id);
-    },
-  },
-
-  mounted() {
-    this.emitter.on("addItemEvent", () => {
-      this.addItem();
+    // Au montage, on récupère les items depuis le store
+    onMounted(() => {
+      store.fetchCartItems();
     });
-  },
-
-  setup() {
-    const items = ref([]);
-    const search = ref("");
-    const show = ref(true);
-
-    const filterTableData = computed(() =>
-      items.value.filter(
-        (data) =>
-          !search.value ||
-          data.card_name.toLowerCase().includes(search.value.toLowerCase())
-      )
-    );
 
     return {
       Delete,
+      fullLogoImage,
+      glassImage,
       filterTableData,
-      items,
       search,
       show,
+      toggleShow,
+      openFile,
+      setClick,
+      store,
     };
   },
 };

@@ -1,3 +1,4 @@
+<!-- Tabs.vue -->
 <template>
   <transition name="el-zoom-in-center" appear>
     <div class="tabs-container">
@@ -54,10 +55,10 @@
           placeholder="Année"
         >
           <el-option
-            v-for="item in availableYears"
-            :key="item"
-            :label="item"
-            :value="item"
+            v-for="year in availableYears"
+            :key="year"
+            :label="year"
+            :value="year"
           />
         </el-select>
       </div>
@@ -81,28 +82,26 @@
 
 
 <script>
-import axios from "axios";
-import { onBeforeMount, ref, computed, watch } from "vue";
-
-const apiURL = "https://api.scryfall.com";
+import { computed, onBeforeMount, ref, watch } from "vue";
+import { useMainStore } from "../utils/mainStore";
 
 export default {
   name: "Tabs",
 
-  methods: {
-    setClick(code) {
-      this.emitter.emit("showGalleryEvent", code);
-    },
-    handleImageError(event) {
-      event.target.src = "/favicon-48.png";
-    },
-  },
-
   setup() {
-    const setsList = ref([]);
-    const isLoading = ref(true);
-    const hasError = ref(false);
+    const store = useMainStore();
 
+    // Accès aux données du store
+    const setsList = computed(() => store.setsList);
+
+    // Charger les sets via le store s'ils ne sont pas déjà chargés
+    onBeforeMount(async () => {
+      if (!setsList.value.length) {
+        await store.fetchSetsList();
+      }
+    });
+
+    // États locaux pour les filtres
     const availableSetTypes = [
       { value: "commander", label: "Commander" },
       { value: "expansion", label: "Extension" },
@@ -111,11 +110,13 @@ export default {
       { value: "draft_innovation", label: "Draft & Innovation" },
     ];
 
-    // Valeurs stockées
+    // Valeurs des filtres stockées dans le navigateur
     const storedType = localStorage.getItem("preferredSetType");
     const defaultType = storedType ? storedType : "expansion";
     const storedYear = localStorage.getItem("preferredSetYear");
-    const defaultYear = storedYear ? storedYear : new Date().getFullYear().toString();
+    const defaultYear = storedYear
+      ? storedYear
+      : new Date().getFullYear().toString();
 
     // Filtre par type
     const selectedSetType = ref(defaultType);
@@ -129,21 +130,7 @@ export default {
       localStorage.setItem("preferredSetYear", newVal);
     });
 
-    onBeforeMount(async () => {
-      try {
-        const res = await axios.get(`${apiURL}/sets`);
-        setsList.value = res.data.data
-          .filter((item) => item.icon_svg_uri && item.released_at)
-          .sort((a, b) => new Date(b.released_at) - new Date(a.released_at));
-      } catch (error) {
-        console.error("Erreur lors du chargement des sets :", error);
-        hasError.value = true;
-      } finally {
-        isLoading.value = false;
-      }
-    });
-
-    // Années disponibles
+    // Années disponibles basées sur les sets récupérés
     const availableYears = computed(() => {
       const yearsSet = new Set(
         setsList.value.map((item) =>
@@ -154,7 +141,7 @@ export default {
       return ["Toutes années", ...sortedYears];
     });
 
-    // Filtrage combiné selon le type & l'année
+    // Filtrage combiné selon le type et l'année
     const filteredSets = computed(() => {
       return setsList.value.filter((item) => {
         let match = true;
@@ -172,15 +159,36 @@ export default {
       });
     });
 
+    // Gestion des états de chargement et d'erreur (local)
+    const isLoading = ref(true);
+    const hasError = ref(false);
+    watch(setsList, (newVal) => {
+      if (newVal && newVal.length > 0) {
+        isLoading.value = false;
+      }
+    });
+
+    // Clic sur un onglet : met à jour le set sélectionné dans le store et affiche la galerie
+    const setClick = (code) => {
+      store.fetchSetData(code);
+      store.setCurrentComponent("Gallery");
+    };
+
+    // Gestion d'erreur de chargement d'image
+    const handleImageError = (event) => {
+      event.target.src = "/favicon-48.png";
+    };
+
     return {
-      setsList,
-      isLoading,
-      hasError,
       availableSetTypes,
       selectedSetType,
       selectedSetYear,
       availableYears,
       filteredSets,
+      isLoading,
+      hasError,
+      setClick,
+      handleImageError,
     };
   },
 };

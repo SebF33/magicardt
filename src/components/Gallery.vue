@@ -1,3 +1,4 @@
+<!-- Gallery.vue -->
 <template>
   <div class="container my-8 px-16 sm:px-8 md:px-16 lg:px-18">
     <transition name="el-zoom-in-center" appear>
@@ -31,7 +32,6 @@
               </p>
             </div>
           </div>
-
           <div class="flex flex-col items-start gap-4">
             <div class="w-full md:w-96 px-3">
               <v-slider
@@ -49,7 +49,6 @@
                 track-color="lightestPrimary"
               />
             </div>
-
             <div class="w-full flex justify-center">
               <v-pagination
                 v-if="currentPage >= 1 || hasMoreCards"
@@ -96,48 +95,49 @@
 
 <script>
 import axios from "axios";
+import { computed, onMounted, ref, watch } from "vue";
+import { useMainStore } from "../utils/mainStore";
 
 const apiURL = "https://api.scryfall.com";
 
 export default {
   name: "Gallery",
 
-  props: {
-    setCode: String,
-    setDatas: Object,
-  },
+  setup() {
+    const store = useMainStore();
 
-  data() {
-    return {
-      cards: [],
-      currentPage: 1,
-      hasMoreCards: false,
-      slider: [
-        "pb-0/1",
-        "pb-1/4",
-        "pb-1/2",
-        "pb-3/4",
-        "pb-1/1",
-        "pb-5/4",
-        "pb-3/2",
-      ],
-      sliderValue: 2,
-      tickLabels: {
-        0: "0%",
-        1: "25%",
-        2: "50%",
-        3: "75%",
-        4: "100%",
-        5: "125%",
-        6: "150%",
-      },
-      totalPages: 1,
-      loadedImages: [],
-    };
-  },
+    // Accès aux données du store
+    const setDatas = computed(() => store.setDatas);
+    const setCode = computed(() => setDatas.value.code);
 
-  methods: {
-    async fetchCardsData() {
+    // États locaux pour la galerie
+    const cards = ref([]);
+    const currentPage = ref(1);
+    const hasMoreCards = ref(false);
+    const slider = ref([
+      "pb-0/1",
+      "pb-1/4",
+      "pb-1/2",
+      "pb-3/4",
+      "pb-1/1",
+      "pb-5/4",
+      "pb-3/2",
+    ]);
+    const sliderValue = ref(2);
+    const tickLabels = ref({
+      0: "0%",
+      1: "25%",
+      2: "50%",
+      3: "75%",
+      4: "100%",
+      5: "125%",
+      6: "150%",
+    });
+    const totalPages = ref(1);
+    const loadedImages = ref([]);
+
+    const fetchCardsData = async () => {
+      if (!setCode.value) return; // s'assurer qu'un set est sélectionné
       try {
         const { data } = await axios.get(`${apiURL}/cards/search`, {
           params: {
@@ -145,53 +145,64 @@ export default {
             order: "name",
             include_extras: true,
             include_variations: false,
-            q: `e:${this.setCode}`,
-            page: this.currentPage,
+            q: `e:${setCode.value}`,
+            page: currentPage.value,
           },
         });
-
         const totalCards = data.total_cards;
-        this.cards = data.data.map((card) => ({
+        cards.value = data.data.map((card) => ({
           id: card.id,
           name: card.name,
           image:
             card?.image_uris?.normal ?? card.card_faces[0].image_uris.normal,
         }));
-
-        this.hasMoreCards = data.has_more;
-        this.totalPages = this.hasMoreCards
+        hasMoreCards.value = data.has_more;
+        totalPages.value = hasMoreCards.value
           ? Math.ceil(totalCards / data.data.length)
-          : this.currentPage;
+          : currentPage.value;
       } catch (error) {
         console.error(error);
       }
-    },
+    };
 
-    setClick(id) {
-      this.emitter.emit("showCardFromGalleryEvent", id);
-    },
+    const setClick = (id) => {
+      store.fetchCardById(id);
+    };
 
-    handleImageLoad(id) {
-      if (!this.loadedImages.includes(id)) {
-        this.loadedImages.push(id);
+    const handleImageLoad = (id) => {
+      if (!loadedImages.value.includes(id)) {
+        loadedImages.value.push(id);
       }
-    },
-  },
+    };
 
-  mounted() {
-    this.fetchCardsData();
-  },
+    onMounted(() => {
+      fetchCardsData();
+    });
 
-  watch: {
-    currentPage() {
-      this.fetchCardsData();
-    },
-    setCode(newVal, oldVal) {
+    watch(currentPage, () => {
+      fetchCardsData();
+    });
+
+    watch(setCode, (newVal, oldVal) => {
       if (newVal !== oldVal) {
-        this.currentPage = 1;
-        this.fetchCardsData();
+        currentPage.value = 1;
+        fetchCardsData();
       }
-    },
+    });
+
+    return {
+      setDatas,
+      cards,
+      currentPage,
+      hasMoreCards,
+      slider,
+      sliderValue,
+      tickLabels,
+      totalPages,
+      loadedImages,
+      setClick,
+      handleImageLoad,
+    };
   },
 };
 </script>

@@ -1,13 +1,13 @@
+<!-- App.vue -->
 <template>
   <v-app>
     <Tabs />
-
     <Logo />
-
     <v-main id="main" class="min-w-screen flex items-center">
-      <Cart :cardDatas="cardDatas" :setDatas="setDatas" />
+      <Cart />
 
       <div class="inline-block container mx-auto">
+        <!-- Fond basé sur l'image de la carte -->
         <div
           class="bg-container"
           :style="{
@@ -18,6 +18,7 @@
           }"
         ></div>
 
+        <!-- Formulaire de recherche / affichage de carte -->
         <Form
           id="card-form"
           v-model="submitTerm"
@@ -85,13 +86,9 @@
             Afficher
           </button>
         </Form>
-        <component
-          :is="currentComponent"
-          :cardDatas="cardDatas"
-          :key="componentKey"
-          :setCode="setCode"
-          :setDatas="setDatas"
-        />
+
+        <!-- Affichage dynamique du composant (Card ou Gallery) via le store -->
+        <component :is="store.currentComponent" :key="componentKey" />
       </div>
     </v-main>
   </v-app>
@@ -104,7 +101,9 @@ import axios from "axios";
 import { computed, onMounted, ref, watch } from "vue";
 import { Form } from "vee-validate";
 import { toFormValidator } from "@vee-validate/zod";
+import { useMainStore } from "./utils/mainStore";
 import * as zod from "zod";
+
 import Card from "./components/Card.vue";
 import Cart from "./components/Cart.vue";
 import Gallery from "./components/Gallery.vue";
@@ -113,40 +112,6 @@ import Tabs from "./components/Tabs.vue";
 import TextInput from "./components/TextInput.vue";
 
 const apiURL = "https://api.scryfall.com";
-
-const initialCardState = () => {
-  return {
-    cardDatas: {
-      artist: "",
-      card_faces: { 0: { image_uris: { png: "", border_crop: "" } } },
-      colors: "",
-      flavor_text: "",
-      id: "",
-      image_uris: { png: "", border_crop: "" },
-      loyalty: "",
-      mana_cost: "",
-      name: "",
-      oracle_text: "",
-      power: "",
-      prices: { eur: "", eur_foil: "" },
-      set: "",
-      set_name: "",
-      toughness: "",
-      type_line: "",
-    },
-    setDatas: {
-      code: "",
-      icon_svg_uri: "",
-      name: "",
-    },
-  };
-};
-
-const initialGalleryState = () => {
-  return {
-    setCode: "",
-  };
-};
 
 export default {
   name: "App",
@@ -161,218 +126,41 @@ export default {
     TextInput,
   },
 
-  data() {
-    return {
-      cardDatas: {
-        artist: "",
-        card_faces: { 0: { image_uris: { png: "", border_crop: "" } } },
-        colors: "",
-        flavor_text: "",
-        id: "",
-        image_uris: { png: "", border_crop: "" },
-        loyalty: "",
-        mana_cost: "",
-        name: "",
-        oracle_text: "",
-        power: "",
-        prices: { eur: "", eur_foil: "" },
-        set: "",
-        set_name: "",
-        toughness: "",
-        type_line: "",
-      },
-      componentKey: 0,
-      currentComponent: "Card",
-      isLoading: false,
-      placeholder: "",
-      setCode: "",
-      setDatas: {
-        code: "",
-        icon_svg_uri: "",
-        name: "",
-      },
-      submitTerm: "",
-    };
-  },
-
-  created: function () {
-    this.randomPlaceholder();
-  },
-
-  methods: {
-    // Réinitialiser le composant "carte" ou "galerie"
-    forceRerender() {
-      this.componentKey += 1;
-    },
-
-    // Placeholder
-    randomPlaceholder() {
-      const list = ["Lotus", "Mox", "The Wanderer", "Urza"];
-      const randomIndex = Math.floor(Math.random() * list.length);
-      this.placeholder = "Exemple : " + list[randomIndex];
-    },
-
-    // Réinitialiser les données de la carte
-    resetCard() {
-      Object.assign(this.$data, initialCardState());
-    },
-
-    // Réinitialiser les données de la galerie
-    resetGallery() {
-      Object.assign(this.$data, initialGalleryState());
-    },
-
-    // Afficher la carte
-    async showCard(id) {
-      try {
-        const response = await axios.get(`${apiURL}/cards/${id}`);
-
-        if (response && response.data) {
-          this.cardDatas = response.data;
-          // formater
-          if (this.cardDatas.mana_cost) {
-            this.cardDatas.mana_cost = this.formatSymbols(this.cardDatas.mana_cost);
-          }
-          if (this.cardDatas.oracle_text) {
-            this.cardDatas.oracle_text = this.formatOracleText(this.cardDatas.oracle_text);
-          }
-        } else {
-          throw new Error("Données de la carte non disponibles.");
-        }
-
-        if (this.cardDatas.set) {
-          const setResponse = await axios.get(`${apiURL}/sets/${this.cardDatas.set}`);
-          if (setResponse && setResponse.data) {
-            this.setDatas = setResponse.data;
-          }
-        }
-        
-        this.currentComponent = "Card";
-      } catch (error) {
-        console.error("Erreur lors de l'affichage de la carte :", error);
-      }
-    },
-
-    // Afficher la galerie
-    showGallery(code) {
-      this.selectedCardName = "";
-
-      this.setCode = code;
-
-      axios
-        .get(`${apiURL}/sets/${this.setCode}`)
-        .then((response) => {
-          this.setDatas = response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-      this.currentComponent = "Gallery";
-    },
-
-    // Récupérer les données de la carte à la soumission du formulaire
-    submitForm() {
-      this.resetCard();
-
-      let code = this.setTerm;
-      let name =
-        this.selectedCardName === "" ? this.searchTerm : this.selectedCardName;
-
-      axios
-        .get(`${apiURL}/cards/named`, {
-          params: {
-            exact: name,
-            set: code,
-          },
-        })
-        .then((response) => {
-          this.cardDatas = response.data;
-          this.cardDatas.mana_cost = this.formatSymbols(
-            this.cardDatas.mana_cost
-          );
-          this.cardDatas.oracle_text = this.formatOracleText(
-            this.cardDatas.oracle_text
-          );
-        })
-        .then(async () => {
-          await axios
-            .get(`${apiURL}/sets/${this.cardDatas.set}`)
-            .then((res) => {
-              this.setDatas = res.data;
-            });
-        })
-        .catch(() => {
-          this.onInvalidSubmit();
-          this.cardDatas.artist = "";
-          this.cardDatas.flavor_text = "";
-          this.cardDatas.id = "";
-          this.cardDatas.image_uris.png = this.cardback;
-          this.cardDatas.loyalty = "";
-          this.cardDatas.mana_cost = "";
-          this.cardDatas.name = "Carte inexistante 😕";
-          this.cardDatas.oracle_text = "";
-          this.cardDatas.power = "";
-          this.cardDatas.set = "";
-          this.cardDatas.set_name = "";
-          this.cardDatas.toughness = "";
-          this.cardDatas.type_line = "";
-          this.setDatas.icon_svg_uri = "";
-          this.setDatas.name = "";
-        });
-
-      this.currentComponent = "Card";
-    },
-  },
-
-  // Évènements
-  mounted() {
-    this.emitter.on("showCardFromCartEvent", (id) => {
-      setTimeout(() => {
-        this.showCard(id);
-      }, 300);
-    });
-    this.emitter.on("showCardFromGalleryEvent", (id) => {
-      this.isLoading = true;
-      this.showCard(id).then(() => {
-        this.isLoading = false;
-      });
-    });
-    this.emitter.on("showGalleryEvent", (code) => {
-      setTimeout(() => {
-        this.resetGallery();
-        this.showGallery(code);
-        this.forceRerender();
-      }, 100);
-    });
-  },
-
   setup() {
-    const searchResults = ref([]);
+    const store = useMainStore();
+
+    // Accès aux données du store
+    const cardDatas = computed(() => store.cardDatas);
+
+    // États locaux pour le formulaire et l'autocomplétion
+    const submitTerm = ref("");
     const searchTerm = ref("");
     const selectedCardName = ref("");
+    const searchResults = ref([]);
     const setsList = ref([]);
     const setTerm = ref("");
 
-    onMounted(async () => {
-      await axios.get(`${apiURL}/sets`).then((res) => {
-        setsList.value = res.data.data;
+    // Clé pour forcer le re-render du composant dynamique
+    const componentKey = ref(0);
+
+    // Placeholder pour le champ de recherche
+    const placeholder = ref("");
+    const randomPlaceholder = () => {
+      const list = ["Lotus", "Mox", "The Wanderer", "Urza"];
+      const randomIndex = Math.floor(Math.random() * list.length);
+      placeholder.value = "Exemple : " + list[randomIndex];
+    };
+    randomPlaceholder();
+
+    // Auto-complétion : mise à jour des résultats de recherche
+    watch(searchTerm, (newTerm) => {
+      axios.get(`${apiURL}/cards/autocomplete?q=${newTerm}`).then((res) => {
+        searchResults.value = res.data.data;
       });
     });
 
-    // Auto-complétion
-    watch(
-      () => searchTerm.value,
-      (card) =>
-        axios.get(`${apiURL}/cards/autocomplete?q=${card}`).then((res) => {
-          searchResults.value = res.data.data;
-        })
-    );
-
     const searchCardNames = computed(() => {
-      if (searchTerm.value === "") {
-        return [];
-      }
+      if (searchTerm.value === "") return [];
       let matches = 0;
       return searchResults.value.filter((cardName) => {
         if (
@@ -380,8 +168,9 @@ export default {
           matches < 10
         ) {
           matches++;
-          return cardName;
+          return true;
         }
+        return false;
       });
     });
 
@@ -390,208 +179,85 @@ export default {
       searchTerm.value = "";
     };
 
-    // Formater le texte Oracle
-    function formatOracleText(data) {
-      const formattedData = data.replace(/\n/g, "<br/>");
-      return formatSymbols(formattedData);
-    }
+    // Récupération des sets pour le select
+    onMounted(async () => {
+      const res = await axios.get(`${apiURL}/sets`);
+      setsList.value = res.data.data;
+    });
 
-    // Formater la symbologie
-    function formatSymbols(data) {
-      const formattedData = data
-        .replaceAll(
-          "{T}",
-          '<abbr class="card-symbol card-symbol-T" title="Engagez ce permanent">{T}</abbr>'
-        )
-        .replaceAll(
-          "{Q}",
-          '<abbr class="card-symbol card-symbol-Q" title="Dégagez ce permanent">{Q}</abbr>'
-        )
-        .replaceAll(
-          "{E}",
-          '<abbr class="card-symbol card-symbol-E" title="Marqueur "énergie"">{E}</abbr>'
-        )
-        .replaceAll(
-          "{CHAOS}",
-          '<abbr class="card-symbol card-symbol-CHAOS" title="Chaos">{CHAOS}</abbr>'
-        )
-        .replaceAll(
-          "{A}",
-          '<abbr class="card-symbol card-symbol-A" title="Marqueur "gland"">{A}</abbr>'
-        )
-        .replaceAll(
-          "{X}",
-          '<abbr class="card-symbol card-symbol-X" title="Mana générique : X">{X}</abbr>'
-        )
-        .replaceAll(
-          "{Y}",
-          '<abbr class="card-symbol card-symbol-Y" title="Mana générique : Y">{Y}</abbr>'
-        )
-        .replaceAll(
-          "{Z}",
-          '<abbr class="card-symbol card-symbol-Z" title="Mana générique : Z">{Z}</abbr>'
-        )
-        .replaceAll(
-          "{½}",
-          '<abbr class="card-symbol card-symbol-HALF" title="Mana générique : ½">{½}</abbr>'
-        )
-        .replaceAll(
-          "{0}",
-          '<abbr class="card-symbol card-symbol-0" title="Mana : 0">{0}</abbr>'
-        )
-        .replaceAll(
-          "{1}",
-          '<abbr class="card-symbol card-symbol-1" title="Mana générique : 1">{1}</abbr>'
-        )
-        .replaceAll(
-          "{2}",
-          '<abbr class="card-symbol card-symbol-2" title="Mana générique : 2">{2}</abbr>'
-        )
-        .replaceAll(
-          "{3}",
-          '<abbr class="card-symbol card-symbol-3" title="Mana générique : 3">{3}</abbr>'
-        )
-        .replaceAll(
-          "{4}",
-          '<abbr class="card-symbol card-symbol-4" title="Mana générique : 4">{4}</abbr>'
-        )
-        .replaceAll(
-          "{5}",
-          '<abbr class="card-symbol card-symbol-5" title="Mana générique : 5">{5}</abbr>'
-        )
-        .replaceAll(
-          "{6}",
-          '<abbr class="card-symbol card-symbol-6" title="Mana générique : 6">{6}</abbr>'
-        )
-        .replaceAll(
-          "{7}",
-          '<abbr class="card-symbol card-symbol-7" title="Mana générique : 7">{7}</abbr>'
-        )
-        .replaceAll(
-          "{8}",
-          '<abbr class="card-symbol card-symbol-8" title="Mana générique : 8">{8}</abbr>'
-        )
-        .replaceAll(
-          "{9}",
-          '<abbr class="card-symbol card-symbol-9" title="Mana générique : 9">{9}</abbr>'
-        )
-        .replaceAll(
-          "{10}",
-          '<abbr class="card-symbol card-symbol-10" title="Mana générique : 10">{10}</abbr>'
-        )
-        .replaceAll(
-          "{11}",
-          '<abbr class="card-symbol card-symbol-11" title="Mana générique : 11">{11}</abbr>'
-        )
-        .replaceAll(
-          "{12}",
-          '<abbr class="card-symbol card-symbol-12" title="Mana générique : 12">{12}</abbr>'
-        )
-        .replaceAll(
-          "{13}",
-          '<abbr class="card-symbol card-symbol-13" title="Mana générique : 13">{13}</abbr>'
-        )
-        .replaceAll(
-          "{14}",
-          '<abbr class="card-symbol card-symbol-14" title="Mana générique : 14">{14}</abbr>'
-        )
-        .replaceAll(
-          "{15}",
-          '<abbr class="card-symbol card-symbol-15" title="Mana générique : 15">{15}</abbr>'
-        )
-        .replaceAll(
-          "{16}",
-          '<abbr class="card-symbol card-symbol-16" title="Mana générique : 16">{16}</abbr>'
-        )
-        .replaceAll(
-          "{17}",
-          '<abbr class="card-symbol card-symbol-17" title="Mana générique : 17">{18}</abbr>'
-        )
-        .replaceAll(
-          "{18}",
-          '<abbr class="card-symbol card-symbol-18" title="Mana générique : 18">{18}</abbr>'
-        )
-        .replaceAll(
-          "{19}",
-          '<abbr class="card-symbol card-symbol-19" title="Mana générique : 19">{19}</abbr>'
-        )
-        .replaceAll(
-          "{20}",
-          '<abbr class="card-symbol card-symbol-20" title="Mana générique : 20">{20}</abbr>'
-        )
-        .replaceAll(
-          "{100}",
-          '<abbr class="card-symbol card-symbol-100" title="Mana générique : 100">{100}</abbr>'
-        )
-        .replaceAll(
-          "{1000000}",
-          '<abbr class="card-symbol card-symbol-1000000" title="Mana générique : 1000000">{1000000}</abbr>'
-        )
-        .replaceAll(
-          "{∞}",
-          '<abbr class="card-symbol card-symbol-INFINITY" title="Mana générique : ∞">{∞}</abbr>'
-        )
-        .replaceAll(
-          "{W}",
-          '<abbr class="card-symbol card-symbol-W" title="Mana blanc">{W}</abbr>'
-        )
-        .replaceAll(
-          "{U}",
-          '<abbr class="card-symbol card-symbol-U" title="Mana bleu">{U}</abbr>'
-        )
-        .replaceAll(
-          "{B}",
-          '<abbr class="card-symbol card-symbol-B" title="Mana noir">{B}</abbr>'
-        )
-        .replaceAll(
-          "{R}",
-          '<abbr class="card-symbol card-symbol-R" title="Mana rouge">{R}</abbr>'
-        )
-        .replaceAll(
-          "{G}",
-          '<abbr class="card-symbol card-symbol-G" title="Mana vert">{G}</abbr>'
-        )
-        .replaceAll(
-          "{C}",
-          '<abbr class="card-symbol card-symbol-C" title="Mana incolore">{C}</abbr>'
-        )
-        .replaceAll(
-          "{S}",
-          '<abbr class="card-symbol card-symbol-S" title="Mana neige">{S}</abbr>'
-        );
-      return formattedData;
-    }
-
-    // Comportement si la saisie de l'utilisateur est invalide
-    function onInvalidSubmit() {
+    // Comportement en cas de soumission invalide
+    const onInvalidSubmit = () => {
       const submitBtn = document.querySelector(".submit-btn");
       submitBtn.classList.add("invalid");
       setTimeout(() => {
         submitBtn.classList.remove("invalid");
       }, 1000);
-    }
+    };
 
-    // Générer un schéma de validation
+    // Schéma de validation pour le formulaire
     const validationSchema = toFormValidator(
       zod.object({
-        name: zod
-          .string("Ce champ est requis...")
-          .min(2, { message: "Saisissez 2 caractères minimum..." }),
+        name: zod.string("Ce champ est requis...").min(2, {
+          message: "Saisissez 2 caractères minimum...",
+        }),
       })
     );
 
+    // Afficher une carte via le store
+    const showCard = async (id) => {
+      try {
+        await store.fetchCardById(id);
+      } catch (error) {
+        console.error("Erreur lors de l'affichage de la carte :", error);
+      }
+    };
+
+    // Afficher la galerie via le store
+    const showGallery = async (code) => {
+      selectedCardName.value = "";
+      setTerm.value = code;
+      try {
+        await store.fetchSetData(code);
+      } catch (error) {
+        console.error(error);
+      }
+      store.setCurrentComponent("Gallery");
+    };
+
+    // Soumission du formulaire : récupération d'une carte par nom et set
+    const submitForm = () => {
+      // choix du nom à rechercher
+      const code = setTerm.value;
+      const name =
+        selectedCardName.value === ""
+          ? searchTerm.value
+          : selectedCardName.value;
+      store.fetchCardByNameAndSet(name, code);
+      store.setCurrentComponent("Card");
+    };
+
+    // Permet de forcer le re-render du composant dynamique si nécessaire
+    const forceRerender = () => {
+      componentKey.value++;
+    };
+
     return {
-      formatOracleText,
-      formatSymbols,
-      onInvalidSubmit,
-      searchCardNames,
-      searchResults,
+      store,
+      submitTerm,
       searchTerm,
-      selectCardName,
       selectedCardName,
+      searchResults,
+      searchCardNames,
+      selectCardName,
       setsList,
       setTerm,
       validationSchema,
+      onInvalidSubmit,
+      forceRerender,
+      submitForm,
+      componentKey,
+      placeholder,
+      cardDatas,
     };
   },
 };
