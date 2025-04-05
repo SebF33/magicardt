@@ -2,64 +2,62 @@
 <template>
   <div class="container my-8 px-16 sm:px-8 md:px-16 lg:px-18">
     <transition name="el-zoom-in-center" appear>
-      <v-banner
-        class="fixed-banner mt-12 mb-8 z-10 py-2"
-        elevation="10"
-        rounded
-      >
-        <v-banner-text>
-          <div class="flex items-center mb-3">
-            <img
-              :src="setDatas.icon_svg_uri"
-              :alt="setDatas.name"
-              class="banner-symbol mr-6 shrink-0 will-change-transform"
-              width="60"
-              height="60"
-              draggable="false"
-              ondragstart="return false"
-            />
-            <div class="w-full truncate">
-              <p class="text-xl font-bold truncate will-change-transform">
-                {{ setDatas.name }}
-              </p>
-              <p
-                class="mt-1 text-xs font-oswald truncate will-change-transform"
-              >
-                Date de sortie : {{ setDatas.released_at }}
-              </p>
-              <p class="text-xs font-oswald truncate will-change-transform">
-                Nombre de cartes : {{ setDatas.card_count }}
-              </p>
-            </div>
-          </div>
-          <div class="flex flex-col items-start gap-4">
-            <div class="w-full md:w-96 px-3">
-              <v-slider
-                v-model="sliderValue"
-                :max="6"
-                :ticks="tickLabels"
-                class="mt-1 text-xs font-oswald"
-                color="darkerPrimary"
-                hide-details="true"
-                show-ticks="always"
-                step="1"
-                thumb-color="secondary"
-                thumb-size="12"
-                tick-size="1"
-                track-color="lightestPrimary"
+      <v-banner class="banner mt-12 mb-8 z-10 py-2" elevation="10" rounded>
+        <transition name="banner-text-transition" mode="out-in">
+          <v-banner-text v-if="setDatas && setDatas.name" :key="setDatas.code">
+            <div class="flex items-center mb-3">
+              <img
+                :src="setDatas.icon_svg_uri"
+                :alt="setDatas.name"
+                class="banner-symbol mr-6 shrink-0 will-change-transform"
+                width="60"
+                height="60"
+                draggable="false"
+                ondragstart="return false"
               />
+              <div class="w-full truncate">
+                <p class="text-xl font-bold truncate will-change-transform">
+                  {{ setDatas.name }}
+                </p>
+                <p
+                  class="mt-1 text-xs font-oswald truncate will-change-transform"
+                >
+                  Date de sortie : {{ setDatas.released_at }}
+                </p>
+                <p class="text-xs font-oswald truncate will-change-transform">
+                  Nombre de cartes : {{ setDatas.card_count }}
+                </p>
+              </div>
             </div>
-            <div class="w-full flex justify-center">
-              <v-pagination
-                v-if="currentPage >= 1 || hasMoreCards"
-                v-model="currentPage"
-                :color="primary"
-                :length="totalPages"
-                :total-visible="5"
-              />
+            <div class="flex flex-col items-start gap-4">
+              <div class="w-full md:w-96 px-3">
+                <v-slider
+                  v-model="sliderValue"
+                  :max="6"
+                  :ticks="tickLabels"
+                  class="mt-1 text-xs font-oswald"
+                  color="darkerPrimary"
+                  hide-details="true"
+                  show-ticks="always"
+                  step="1"
+                  thumb-color="secondary"
+                  thumb-size="12"
+                  tick-size="1"
+                  track-color="lightestPrimary"
+                />
+              </div>
             </div>
-          </div>
-        </v-banner-text>
+          </v-banner-text>
+        </transition>
+        <div class="w-full flex justify-center">
+          <v-pagination
+            v-if="currentPage >= 1 || hasMoreCards"
+            v-model="currentPage"
+            :length="totalPages"
+            :total-visible="5"
+            color="primary"
+          />
+        </div>
       </v-banner>
     </transition>
 
@@ -145,7 +143,7 @@ export default {
             order: "name",
             include_extras: true,
             include_variations: false,
-            q: `e:${setCode.value}`,
+            q: `e:${setCode.value.toLowerCase()}`,
             page: currentPage.value,
           },
         });
@@ -161,7 +159,15 @@ export default {
           ? Math.ceil(totalCards / data.data.length)
           : currentPage.value;
       } catch (error) {
-        console.error(error);
+        if (error.response && error.response.status === 404) {
+          // aucun résultat trouvé
+          console.warn("Aucune carte trouvée pour ce set :", setCode.value);
+          cards.value = [];
+          hasMoreCards.value = false;
+          totalPages.value = currentPage.value;
+        } else {
+          console.error("Erreur lors de la récupération des cartes :", error);
+        }
       }
     };
 
@@ -211,31 +217,30 @@ export default {
 
 <style scoped>
 /* Bannière */
-.fixed-banner {
+.banner {
+  position: relative;
   height: 160px;
   background-color: var(--lighter-primary-color);
   padding: 0.5rem 1rem;
   overflow: hidden;
   display: flex;
   align-items: flex-start;
-  position: relative;
 }
 
-.v-banner__content {
+:deep(.v-banner__content) {
   width: 100%;
   height: 100%;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .v-banner-text {
   padding: 0 !important;
   margin: 0 !important;
-  width: 100%;
-  max-height: 100%;
-  overflow: hidden;
+  width: 100% !important;
+  overflow: visible !important;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -245,12 +250,27 @@ export default {
 @keyframes fade-in-to-left {
   0% {
     opacity: 0;
-    transform: translateX(12px);
+    transform: translateX(10px);
   }
   100% {
     opacity: 1;
     transform: translateX(0);
   }
+}
+
+.banner-text-transition-enter-active,
+.banner-text-transition-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.banner-text-transition-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.banner-text-transition-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
 }
 
 .v-banner-text .flex.items-center {
@@ -325,6 +345,22 @@ export default {
   }
 }
 
+:deep(.v-pagination__list) {
+  gap: 0.5rem;
+}
+
+:deep(.v-pagination__item) {
+  margin: 0;
+}
+
+:deep(.v-pagination__item button) {
+  min-width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.2rem;
+}
+
 /* Cartes */
 .card {
   opacity: 0;
@@ -344,20 +380,14 @@ export default {
 
 /* Responsive */
 @media (max-width: 1280px) {
-  .fixed-banner {
+  .banner {
     height: 220px;
-  }
-  .v-pagination {
-    position: static;
-    transform: none;
-    margin-top: 0.25rem;
-    justify-content: center !important;
   }
 }
 
 @media (max-width: 640px) {
-  .v-slider-track__tick-label {
-    font-size: 0.5rem;
+  :deep(.v-slider-track__tick-label) {
+    font-size: 0.6rem;
     line-height: 1;
     white-space: nowrap;
     transform: translateY(-2px);
@@ -378,10 +408,6 @@ export default {
 
   .text-xs {
     font-size: 0.7rem;
-  }
-
-  .v-pagination {
-    justify-content: center !important;
   }
 }
 </style>
