@@ -164,6 +164,7 @@
 
 <script>
 import { computed, onMounted, ref } from "vue";
+import { createFadedImage } from "../utils/createFadedImage";
 import html2canvas from "html2canvas";
 import iconAsset from "../assets/icon.png";
 import { jsPDF } from "jspdf";
@@ -301,12 +302,9 @@ export default {
     const createPdf = async () => {
       pdfGenerating.value = true;
 
-      const artImageUrl =
-        cardDatas.image_uris.art_crop + "?not-from-cache-please";
-      const cardImageUrl = cardDatas.image_uris.png + "?not-from-cache-please";
-
-      const title = `${cardDatas.name}_${setDatas.code}`;
-
+      const artImageUrl = cardDatas.value.image_uris.art_crop + "?not-from-cache-please";
+      const cardImageUrl = cardDatas.value.image_uris.png + "?not-from-cache-please";
+      const title = `${cardDatas.value.name}_${setDatas.code}`;
       const dom = document.getElementById("card");
 
       // clone provisoire du DOM original..
@@ -356,7 +354,7 @@ export default {
           pageCard.src = cardImageUrl;
 
           const pageIcon = new Image();
-          pageIcon.src = iconImage;
+          pageIcon.src = iconImage.value;
 
           // chargement simultané des 3 images supplémentaires
           Promise.all([
