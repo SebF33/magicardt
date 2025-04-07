@@ -304,7 +304,7 @@ export default {
 
       const artImageUrl = cardDatas.value.image_uris.art_crop + "?not-from-cache-please";
       const cardImageUrl = cardDatas.value.image_uris.png + "?not-from-cache-please";
-      const title = `${cardDatas.value.name}_${setDatas.code}`;
+      const title = `${cardDatas.value.name}_${setDatas.value.code}`;
       const dom = document.getElementById("card");
 
       // clone provisoire du DOM original..
