@@ -2,11 +2,10 @@
 <template>
   <v-app>
     <Tabs />
-    <Logo />
+    <Cart />
+    <Logo class="lg:-mt-[380px]" />
     <v-main id="main" class="min-w-screen flex items-center">
-      <Cart />
-
-      <div class="inline-block container mx-auto">
+      <div class="container inline-block mx-auto">
         <!-- Fond basé sur l'image de la carte -->
         <div
           class="bg-container"
@@ -17,7 +16,6 @@
             })`,
           }"
         ></div>
-
         <!-- Formulaire de recherche / affichage de carte -->
         <Form
           id="card-form"
@@ -35,7 +33,6 @@
             :placeholder="placeholder"
             success-message="Bonne recherche !"
           />
-
           <v-slide-y-transition>
             <ul
               v-if="searchCardNames.length"
@@ -55,7 +52,6 @@
               </li>
             </ul>
           </v-slide-y-transition>
-
           <el-select
             class="sets-list font-medievalsharp absolute z-10"
             v-model="setTerm"
@@ -70,7 +66,6 @@
               :value="item.code"
             />
           </el-select>
-
           <p
             v-if="selectedCardName"
             class="selected-name text-lg pt-2 absolute"
@@ -78,7 +73,6 @@
             Vous avez sélectionné :
             <span class="font-semibold">{{ selectedCardName }}</span>
           </p>
-
           <button
             class="submit-btn bg-primary-color cursor-pointer"
             type="submit"
@@ -86,7 +80,6 @@
             Afficher
           </button>
         </Form>
-
         <!-- Affichage dynamique du composant (Card ou Gallery) via le store -->
         <component :is="store.currentComponent" :key="componentKey" />
       </div>

@@ -1,20 +1,22 @@
 <!-- Cart.vue -->
 <template>
-  <div class="mobileToWork absolute top-16 right-10">
+  <div
+    class="cart-container w-full min-h-96 max-w-[440px] relative max-[1439px]:top-[20px] max-[1439px]:mx-auto lg:top-[-26px] lg:ml-auto lg:mr-8 flex flex-col"
+  >
     <transition name="slide-fade" appear>
       <img
-        class="absolute left-0 z-10"
         v-show="show"
         :src="fullLogoImage"
         alt="magicardt"
+        class="responsive-logo absolute left-0 z-10"
         style="width: 340px"
         draggable="false"
         ondragstart="return false"
       />
     </transition>
     <a
-      class="glass-btn cursor-pointer absolute z-10"
       @click="toggleShow"
+      class="glass-btn cursor-pointer absolute z-10"
       style="width: 32.2955px"
       draggable="false"
       ondragstart="return false"
@@ -23,14 +25,14 @@
     </a>
     <transition name="el-zoom-in-top" appear>
       <el-table
-        class="absolute top-4"
         v-show="show"
         :data="filterTableData"
         stripe
         :header-cell-style="{ background: '#c0bc97' }"
         :row-style="{ background: '#f8f8f5' }"
+        class="responsive-table absolute top-4"
+        max-height="320"
         style="width: 440px"
-        max-height="410"
       >
         <el-table-column min-width="36" prop="card_image">
           <template #default="scope">
@@ -289,7 +291,7 @@ li {
   list-style: none;
 }
 
-/* Slide-fade animations */
+/* Animations */
 .slide-fade-enter-active {
   transition: all 0.6s ease-out;
 }
@@ -304,9 +306,28 @@ li {
   opacity: 0;
 }
 
-/* 🚧 Mobile à travailler */
-@media all and (max-width: 1400px) {
-  .mobileToWork {
+/* Responsive */
+@media (max-width: 500px) {
+  .cart-container {
+    max-width: 90% !important;
+    top: 10px !important;
+  }
+  .responsive-logo {
+    width: 200px !important;
+    top: 29px !important;
+  }
+  .responsive-table {
+    width: 100% !important;
+  }
+  .glass-btn {
+    width: 20px !important;
+    top: 27px !important;
+    left: 163px !important;
+  }
+}
+
+@media (max-width: 300px) {
+  .cart-container {
     display: none;
   }
 }

@@ -24,7 +24,9 @@ module.exports = {
         'oswald': ['Oswald'],
       },
       screens: {
-        'xs': '480px',
+        'sm': '576px',
+        'md': '960px',
+        'lg': '1440px',
       },
       spacing: {
         '0/1': '0%',
