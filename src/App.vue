@@ -3,7 +3,7 @@
   <v-app>
     <Tabs />
     <Cart />
-    <Logo class="lg:-mt-[380px]" />
+    <Logo class="max-[1439px]:mt-[60px] lg:-mt-[380px]" />
     <v-main id="main" class="min-w-screen flex items-center">
       <div class="container inline-block mx-auto">
         <!-- Fond basé sur l'image de la carte -->
