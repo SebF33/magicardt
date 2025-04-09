@@ -122,6 +122,9 @@ export const useMainStore = defineStore("main", {
           card_image:
             this.cardDatas?.image_uris?.small ??
             this.cardDatas.card_faces[0].image_uris.small,
+          card_image_hd:
+            this.cardDatas?.image_uris?.normal ??
+            this.cardDatas.card_faces[0].image_uris.normal,
           card_name: this.cardDatas.name,
           card_price:
             this.cardDatas.prices.eur === null

@@ -80,7 +80,7 @@
             Afficher
           </button>
         </Form>
-        <!-- Affichage dynamique du composant (Card ou Gallery) via le store -->
+        <!-- Affichage dynamique d'un composant via le store (Card / Cardmat / Gallery) -->
         <component :is="store.currentComponent" :key="componentKey" />
       </div>
     </v-main>
@@ -99,6 +99,7 @@ import * as zod from "zod";
 
 import Card from "./components/Card.vue";
 import Cart from "./components/Cart.vue";
+import Cardmat from "./components/Cardmat.vue";
 import Gallery from "./components/Gallery.vue";
 import Logo from "./components/Logo.vue";
 import Tabs from "./components/Tabs.vue";
@@ -112,6 +113,7 @@ export default {
   components: {
     Card,
     Cart,
+    Cardmat,
     Gallery,
     Logo,
     Form,

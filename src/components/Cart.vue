@@ -15,8 +15,8 @@
       />
     </transition>
     <a
-      @click="toggleShow"
-      class="glass-btn cursor-pointer absolute z-10"
+      @click="goToCardmatOrCard"
+      class="glass-btn cursor-pointer absolute z-10 transform-gpu will-change-transform"
       style="width: 32.2955px"
       draggable="false"
       ondragstart="return false"
@@ -132,10 +132,9 @@ export default {
     // Accès aux données du store
     const items = computed(() => store.items);
 
-    // Variables locales pour la recherche et l'affichage du tableau
+    // Recherche et affichage du tableau
     const search = ref("");
     const show = ref(true);
-
     const filterTableData = computed(() =>
       items.value.filter(
         (data) =>
@@ -144,9 +143,15 @@ export default {
       )
     );
 
-    // Toggle de l'affichage (pour masquer/afficher le tableau)
-    const toggleShow = () => {
-      show.value = !show.value;
+    const goToCardmatOrCard = () => {
+      if (show.value) {
+        // fermer le tableau
+        show.value = false;
+        store.setCurrentComponent("Cardmat");
+      } else {
+        show.value = true;
+        store.setCurrentComponent("Card");
+      }
     };
 
     // 📝 Export de la liste
@@ -218,9 +223,9 @@ export default {
       filterTableData,
       search,
       show,
-      toggleShow,
       openFile,
       setClick,
+      goToCardmatOrCard,
       store,
     };
   },
@@ -255,11 +260,11 @@ export default {
 
 .glass-btn {
   right: 130px;
-  transition: 0.3s ease-in-out;
+  transition: 0.2s ease-in-out;
 }
 
 .glass-btn:hover {
-  transform: scale(0.92);
+  transform: scale(0.91);
 }
 
 /* Tableau */
