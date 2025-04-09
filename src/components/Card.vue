@@ -304,7 +304,7 @@ export default {
 
       const artImageUrl = cardDatas.value.image_uris.art_crop + "?not-from-cache-please";
       const cardImageUrl = cardDatas.value.image_uris.png + "?not-from-cache-please";
-      const title = `${cardDatas.value.name}_${setDatas.value.code}`;
+      const fileName = `${cardDatas.value.name}_${setDatas.value.code.toUpperCase()}`;
       const dom = document.getElementById("card");
 
       // clone provisoire du DOM original..
@@ -385,7 +385,7 @@ export default {
               pdf.addImage(pageData, "jpeg", 0, 400, imgWidth, imgHeight);
               pdf.addImage(cardImg, "jpeg", 14, 413, 156.1, 217.91);
 
-              pdf.save(title + ".pdf");
+              pdf.save(fileName + ".pdf");
             })
             .catch((error) => {
               console.error("Erreur lors du chargement des images :", error);
