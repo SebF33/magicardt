@@ -3,7 +3,7 @@
   <transition name="el-zoom-in-center" appear>
     <div class="tabs-container">
       <!-- Onglets -->
-      <v-sheet elevation="14" class="pa-0 tabs-sheet">
+      <v-sheet elevation="14" class="tabs-sheet relative pa-0">
         <v-tabs
           bg-color="primary-color"
           slider-color="primary-color"
@@ -31,6 +31,17 @@
             />
           </v-tab>
         </v-tabs>
+        <!-- Loader -->
+        <v-progress-circular
+          v-if="isLoading"
+          indeterminate
+          class="loading-spinner"
+          color="secondary"
+        />
+        <!-- Message d'erreur -->
+        <div v-else-if="hasError" class="text-red text-center py-4">
+          Une erreur est survenue lors du chargement des sets.
+        </div>
       </v-sheet>
 
       <!-- Filtres (type & année) -->
@@ -61,19 +72,6 @@
             :value="year"
           />
         </el-select>
-      </div>
-
-      <!-- Loader -->
-      <v-progress-circular
-        v-if="isLoading"
-        indeterminate
-        color="primary"
-        class="loading-spinner"
-      />
-
-      <!-- Message d'erreur -->
-      <div v-else-if="hasError" class="text-red text-center py-4">
-        Une erreur est survenue lors du chargement des sets.
       </div>
     </div>
   </transition>

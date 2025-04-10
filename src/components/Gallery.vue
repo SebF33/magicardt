@@ -366,7 +366,7 @@ export default {
   opacity: 0;
   box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
     rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.15s ease-in-out;
   will-change: transform, opacity;
 }
 
@@ -375,7 +375,7 @@ export default {
 }
 
 .card:hover {
-  transform: scale(0.96);
+  transform: scale(0.975);
 }
 
 /* Responsive */

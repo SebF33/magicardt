@@ -180,6 +180,21 @@ export default {
   overflow: hidden;
 }
 
+.cardmat::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: url("../assets/complete-logo.png") no-repeat center;
+  background-size: contain;
+  width: clamp(200px, 80vw, 1100px);
+  height: clamp(200px, 80vw, 1100px);
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: 0;
+}
+
 .card-item {
   position: absolute;
   width: 180px;

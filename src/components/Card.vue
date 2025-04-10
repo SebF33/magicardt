@@ -516,6 +516,7 @@ export default {
 
 #card,
 #card-clone {
+  font-family: "MedievalSharp";
   position: absolute;
   top: 260px;
   left: 50%;
@@ -526,8 +527,8 @@ export default {
   padding: 25px;
   padding-top: 0;
   padding-bottom: 0;
-  font-family: "MedievalSharp";
   background-image: linear-gradient(transparent, var(--tertiary-color) 22%);
+  border-radius: 10px;
   box-shadow: -20px 0 35px -25px black, 20px 0 35px -25px black;
 }
 
@@ -570,6 +571,7 @@ export default {
   color: var(--secondary-color);
   font-size: 15pt;
   font-weight: bold;
+  line-height: 1.5rem;
 }
 
 #card p,
@@ -598,12 +600,13 @@ export default {
 #card .set-symbol img,
 #card-clone .set-symbol img {
   display: block;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.12s ease-in-out;
+  will-change: transform;
 }
 
 #card .set-symbol img:hover,
 #card-clone .set-symbol img:hover {
-  transform: scale(1.18);
+  transform: scale(1.06);
 }
 
 #card .oracle-text,
