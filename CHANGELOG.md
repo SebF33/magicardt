@@ -9,6 +9,7 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 ## [2025-04-10]
 
 ### Nouveautés
+- Ajout du footer.
 - Ajout d'un tapis de cartes.
 
 ## [2025-04-01]

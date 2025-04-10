@@ -1,10 +1,10 @@
 <!-- App.vue -->
 <template>
-  <v-app>
+  <v-app class="flex flex-col min-h-screen">
     <Tabs />
     <Cart />
     <Logo class="max-[1439px]:mt-[60px] lg:-mt-[380px]" />
-    <v-main id="main" class="min-w-screen flex items-center">
+    <v-main id="main" class="flex-grow flex items-center">
       <div class="container inline-block mx-auto">
         <!-- Fond basé sur l'image de la carte -->
         <div
@@ -84,6 +84,7 @@
         <component :is="store.currentComponent" :key="componentKey" />
       </div>
     </v-main>
+    <Footer />
   </v-app>
 </template>
 
@@ -100,6 +101,7 @@ import * as zod from "zod";
 import Card from "./components/Card.vue";
 import Cart from "./components/Cart.vue";
 import Cardmat from "./components/Cardmat.vue";
+import Footer from "./components/Footer.vue";
 import Gallery from "./components/Gallery.vue";
 import Logo from "./components/Logo.vue";
 import Tabs from "./components/Tabs.vue";
@@ -114,6 +116,7 @@ export default {
     Card,
     Cart,
     Cardmat,
+    Footer,
     Gallery,
     Logo,
     Form,
