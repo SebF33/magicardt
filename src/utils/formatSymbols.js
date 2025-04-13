@@ -4,6 +4,7 @@
  */
 export function formatSymbols(data) {
   const formattedData = data
+    // Divers
     .replaceAll(
       "{T}",
       '<abbr class="card-symbol card-symbol-T" title="Engagez ce permanent">{T}</abbr>'
@@ -14,7 +15,7 @@ export function formatSymbols(data) {
     )
     .replaceAll(
       "{E}",
-      '<abbr class="card-symbol card-symbol-E" title="Marqueur "énergie"">{E}</abbr>'
+      '<abbr class="card-symbol card-symbol-E" title="Marqueur &quot;énergie&quot;">{E}</abbr>'
     )
     .replaceAll(
       "{CHAOS}",
@@ -22,8 +23,9 @@ export function formatSymbols(data) {
     )
     .replaceAll(
       "{A}",
-      '<abbr class="card-symbol card-symbol-A" title="Marqueur "gland"">{A}</abbr>'
+      '<abbr class="card-symbol card-symbol-A" title="Marqueur &quot;gland&quot;">{A}</abbr>'
     )
+    // Générique
     .replaceAll(
       "{X}",
       '<abbr class="card-symbol card-symbol-X" title="Mana générique : X">{X}</abbr>'
@@ -110,7 +112,7 @@ export function formatSymbols(data) {
     )
     .replaceAll(
       "{17}",
-      '<abbr class="card-symbol card-symbol-17" title="Mana générique : 17">{18}</abbr>'
+      '<abbr class="card-symbol card-symbol-17" title="Mana générique : 17">{17}</abbr>'
     )
     .replaceAll(
       "{18}",
@@ -136,6 +138,7 @@ export function formatSymbols(data) {
       "{∞}",
       '<abbr class="card-symbol card-symbol-INFINITY" title="Mana générique : ∞">{∞}</abbr>'
     )
+    // Couleurs
     .replaceAll(
       "{W}",
       '<abbr class="card-symbol card-symbol-W" title="Mana blanc">{W}</abbr>'
@@ -163,6 +166,89 @@ export function formatSymbols(data) {
     .replaceAll(
       "{S}",
       '<abbr class="card-symbol card-symbol-S" title="Mana neige">{S}</abbr>'
+    )
+    // Hybrides (deux couleurs)
+    .replaceAll(
+      "{W/U}",
+      '<abbr class="card-symbol card-symbol-WU" title="Mana hybride : blanc ou bleu">{W/U}</abbr>'
+    )
+    .replaceAll(
+      "{W/B}",
+      '<abbr class="card-symbol card-symbol-WB" title="Mana hybride : blanc ou noir">{W/B}</abbr>'
+    )
+    .replaceAll(
+      "{W/R}",
+      '<abbr class="card-symbol card-symbol-WR" title="Mana hybride : blanc ou rouge">{W/R}</abbr>'
+    )
+    .replaceAll(
+      "{W/G}",
+      '<abbr class="card-symbol card-symbol-WG" title="Mana hybride : blanc ou vert">{W/G}</abbr>'
+    )
+    .replaceAll(
+      "{U/B}",
+      '<abbr class="card-symbol card-symbol-UB" title="Mana hybride : bleu ou noir">{U/B}</abbr>'
+    )
+    .replaceAll(
+      "{U/R}",
+      '<abbr class="card-symbol card-symbol-UR" title="Mana hybride : bleu ou rouge">{U/R}</abbr>'
+    )
+    .replaceAll(
+      "{U/G}",
+      '<abbr class="card-symbol card-symbol-UG" title="Mana hybride : bleu ou vert">{U/G}</abbr>'
+    )
+    .replaceAll(
+      "{B/R}",
+      '<abbr class="card-symbol card-symbol-BR" title="Mana hybride : noir ou rouge">{B/R}</abbr>'
+    )
+    .replaceAll(
+      "{B/G}",
+      '<abbr class="card-symbol card-symbol-BG" title="Mana hybride : noir ou vert">{B/G}</abbr>'
+    )
+    .replaceAll(
+      "{R/G}",
+      '<abbr class="card-symbol card-symbol-RG" title="Mana hybride : rouge ou vert">{R/G}</abbr>'
+    )
+    // Hybrides (2 ou couleur)
+    .replaceAll(
+      "{2/W}",
+      '<abbr class="card-symbol card-symbol-2W" title="Mana hybride : 2 ou blanc">{2/W}</abbr>'
+    )
+    .replaceAll(
+      "{2/U}",
+      '<abbr class="card-symbol card-symbol-2U" title="Mana hybride : 2 ou bleu">{2/U}</abbr>'
+    )
+    .replaceAll(
+      "{2/B}",
+      '<abbr class="card-symbol card-symbol-2B" title="Mana hybride : 2 ou noir">{2/B}</abbr>'
+    )
+    .replaceAll(
+      "{2/R}",
+      '<abbr class="card-symbol card-symbol-2R" title="Mana hybride : 2 ou rouge">{2/R}</abbr>'
+    )
+    .replaceAll(
+      "{2/G}",
+      '<abbr class="card-symbol card-symbol-2G" title="Mana hybride : 2 ou vert">{2/G}</abbr>'
+    )
+    // Phyrexians
+    .replaceAll(
+      "{W/P}",
+      '<abbr class="card-symbol card-symbol-WP" title="Mana phyrexian : blanc">{W/P}</abbr>'
+    )
+    .replaceAll(
+      "{U/P}",
+      '<abbr class="card-symbol card-symbol-UP" title="Mana phyrexian : bleu">{U/P}</abbr>'
+    )
+    .replaceAll(
+      "{B/P}",
+      '<abbr class="card-symbol card-symbol-BP" title="Mana phyrexian : noir">{B/P}</abbr>'
+    )
+    .replaceAll(
+      "{R/P}",
+      '<abbr class="card-symbol card-symbol-RP" title="Mana phyrexian : rouge">{R/P}</abbr>'
+    )
+    .replaceAll(
+      "{G/P}",
+      '<abbr class="card-symbol card-symbol-GP" title="Mana phyrexian : vert">{G/P}</abbr>'
     );
   return formattedData;
 };
