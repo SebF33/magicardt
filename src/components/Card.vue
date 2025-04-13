@@ -121,8 +121,33 @@
               @click="store.addItem"
               class="add-btn data-html2canvas-ignore text-lighterPrimary font-bold shadow-inner"
               color="#837c5e"
+              title="Ajouter au panier"
             >
-              Ajouter
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <defs>
+                  <linearGradient
+                    id="plusGradient"
+                    x1="0"
+                    y1="0"
+                    x2="24"
+                    y2="24"
+                    gradientUnits="userSpaceOnUse"
+                  >
+                    <stop offset="0" stop-color="#fcf8e8" />
+                    <stop offset="1" stop-color="#837c5e" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="M10 2 H14 V10 H22 V14 H14 V22 H10 V14 H2 V10 H10 Z"
+                  fill="url(#plusGradient)"
+                />
+              </svg>
             </el-button>
           </transition>
           <transition name="el-fade-in-linear" appear>
