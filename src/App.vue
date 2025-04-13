@@ -215,7 +215,7 @@ export default {
       selectedCardName.value = "";
       setTerm.value = code;
       try {
-        await store.fetchSetData(code);
+        await store.fetchSetData(code, true);
       } catch (error) {
         console.error(error);
       }

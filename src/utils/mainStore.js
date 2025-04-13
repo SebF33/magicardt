@@ -42,13 +42,17 @@ export const useMainStore = defineStore("main", {
     searchResults: [],
     selectedCardName: "",
     setTerm: "",
-    // Pour gérer l'affichage (Card / Gallery)
+    // Pour gérer l'affichage (Card / Cardmat / Gallery)
     currentComponent: "Card",
     isLoading: false,
   }),
 
   actions: {
-    async fetchCardById(id) {
+    async fetchCardById(id, resetSet = true) {
+      // la carte est déjà affichée
+      if (this.cardDatas && this.cardDatas.id === id && this.currentComponent !== "Gallery") {
+        return;
+      }
       try {
         const response = await axios.get(`${apiURL}/cards/${id}`);
         if (response && response.data) {
@@ -61,7 +65,7 @@ export const useMainStore = defineStore("main", {
             this.cardDatas.oracle_text = formatOracleText(this.cardDatas.oracle_text);
           }
           if (this.cardDatas.set) {
-            await this.fetchSetData(this.cardDatas.set);
+            await this.fetchSetData(this.cardDatas.set, resetSet);
           }
           this.currentComponent = "Card";
         }
@@ -86,17 +90,23 @@ export const useMainStore = defineStore("main", {
         this.cardDatas.oracle_text = formatOracleText(
           this.cardDatas.oracle_text
         );
-        await this.fetchSetData(this.cardDatas.set);
+        await this.fetchSetData(this.cardDatas.set, true);
         this.currentComponent = "Card";
       } catch (error) {
         console.error("Erreur lors de la récupération de la carte :", error);
-        // Par exemple, réinitialiser ou afficher un message d’erreur
         this.cardDatas.name = "Carte inexistante 😕";
       }
     },
 
-    async fetchSetData(setCode) {
+    async fetchSetData(setCode, resetSet) {
+      // le set est déjà affiché
+      if (!resetSet && this.setDatas && this.setDatas.code === setCode) {
+        return;
+      }
       try {
+        if (resetSet || this.currentComponent !== "Gallery") {
+          this.setDatas = { code: "", icon_svg_uri: "", name: "" };
+        }
         const response = await axios.get(`${apiURL}/sets/${setCode}`);
         if (response && response.data) {
           this.setDatas = response.data;

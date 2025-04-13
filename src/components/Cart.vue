@@ -208,7 +208,7 @@ export default {
 
     // Clic sur une miniature
     const setClick = (id) => {
-      store.fetchCardById(id);
+      store.fetchCardById(id, false);
     };
 
     // Au montage, on récupère les items depuis le store

@@ -166,9 +166,9 @@ export default {
       }
     });
 
-    // Clic sur un onglet : met à jour le set sélectionné dans le store et affiche la galerie
+    // Clic sur un onglet pour afficher la galerie
     const setClick = (code) => {
-      store.fetchSetData(code);
+      store.fetchSetData(code, false);
       store.setCurrentComponent("Gallery");
     };
 
