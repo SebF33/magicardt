@@ -1,8 +1,8 @@
 <!-- Gallery.vue -->
 <template>
-  <div class="container my-8 px-16 sm:px-8 md:px-16 lg:px-18">
+  <div class="container my-8 px-16 sm:px-8">
     <transition name="el-zoom-in-center" appear>
-      <v-banner class="banner mt-12 mb-8 z-10 py-2" elevation="10" rounded>
+      <v-banner class="banner mt-12" elevation="10" rounded>
         <transition name="banner-text-transition" mode="out-in">
           <v-banner-text v-if="setDatas && setDatas.name" :key="setDatas.code">
             <div class="flex items-center mb-3">
@@ -64,26 +64,30 @@
     <TransitionGroup
       name="bounce"
       tag="div"
-      class="grid gap-4 sm:gap-8 grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8"
+      class="grid gap-4 sm:gap-8 grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 px-6 pt-6 pb-52 max-h-[420px] min-h-[420px] overflow-y-auto custom-scrollbar"
     >
       <div
         v-for="card in cards"
         :key="card.id"
         :class="[slider[sliderValue], 'relative transition-all']"
       >
-        <img
-          @click="setClick(card.id)"
-          @load="handleImageLoad(card.id)"
-          :src="card.image"
-          :alt="card.name"
-          :aria-label="`Carte ${card.name}`"
-          :class="['card', loadedImages.includes(card.id) ? 'card-loaded' : '']"
-          class="card absolute object-cover rounded-lg cursor-pointer"
-          loading="lazy"
-          draggable="false"
-          ondragstart="return false"
-          role="button"
-        />
+        <a @click="setClick(card.id)" class="block">
+          <img
+            @load="handleImageLoad(card.id)"
+            :src="card.image"
+            :alt="card.name"
+            :aria-label="`Carte ${card.name}`"
+            :class="[
+              'card',
+              loadedImages.includes(card.id) ? 'card-loaded' : '',
+            ]"
+            class="card absolute object-cover rounded-lg cursor-pointer"
+            loading="lazy"
+            draggable="false"
+            ondragstart="return false"
+            role="button"
+          />
+        </a>
       </div>
     </TransitionGroup>
   </div>
@@ -316,7 +320,6 @@ export default {
   bottom: 8px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
   display: flex !important;
   justify-content: center !important;
   align-items: center;
@@ -363,19 +366,43 @@ export default {
 
 /* Cartes */
 .card {
+  display: block;
   opacity: 0;
   box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
     rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
-  transition: all 0.15s ease-in-out;
-  will-change: transform, opacity;
+  /* will-change: transform, opacity; //trop gourmand */
 }
 
 .card-loaded {
   opacity: 1;
 }
 
-.card:hover {
+a.block .card {
+  transition: all 0.15s ease-in-out;
+}
+
+a.block:hover .card {
   transform: scale(0.975);
+}
+
+/* Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--lighter-primary-color);
+  border-radius: 4px;
+  border: 2px solid transparent;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--lighter-primary-color) transparent;
 }
 
 /* Responsive */

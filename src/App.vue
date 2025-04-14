@@ -84,7 +84,7 @@
         <component :is="store.currentComponent" :key="componentKey" />
       </div>
     </v-main>
-    <Footer />
+    <Footer class="mt-[140px]" />
   </v-app>
 </template>
 

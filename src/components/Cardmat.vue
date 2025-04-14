@@ -177,6 +177,9 @@ export default {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cdefs%3E%3Cpattern id='fabric' patternUnits='userSpaceOnUse' width='20' height='20'%3E%3Cpath d='M0 10h20 M10 0v20' stroke='rgba(255,255,255,0.3)' stroke-width='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='80' height='80' fill='url(%23fabric)'/%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: auto;
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8),
+    0 -6px 12px rgba(0, 0, 0, 0.2), 6px 0 12px rgba(0, 0, 0, 0.2),
+    -6px 0 12px rgba(0, 0, 0, 0.2);
   overflow: hidden;
 }
 

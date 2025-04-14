@@ -1,6 +1,6 @@
 <!-- Footer.vue -->
 <template>
-  <footer class="footer">
+  <footer class="footer z-10 shadow-[0_-10px_15px_-5px_rgba(0,0,0,0.4)]">
     <div class="footer-content">
       <p>
         <a
@@ -68,8 +68,8 @@ export default {
 
 <style scoped>
 .footer {
-  margin-top: 100px;
   width: 100%;
+  max-height: 120px;
   background: var(--secondary-color);
   color: var(--light-color);
   padding: 1rem;
