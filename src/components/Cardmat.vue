@@ -1,25 +1,27 @@
 <!-- Cardmat.vue -->
 <template>
-  <div class="cardmat-container mt-10">
-    <div class="cardmat" ref="matRef" @dragover.prevent @drop="onDrop">
-      <div
-        v-for="card in items"
-        :key="card.id"
-        class="card-item"
-        :style="cardStyle(card)"
-        @mousedown="onMouseDown($event, card.id)"
-        @dblclick="changeRotation(card.id)"
-      >
-        <img
-          :src="card.card_image_hd || card.card_image"
-          :alt="card.card_name"
-          class="rounded-lg"
-          loading="lazy"
-          draggable="false"
-        />
+  <transition name="el-fade-in-linear" appear>
+    <div class="cardmat-container mt-10">
+      <div class="cardmat" ref="matRef" @dragover.prevent @drop="onDrop">
+        <div
+          v-for="card in items"
+          :key="card.id"
+          class="card-item"
+          :style="cardStyle(card)"
+          @mousedown="onMouseDown($event, card.id)"
+          @dblclick="changeRotation(card.id)"
+        >
+          <img
+            :src="card.card_image_hd || card.card_image"
+            :alt="card.card_name"
+            class="rounded-lg"
+            loading="lazy"
+            draggable="false"
+          />
+        </div>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 

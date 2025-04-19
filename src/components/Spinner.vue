@@ -19,6 +19,7 @@ export default {
   margin-top: 164px;
   width: 223px;
   height: 310px;
+  user-select: none;
 }
 
 .half-circle-spinner {
