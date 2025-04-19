@@ -33,7 +33,7 @@ export const useMainStore = defineStore("main", {
       icon_svg_uri: "",
       name: "",
     },
-    // Items du panier (Cart)
+    // Items du panier (composant Cart)
     items: [],
     // Liste des sets pour les onglets (Tabs)
     setsList: [],
@@ -42,12 +42,59 @@ export const useMainStore = defineStore("main", {
     searchResults: [],
     selectedCardName: "",
     setTerm: "",
-    // Pour gérer l'affichage (Card / Cardmat / Gallery)
+    // Affichage dynamique du composant (Card / Cardmat / Gallery)
     currentComponent: "Card",
     isLoading: false,
+    // Cartes par artiste
+    artistCards: [],
+    artistClickInProgress: false,
+    artistHasMore: false,
+    artistName: "",
+    artistTotalCards: 0,
+    artistTotalPages: 1,
   }),
 
+
   actions: {
+    /**
+     * Recherche les cartes pour un nom d'artiste donné
+     * @param {string} artistName
+     * @param {number} page (défaut 1)
+     */
+    async fetchCardsByArtist(artistName, page = 1) {
+      try {
+        // on passe en "mode artiste"
+        this.artistClickInProgress = true;
+        this.artistName = artistName;
+
+        const { data } = await axios.get(`${apiURL}/cards/search`, {
+          params: {
+            q: `a:"${artistName}"`,
+            unique: "cards",
+            order: "name",
+            include_extras: true,
+            include_variations: false,
+            page,
+          },
+        });
+        this.artistCards = data.data.map((card) => ({
+          id: card.id,
+          name: card.name,
+          image: card.image_uris?.normal ?? card.card_faces[0].image_uris.normal,
+        }));
+        // totaux pour la pagination
+        this.artistTotalCards = data.total_cards;
+        this.artistHasMore = data.has_more;
+        this.artistTotalPages = data.has_more ?
+          Math.ceil(data.total_cards / data.data.length) :
+          page;
+        
+        this.currentComponent = "Gallery";
+      } catch (error) {
+        console.error("Erreur lors de la récupération des cartes par artiste :", error);
+      }
+    },
+
     async fetchCardById(id, resetSet = true) {
       // la carte est déjà affichée
       if (this.cardDatas && this.cardDatas.id === id && this.currentComponent !== "Gallery") {
@@ -124,7 +171,7 @@ export const useMainStore = defineStore("main", {
         console.error("Erreur lors de la récupération des sets :", error);
       }
     },
-    
+
     async addItem() {
       try {
         const response = await axios.post(serverURL, {
@@ -151,7 +198,7 @@ export const useMainStore = defineStore("main", {
         console.error("Erreur lors de l'ajout de l'item :", error);
       }
     },
-    
+
     async removeItem(itemId) {
       try {
         await axios.delete(`${serverURL}/${itemId}`);

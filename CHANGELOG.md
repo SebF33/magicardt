@@ -6,6 +6,11 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 
 **Auteur : Sébastien Flouriot (SebF33)**
 
+## [2025-04-19]
+
+### Nouveautés
+- Ajout de la galerie de cartes illustrées par l'artiste au clic de son nom.
+
 ## [2025-04-10]
 
 ### Nouveautés

@@ -53,14 +53,14 @@
         <transition name="el-fade-in-linear" appear>
           <a
             v-if="setDatas.icon_svg_uri"
-            @click="store.setCurrentComponent('Gallery')"
+            @click="setClick()"
             class="set-symbol cursor-pointer"
           >
             <img
               :src="setDatas.icon_svg_uri"
-              width="32"
               :alt="setDatas.name"
               :title="setDatas.name"
+              width="32"
               draggable="false"
               ondragstart="return false"
             />
@@ -84,8 +84,11 @@
           </p>
         </transition>
         <transition name="el-fade-in-linear" appear>
-          <span class="artist font-bold" v-if="cardDatas.artist">
-            Artiste(s) : {{ cardDatas.artist }}
+          <span v-if="cardDatas.artist" class="artist font-bold">
+            Artiste(s) :
+            <strong @click="filterByArtist" class="underline cursor-pointer">{{
+              cardDatas.artist
+            }}</strong>
           </span>
         </transition>
         <transition name="el-fade-in-linear" appear>
@@ -435,6 +438,16 @@ export default {
       }
     };
 
+    // Récupération des cartes par artiste
+    const filterByArtist = () => {
+      if (cardDatas.value.artist) {
+        const artistNames = cardDatas.value.artist.split(/,\s*/);
+        const artistName = artistNames[0]; // premier artiste
+        store.artistClickInProgress = true;
+        store.fetchCardsByArtist(artistName);
+      }
+    };
+
     // 🔍 Zoom sur la carte
     const handleZoom = () => {
       isLoaded.value = true;
@@ -507,9 +520,16 @@ export default {
       }, 1200);
     });
 
+    // Clic sur l'icône du set pour afficher la galerie
+    const setClick = () => {
+      store.artistClickInProgress = false;
+      store.setCurrentComponent("Gallery");
+    };
+
     return {
       store,
       cardDatas,
+      filterByArtist,
       setDatas,
       isLoading,
       isLoaded,
@@ -521,6 +541,7 @@ export default {
       handleZoom,
       createPdf,
       createGradientString,
+      setClick,
     };
   },
 };
