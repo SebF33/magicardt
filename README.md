@@ -68,4 +68,6 @@ https://magic.wizards.com
 https://scryfall.com
 
 
-![avatar](/.github/avatar.png)
+<p align="center">
+  <img align="center" width="100" src="https://raw.githubusercontent.com/sebf33/sebf33/master/assets/avatar.png" />
+</p>
