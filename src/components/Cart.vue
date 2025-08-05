@@ -82,7 +82,7 @@
               size="small"
               type="danger"
               :icon="Delete"
-              @click="store.removeItem(scope.row.id)"
+              @click="store.removeItem(scope.row.card_id)"
             />
           </template>
         </el-table-column>

@@ -212,10 +212,10 @@ export const useMainStore = defineStore("main", {
       }
     },    
 
-    async removeItem(itemId) {
+    async removeItem(itemCardId) {
       try {
         const db = await getDatabase();
-        const doc = await db.cards.findOne({ selector: { id: itemId } }).exec();
+        const doc = await db.cards.findOne({ selector: { card_id: itemCardId } }).exec();
         if (doc) {
           await doc.remove();
           await this.fetchCartItems();
