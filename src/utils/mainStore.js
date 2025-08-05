@@ -2,9 +2,9 @@ import axios from "axios";
 import { defineStore } from "pinia";
 import { formatOracleText } from "./formatOracleText";
 import { formatSymbols } from "./formatSymbols";
+import { getDatabase  } from "./db";
 
 const apiURL = "https://api.scryfall.com";
-const serverURL = "https://magicardt.herokuapp.com/cards";
 
 export const useMainStore = defineStore("main", {
   state: () => ({
@@ -174,8 +174,18 @@ export const useMainStore = defineStore("main", {
 
     async addItem() {
       try {
-        const response = await axios.post(serverURL, {
-          card_id: this.cardDatas.id,
+        const db = await getDatabase();
+        const cardId = this.cardDatas.id;
+
+        // Vérifier si la carte est déjà présente
+        const existing = await db.cards.findOne({ selector: { card_id: cardId } }).exec();
+        if (existing) {
+          console.info('Carte déjà présente dans le panier.');
+          return;
+        }
+    
+        const newItem = {
+          card_id: cardId,
           card_image:
             this.cardDatas?.image_uris?.small ??
             this.cardDatas.card_faces[0].image_uris.small,
@@ -192,17 +202,24 @@ export const useMainStore = defineStore("main", {
           card_title: `${this.cardDatas.name} (${this.cardDatas.set_name})`,
           set_icon: this.setDatas.icon_svg_uri,
           set_name: this.setDatas.name,
-        });
-        this.items.push(response.data);
+        };
+    
+        await db.cards.insert(newItem);
+        await this.fetchCartItems();
+    
       } catch (error) {
         console.error("Erreur lors de l'ajout de l'item :", error);
       }
-    },
+    },    
 
     async removeItem(itemId) {
       try {
-        await axios.delete(`${serverURL}/${itemId}`);
-        this.items = this.items.filter((item) => item.id !== itemId);
+        const db = await getDatabase();
+        const doc = await db.cards.findOne({ selector: { id: itemId } }).exec();
+        if (doc) {
+          await doc.remove();
+          await this.fetchCartItems();
+        }
       } catch (error) {
         console.error("Erreur lors de la suppression de l'item :", error);
       }
@@ -210,13 +227,11 @@ export const useMainStore = defineStore("main", {
 
     async fetchCartItems() {
       try {
-        const response = await axios.get(serverURL);
-        this.items = response.data;
+        const db = await getDatabase();
+        const docs = await db.cards.find().exec();
+        this.items = docs.map(doc => doc.toJSON());
       } catch (error) {
-        console.error(
-          "Erreur lors de la récupération des items du panier :",
-          error
-        );
+        console.error("Erreur lors de la récupération des items du panier :", error);
       }
     },
 
