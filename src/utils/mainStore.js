@@ -228,7 +228,10 @@ export const useMainStore = defineStore("main", {
     async fetchCartItems() {
       try {
         const db = await getDatabase();
-        const docs = await db.cards.find().exec();
+        const docs = await db.cards
+          .find()
+          .sort({ card_name: 'asc' })
+          .exec();
         this.items = docs.map(doc => doc.toJSON());
       } catch (error) {
         console.error("Erreur lors de la récupération des items du panier :", error);

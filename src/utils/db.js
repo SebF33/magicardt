@@ -1,9 +1,8 @@
-import {
-  createRxDatabase
-} from 'rxdb';
-import {
-  getRxStorageDexie
-} from 'rxdb/plugins/storage-dexie';
+import { addRxPlugin, createRxDatabase } from 'rxdb';
+import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
+import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
+
+addRxPlugin(RxDBQueryBuilderPlugin);
 
 const cardSchema = {
   title: 'My Magicardt',
@@ -31,7 +30,8 @@ const cardSchema = {
     "set_icon",
     "set_name"
   ],
-  additionalProperties: false
+  additionalProperties: false,
+  indexes: ['card_name']
 };
 
 let dbPromise = null;
