@@ -5,11 +5,11 @@
       <div class="cardmat" ref="matRef" @dragover.prevent @drop="onDrop">
         <div
           v-for="card in items"
-          :key="card.id"
+          :key="card.card_id"
           class="card-item"
           :style="cardStyle(card)"
-          @mousedown="onMouseDown($event, card.id)"
-          @dblclick="changeRotation(card.id)"
+          @mousedown="onMouseDown($event, card.card_id)"
+          @dblclick="changeRotation(card.card_id)"
         >
           <img
             :src="card.card_image_hd || card.card_image"
@@ -41,7 +41,7 @@ export default {
 
     // Zone
     const matRef = ref(null);
-    // Stocker la position (x,y), la rotation et le z-index de chaque carte (indexé par card.id)
+    // Stocker la position (x,y), la rotation et le z-index de chaque carte (indexé par card.card_id)
     const positions = reactive({});
     // Dimensions de la zone
     const matWidth = ref(600);
@@ -60,8 +60,8 @@ export default {
         matHeight.value = rect.height;
       }
       items.value.forEach((card) => {
-        if (!positions[card.id]) {
-          positions[card.id] = {
+        if (!positions[card.card_id]) {
+          positions[card.card_id] = {
             x: Math.random() * (matWidth.value - cardWidth),
             y: Math.random() * (matHeight.value - cardHeight),
             rotation: Math.random() * 30 - 15, // entre -15° et +15°
@@ -135,7 +135,7 @@ export default {
 
     // Calcul du style pour chaque carte (position, rotation et z-index)
     const cardStyle = (card) => {
-      const pos = positions[card.id] || { x: 0, y: 0, rotation: 0, z: 1 };
+      const pos = positions[card.card_id] || { x: 0, y: 0, rotation: 0, z: 1 };
       return {
         left: pos.x + "px",
         top: pos.y + "px",
