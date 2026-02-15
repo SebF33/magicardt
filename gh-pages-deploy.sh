@@ -6,15 +6,5 @@
 # build
 npm run build
 
-# commit
-git checkout gh-pages
-rm -rf *
-cp -r ../dist/* .
-git add .
-git commit -m "deploy"
-
 # push
-git push origin gh-pages
-
-# return to master branch
-git checkout master
+git subtree push --prefix dist origin gh-pages
