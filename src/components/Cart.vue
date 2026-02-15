@@ -172,7 +172,7 @@ export default {
       data.push([]);
       data.push(["Nom", "Prix (€)"]);
       // lignes de données
-      for (let i = 1; i < rows.length; i++) {
+      for (let i = 0; i < rows.length; i++) {
         const cells = rows[i].querySelectorAll("td");
         const row = [];
         cells.forEach((cell, index) => {
