@@ -16,7 +16,7 @@
     "element-plus": "^2.9.8",
     "excellentexport": "^3.9.11",
     "html2canvas": "^1.4.1",
-    "jspdf": "^4.2.0",
+    "jspdf": "^4.2.1",
     "pinia": "^3.0.4",
     "postcss": "^8.4.31",
     "rxdb": "^16.16.0",
