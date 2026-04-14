@@ -271,6 +271,7 @@ export default {
 .el-table {
   margin-top: 55px;
   font-family: "Oswald";
+  border-radius: 10px;
   box-shadow: 0 0 3px 3px var(--darker-primary-color);
 }
 
