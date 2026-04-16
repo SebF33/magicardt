@@ -4,29 +4,34 @@ import { formatOracleText } from "./formatOracleText";
 import { formatSymbols } from "./formatSymbols";
 import { getDatabase  } from "./db";
 
+
 const apiURL = "https://api.scryfall.com";
 
+const defaultCardDatas = () => ({
+  artist: "",
+  card_faces: { 0: { image_uris: { png: "", border_crop: "" } } },
+  colors: "",
+  flavor_text: "",
+  id: "",
+  image_uris: { png: "", border_crop: "" },
+  loyalty: "",
+  mana_cost: "",
+  name: "",
+  oracle_text: "",
+  power: "",
+  prices: { eur: "", eur_foil: "" },
+  set: "",
+  set_name: "",
+  toughness: "",
+  type_line: "",
+});
+
+
 export const useMainStore = defineStore("main", {
+
   state: () => ({
     // Données de la carte
-    cardDatas: {
-      artist: "",
-      card_faces: { 0: { image_uris: { png: "", border_crop: "" } } },
-      colors: "",
-      flavor_text: "",
-      id: "",
-      image_uris: { png: "", border_crop: "" },
-      loyalty: "",
-      mana_cost: "",
-      name: "",
-      oracle_text: "",
-      power: "",
-      prices: { eur: "", eur_foil: "" },
-      set: "",
-      set_name: "",
-      toughness: "",
-      type_line: "",
-    },
+    cardDatas: defaultCardDatas(),
     // Données du set associé
     setDatas: {
       code: "",
@@ -141,7 +146,11 @@ export const useMainStore = defineStore("main", {
         this.currentComponent = "Card";
       } catch (error) {
         console.error("Erreur lors de la récupération de la carte :", error);
-        this.cardDatas.name = "Carte inexistante 😕";
+        this.cardDatas = {
+          ...defaultCardDatas(),
+          name: "Carte inexistante 😕",
+        };
+        this.setDatas = { code: "", icon_svg_uri: "", name: "" };
       }
     },
 
